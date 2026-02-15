@@ -7,8 +7,8 @@
     "courseName": "Data Structures",
     "examName": "Midterm 1",
     "checkInTime": "2026-02-14T09:05:00",
-    "checkOutTime": "2026-02-14T10:20:00",
-    "status": "COMPLETED",
+    "checkOutTime": "2026-02-15T14:55:37",
+    "status": "IN_PROGRESS",
     "staffName": "Maya Lopez",
     "facultyName": "Raghu Ramanujan",
     "notes": "1.5x extended time accommodation"
@@ -35,8 +35,8 @@
     "courseName": "Operating Systems",
     "examName": "Project Checkpoint Quiz",
     "checkInTime": "2026-02-14T12:15:00",
-    "checkOutTime": null,
-    "status": "PENDING",
+    "checkOutTime": "2026-02-15T14:56:11",
+    "status": "COMPLETED",
     "staffName": "Maya Lopez",
     "facultyName": "Catherine Nemitz",
     "notes": "Waiting for exam packet"

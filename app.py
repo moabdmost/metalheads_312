@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask import render_template
 from flask_cors import CORS
 import json
 import os
@@ -42,6 +43,20 @@ def update_submission(id):
 
     save_data(data)
     return jsonify(submission)
+
+
+@app.route("/dashboard")
+def dashboard_page():
+    return render_template("dashboard.html")
+
+@app.route("/scan")
+def scan_page():
+    return render_template("scan.html")
+
+@app.route("/qr")
+def qr_page():
+    return render_template("qr_generate.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
