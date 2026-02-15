@@ -29,11 +29,11 @@ pip3 install -r requirements.txt
 # Run the application
 python3 app.py
 
-# To see the data go here:
+# To see the data 
 http://127.0.0.1:5000/api/submissions
 
-# To see speicifc data:
+# To see speicifc data
 http://127.0.0.1:5000/api/submissions/QS-0002
 
-# To see a page:
+# To see a page
 http://127.0.0.1:5000/dashboard
