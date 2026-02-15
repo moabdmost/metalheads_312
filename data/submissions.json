@@ -9,6 +9,7 @@
     "checkInTime": "2026-02-14T09:05:00",
     "checkOutTime": "2026-02-15T14:55:37",
     "status": "IN_PROGRESS",
+    "room": null,
     "staffName": "Maya Lopez",
     "facultyName": "Raghu Ramanujan",
     "notes": "1.5x extended time accommodation"
@@ -23,6 +24,7 @@
     "checkInTime": "2026-02-14T11:00:00",
     "checkOutTime": null,
     "status": "IN_PROGRESS",
+    "room": null,
     "staffName": "James Thompson",
     "facultyName": "Terrance Kim",
     "notes": ""
@@ -37,6 +39,7 @@
     "checkInTime": "2026-02-14T12:15:00",
     "checkOutTime": "2026-02-15T14:56:11",
     "status": "COMPLETED",
+    "room": null,
     "staffName": "Maya Lopez",
     "facultyName": "Catherine Nemitz",
     "notes": "Waiting for exam packet"
@@ -51,6 +54,7 @@
     "checkInTime": "2026-02-13T14:00:00",
     "checkOutTime": "2026-02-13T15:10:00",
     "status": "VERIFIED",
+    "room": null,
     "staffName": "James Thompson",
     "facultyName": "Laura Bennett",
     "notes": "ID verified at check-in"
@@ -65,6 +69,7 @@
     "checkInTime": "2026-02-12T10:30:00",
     "checkOutTime": "2026-02-12T12:00:00",
     "status": "COMPLETED",
+    "room": null,
     "staffName": "Maya Lopez",
     "facultyName": "John Doe",
     "notes": "Calculator checked before start"
@@ -79,6 +84,7 @@
     "checkInTime": "2026-02-14T15:00:00",
     "checkOutTime": null,
     "status": "IN_PROGRESS",
+    "room": null,
     "staffName": "James Thompson",
     "facultyName": "Rachel Adams",
     "notes": ""
