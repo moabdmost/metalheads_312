@@ -1,4 +1,3 @@
-
 const API_BASE = "http://127.0.0.1:5000/api";
 
 const rowsEl = document.getElementById("rows");
@@ -28,8 +27,24 @@ function fmtTime(t) {
   return t.replace("T", " ");
 }
 
+// Tracks button progress per row — resets on every page reload
+const sessionProgress = {};
+
+function getProgress(id) {
+  return sessionProgress[id] || "idle"; // idle → verified → started → completed
+}
+
 function pill(status) {
-  return `<span class="pill">${status}</span>`;
+  const label = status.replace(/_/g, ' ');
+  return `<span class="pill" data-status="${status}">${label}</span>`;
+}
+
+function buttonsForProgress(progress, id) {
+  return `
+    <button data-action="verify"   data-id="${id}" ${progress !== "idle"     ? "disabled" : ""}>Verify</button>
+    <button data-action="start"    data-id="${id}" ${progress !== "verified" ? "disabled" : ""}>Start</button>
+    <button data-action="complete" data-id="${id}" ${progress !== "started"  ? "disabled" : ""}>Complete</button>
+  `;
 }
 
 function render(submissions) {
@@ -50,9 +65,7 @@ function render(submissions) {
       <td>${pill(s.status)}</td>
       <td>Staff: ${s.staffName}<br>Faculty: ${s.facultyName}</td>
       <td style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button data-action="verify" data-id="${s.id}">Verify</button>
-        <button data-action="complete" data-id="${s.id}">Complete</button>
-        <button data-action="start" data-id="${s.id}">Start</button>
+        ${buttonsForProgress(getProgress(s.id), s.id)}
       </td>
     `;
     rowsEl.appendChild(tr);
@@ -82,11 +95,14 @@ rowsEl.addEventListener("click", async (e) => {
 
     if (action === "verify") {
       await patch(id, { status: "VERIFIED" });
+      sessionProgress[id] = "verified";
+    } else if (action === "start") {
+      await patch(id, { status: "IN PROGRESS" });
+      sessionProgress[id] = "started";
     } else if (action === "complete") {
       const now = new Date().toISOString().slice(0, 19);
       await patch(id, { status: "COMPLETED", checkOutTime: now });
-    } else if (action === "start") {
-      await patch(id, { status: "IN_PROGRESS" });
+      sessionProgress[id] = "completed";
     }
 
     await refresh();

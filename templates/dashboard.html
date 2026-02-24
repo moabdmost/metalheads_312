@@ -3,56 +3,47 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/static/dashboard.css">
     <title>Staff Dashboard</title>
-    <style>
-      body { font-family: system-ui; max-width: 1100px; margin: 24px auto; padding: 0 16px; }
-      table { width: 100%; border-collapse: collapse; }
-      th, td { border: 1px solid #ddd; padding: 10px; vertical-align: top; }
-      th { background: #f3f3f3; text-align: left; }
-      .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-      button, select { padding: 8px 10px; }
-      .muted { color: #666; }
-      nav a { margin-right: 12px; }
-      .pill { display: inline-block; padding: 2px 8px; border: 1px solid #ccc; border-radius: 999px; font-size: 12px; }
-    </style>
   </head>
   <body>
-    <h1>Staff Dashboard</h1>
-    <nav>
-      <a href="/scan">Scan</a>
-      <a href="/qr">QR Generator</a>
-    </nav>
+    <div class="page-wrapper">
+      <h1>Staff Dashboard</h1>
+      <nav>
+        <a href="/scan">Scan</a>
+        <a href="/qr">QR Generator</a>
+      </nav>
 
-    <div class="row" style="margin: 12px 0;">
-      <label for="filter">Filter status:</label>
-      <select id="filter">
-        <option value="ALL" selected>ALL</option>
-        <option value="PENDING">PENDING</option>
-        <option value="IN_PROGRESS">IN_PROGRESS</option>
-        <option value="COMPLETED">COMPLETED</option>
-        <option value="VERIFIED">VERIFIED</option>
-      </select>
+      <div class="row" style="margin: 12px 0;">
+        <label for="filter">Filter status:</label>
+        <select id="filter">
+          <option value="ALL" selected>ALL</option>
+          <option value="PENDING">PENDING</option>
+          <option value="IN_PROGRESS">IN PROGRESS</option>
+          <option value="COMPLETED">COMPLETED</option>
+          <option value="VERIFIED">VERIFIED</option>
+        </select>
 
-      <button id="refresh">Refresh</button>
-      <span id="msg" class="muted"></span>
+        <button id="refresh">Refresh</button>
+        <span id="msg" class="muted"></span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Student</th>
+            <th>Course / Exam</th>
+            <th>Times</th>
+            <th>Status</th>
+            <th>Staff / Faculty</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
     </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Student</th>
-          <th>Course / Exam</th>
-          <th>Times</th>
-          <th>Status</th>
-          <th>Staff / Faculty</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="rows"></tbody>
-    </table>
 
     <script src="/static/dashboard.js"></script>
   </body>
 </html>
-
