@@ -1,0 +1,185 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
+
+/*The basics of the style of our web page*/
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface-2: #22263a;
+  --border: #2e3350;
+  --accent: #4f8ef7;
+  --accent-soft: rgba(79, 142, 247, 0.12);
+  --accent-2: #7c5cfc;
+  --text: #e8eaf6;
+  --text-muted: #7b82a8;
+  --success: #3ecf8e;
+  --warning: #f7c948;
+  --danger: #f76f72;
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* --- Body Style ---*/
+body {
+  font-family: 'DM Sans', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0 0 60px;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(79,142,247,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 110%, rgba(124,92,252,0.07) 0%, transparent 60%);
+}
+
+/* ── Page Wrapper — vertical stack with padding ── */
+.page-wrapper {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 56px 60px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Title ── */
+.page-wrapper h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--text) 40%, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically */
+  height: 100vh; 
+}
+
+/* --- Paragraph Style --- */
+.page-wrapper p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  background: linear-gradient(135deg, var(--text) 40%, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically */
+  height: 100vh; 
+}
+/* Button Style */
+button, input[type=submit] {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 8px 20px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+
+/* Add hover effect for better user experience */
+input[type=submit]:hover {
+    background: #6aa0ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 18px rgba(79, 142, 247, 0.4);
+}
+
+button,input[type=submit]{
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(79, 142, 247, 0.3);
+}
+
+input::placeholder {
+    color: #999;        /* lighter grey */
+    font-style: italic; /* optional */
+}
+
+/* ── Triangle form layout ── */
+.triangle-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: auto;
+  gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  label {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--accent);
+    align-self: center;
+  }
+}
+
+.triangle-form .top-row {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 1rem;
+}
+
+.triangle-form .top-row .field {
+  flex: 1;
+}
+
+.triangle-form .bottom-row {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+}
+
+.triangle-form .bottom-row .field {
+  width: 100%;
+  max-width: 300px;
+}
+
+.triangle-form .field label {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.triangle-form .field input {
+  width: 100%;
+  padding: 0.5rem;
+}
+
+@media (max-width: 500px) {
+  .triangle-form .top-row {
+    flex-direction: column;
+  }
+}
+
+/* container for title, instructions and form; keeps them aligned */
+.triangle-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.triangle-container > h1,
+.triangle-container > p,
+.triangle-container > .triangle-form {
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
+/* ensure submit button spans full width of form grid and sits below bottom row */
+.triangle-form input[type=submit] {
+  grid-column: 1 / -1;
+  justify-self: center;
+  margin-top: 1rem;
+}
+
+
