@@ -1,12 +1,38 @@
 <!DOCTYPE html>
 <html lang = 'en'>
     <head>
-        
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="/static/student.css">
+        <title>Student Login</title> 
     </head>
-<body>
+    <body>
 
-<h1>My First Heading</h1>
-<p>My first paragraph.</p>
+        <div class="triangle-container">
+            <h1 id="Title">Quiz Center Login In</h1>
+            <p id="Instructions"> Please enter either your @davidson email or 
+                Student ID and password</p>
+            <form class="triangle-form">
+                <div class="top-row">
+                    <div class="field">
+                        <label for="email">Enter your email:</label>
+                        <input type="email" id="email" name="email" placeholder="@davidson.edu">
+                    </div>
+                    <div class="field">
+                        <label for="studentID">Student ID:</label>
+                        <input type="text" id="studentID" name="studentID" placeholder="Student ID">
+                    </div>
+                </div>
+                <div class="bottom-row">
+                    <div class="field">
+                        <label for="pwd">Password:</label>
+                        <input type="password" id="pwd" name="pwd" placeholder="Password">
+                    </div>
+                </div>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+              
 
-</body>
+    </body>
 </html>
