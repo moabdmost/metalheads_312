@@ -1,5 +1,3 @@
-
-
 // JavaScript for student.html
 // validates inputs and redirects when data is valid
 
@@ -22,6 +20,12 @@ function submit_function(event) {
         return false;
     }
 
+    if (email_input.value === "" &&student_id_input.value && !/^\d{9}$/.test(student_id_input.value)) {
+        alert("Please enter your 9-digit student ID.");
+        event.preventDefault();
+        return false;
+    }
+
     if (email_input.value && !email_input.value.includes("@davidson.edu")) {
         alert("Please enter your @davidson.edu email.");
         event.preventDefault();
@@ -34,8 +38,34 @@ function submit_function(event) {
         return false;
     }
 
-    // all valid – do not let the form submit normally; redirect manually
+    // prevent normal submission until credentials are checked
     event.preventDefault();
-    window.location.href = 'https://www.espn.com/';
-    return true;
+
+    const email = email_input.value.trim().toLowerCase();
+    const studentId = student_id_input.value.trim();
+    const pwd = password_input.value;
+
+    // Load the static JSON (copied to /static/subs_copy.json) and verify
+    fetch('/data/subs_copy.json')
+        .then(resp => resp.json())
+        .then(jsonData => {
+            const match = jsonData.find(student => {
+                const emailMatch = email && student.email && student.email.toLowerCase() === email;
+                const idMatch = studentId && student.studentId === studentId;
+                return (emailMatch || idMatch) && student.password === pwd;
+            });
+
+            if (match) {
+                // credentials valid — proceed
+                window.location.href = 'https://www.espn.com/';
+            } else {
+                alert('Invalid email/ID or password.');
+            }
+        })
+        .catch(err => {
+            console.error('Failed to load credentials file:', err);
+            alert('Unable to validate credentials at this time.');
+        });
+
+    return false;
 }
