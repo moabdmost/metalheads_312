@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/static/student.css">
+    <title>Select Your Exam</title>
+</head>
+<body>
+    <div class="triangle-container">
+        <h1 id="Title">Select Your Exam</h1>
+        <p id="Instructions">Choose the class and exam you're here to take</p>
+        
+        <form class="triangle-form" id="examForm">
+            <div class="top-row">
+                <div class="field">
+                    <label for="courseSelect">Select Course:</label>
+                    <select id="courseSelect" name="course" required>
+                        <option value="">-- Choose a course --</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="bottom-row">
+                <div class="field">
+                    <label for="examSelect">Select Exam:</label>
+                    <select id="examSelect" name="exam" required disabled>
+                        <option value="">-- First select a course --</option>
+                    </select>
+                </div>
+            </div>
+            
+            <input id="submit-btn" type="submit" value="Check In">
+        </form>
+    </div>
+    
+    <script src="/static/exam_selection.js"></script>
+</body>
+</html>

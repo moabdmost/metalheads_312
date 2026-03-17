@@ -45,25 +45,30 @@ function submit_function(event) {
     const studentId = student_id_input.value.trim();
     const pwd = password_input.value;
 
-    // Load the static JSON (copied to /static/subs_copy.json) and verify
-    fetch('/data/subs_copy.json')
+    // Call the API to validate login
+    fetch('/api/validate-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            email: email, 
+            studentId: studentId, 
+            password: pwd 
+        })
+    })
         .then(resp => resp.json())
-        .then(jsonData => {
-            const match = jsonData.find(student => {
-                const emailMatch = email && student.email && student.email.toLowerCase() === email;
-                const idMatch = studentId && student.studentId === studentId;
-                return (emailMatch || idMatch) && student.password === pwd;
-            });
-
-            if (match) {
-                // credentials valid — proceed
-                window.location.href = 'https://www.espn.com/';
+        .then(data => {
+            if (data.success) {
+                // Save student info to localStorage
+                localStorage.setItem('loggedInStudent', JSON.stringify(data.student));
+                
+                // Redirect to exam selection page
+                window.location.href = '/exam-selection';
             } else {
                 alert('Invalid email/ID or password.');
             }
         })
         .catch(err => {
-            console.error('Failed to load credentials file:', err);
+            console.error('Login error:', err);
             alert('Unable to validate credentials at this time.');
         });
 
