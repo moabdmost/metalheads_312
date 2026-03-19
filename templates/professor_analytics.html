@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/static/dashboard.css">
+    <title>Professor Analytics</title>
+    <style>
+        .analytics-header {
+            margin-bottom: 24px;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .filter-group label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+        
+        .filter-group input,
+        .filter-group select {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem;
+            color: var(--text);
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 12px;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .export-btn {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .export-btn.pdf {
+            background: var(--danger);
+            color: #fff;
+            box-shadow: 0 2px 12px rgba(248, 113, 113, 0.3);
+        }
+        
+        .export-btn.pdf:hover {
+            background: #ff8a8a;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 18px rgba(248, 113, 113, 0.4);
+        }
+        
+        .export-btn.csv {
+            background: var(--success);
+            color: #fff;
+            box-shadow: 0 2px 12px rgba(62, 207, 142, 0.3);
+        }
+        
+        .export-btn.csv:hover {
+            background: #50e3a5;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 18px rgba(62, 207, 142, 0.4);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="analytics-header">
+            <h1>Professor Analytics Dashboard</h1>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label for="courseFilter">Course</label>
+                <select id="courseFilter">
+                    <option value="">All Courses</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="statusFilter">Status</label>
+                <select id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="VERIFIED">Verified</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="COMPLETED">Completed</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="startDate">Start Date</label>
+                <input type="date" id="startDate">
+            </div>
+            
+            <div class="filter-group">
+                <label for="endDate">End Date</label>
+                <input type="date" id="endDate">
+            </div>
+            
+            <div class="filter-group" style="justify-content: flex-end;">
+                <label>&nbsp;</label>
+                <button id="applyFilters" style="padding: 8px 20px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer;">
+                    Apply Filters
+                </button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Submissions</div>
+                <div class="stat-value" id="totalCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value" id="completedCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">In Progress</div>
+                <div class="stat-value" id="inProgressCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pending</div>
+                <div class="stat-value" id="pendingCount">0</div>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Student</th>
+                    <th>Course / Exam</th>
+                    <th>Check-In Time</th>
+                    <th>Check-Out Time</th>
+                    <th>Status</th>
+                    <th>Faculty</th>
+                </tr>
+            </thead>
+            <tbody id="analyticsRows"></tbody>
+        </table>
+
+        <div class="export-buttons">
+            <button class="export-btn pdf" id="exportPDF">
+                📄 Export as PDF
+            </button>
+            <button class="export-btn csv" id="exportCSV">
+                📊 Export as CSV
+            </button>
+        </div>
+    </div>
+
+    <script src="/static/professor_analytics.js"></script>
+</body>
+</html>
