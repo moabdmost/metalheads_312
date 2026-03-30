@@ -104,5 +104,20 @@
     "staffName": null,
     "facultyName": "Dr. Lim",
     "notes": "Reduced Distraction"
+  },
+  {
+    "id": "QS-2980",
+    "studentId": "",
+    "studentName": "",
+    "courseCode": "CSC312",
+    "courseName": "Software Design",
+    "examName": "",
+    "checkInTime": null,
+    "checkOutTime": null,
+    "status": "PENDING",
+    "room": null,
+    "staffName": null,
+    "facultyName": "Dr. Lim",
+    "notes": "AADR"
   }
 ]
