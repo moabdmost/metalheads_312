@@ -69,3 +69,55 @@ function submit_function(event) {
 
     return false;
 }
+
+function handleCredentialResponse(response) {
+    console.log("Encoded JWT ID token: " + response.credential);
+
+    // Decode JWT (basic client-side decode)
+    const data = parseJwt(response.credential);
+
+    console.log("User Info:", data);
+
+    // Example:
+    document.getElementById("user-info").innerText =
+        `Welcome ${data.name} (${data.email})`;
+    
+    const email = data.email ? data.email.trim().toLowerCase() : "";
+    console.log(email);
+    // Load the static JSON (copied to /static/subs_copy.json) and verify
+    fetch('/data/subs_copy.json')
+        .then(resp => resp.json())
+        .then(jsonData => {
+            const match = jsonData.find(student => {
+                const emailMatch = email && student.email && student.email.toLowerCase() === email;
+                
+                return (emailMatch);
+            });
+
+            if (match) {
+                // credentials valid — proceed
+                window.location.href = 'https://www.espn.com/';
+            } else {
+                alert('Invalid email');
+            }
+        })
+        .catch(err => {
+            console.error('Failed to load credentials file:', err);
+            alert('Unable to validate credentials at this time.');
+        });
+
+    return false;
+}
+
+function parseJwt(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+        atob(base64)
+            .split('')
+            .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+    );
+
+    return JSON.parse(jsonPayload);
+}
