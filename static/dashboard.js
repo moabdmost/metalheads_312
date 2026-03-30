@@ -1,8 +1,12 @@
 const API_BASE = "http://127.0.0.1:5000/api";
 
-const rowsEl = document.getElementById("rows");
-const msgEl = document.getElementById("msg");
+const rowsEl  = document.getElementById("rows");
+const msgEl   = document.getElementById("msg");
 const filterEl = document.getElementById("filter");
+
+// Auto-poll interval in milliseconds — dashboard stays live without manual refresh
+const POLL_INTERVAL = 5000;
+let pollTimer = null;
 
 function setMsg(text) { msgEl.textContent = text || ""; }
 
@@ -27,7 +31,7 @@ function fmtTime(t) {
   return t.replace("T", " ");
 }
 
-// Tracks button progress per row — resets on every page reload
+// Tracks button progress per row — persists across auto-refreshes this session
 const sessionProgress = {};
 
 function getProgress(id) {
@@ -47,6 +51,24 @@ function buttonsForProgress(progress, id) {
   `;
 }
 
+// Badge shown next to the student name when they have logged in
+// login_email is stamped on the submission by /api/login when the student signs in
+function loginBadge(s) {
+  if (!s.login_email) return "";
+  return `<span style="
+    display:inline-block;
+    margin-left:6px;
+    padding:2px 8px;
+    border-radius:999px;
+    font-size:0.7rem;
+    font-weight:600;
+    background:rgba(62,207,142,0.12);
+    color:#3ecf8e;
+    border:1px solid rgba(62,207,142,0.3);
+    vertical-align:middle;
+  ">✓ Checked In</span>`;
+}
+
 function render(submissions) {
   rowsEl.innerHTML = "";
   const filter = filterEl.value;
@@ -59,7 +81,10 @@ function render(submissions) {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${s.id}</td>
-      <td><b>${s.studentName}</b><br><span class="muted">${s.studentId}</span></td>
+      <td>
+        <b>${s.studentName}</b>${loginBadge(s)}
+        <br><span class="muted">${s.studentId}</span>
+      </td>
       <td><b>${s.courseCode}</b> — ${s.courseName}<br>${s.examName}</td>
       <td>In: ${fmtTime(s.checkInTime)}<br>Out: ${fmtTime(s.checkOutTime)}</td>
       <td>${pill(s.status)}</td>
@@ -72,14 +97,28 @@ function render(submissions) {
   }
 }
 
-async function refresh() {
+async function refresh(silent = false) {
   try {
-    setMsg("Loading...");
+    if (!silent) setMsg("Loading...");
     const data = await getAll();
     render(data);
-    setMsg(`Loaded ${data.length} record(s).`);
+    const now = new Date().toLocaleTimeString();
+    setMsg(`${data.length} record(s) — last updated ${now}`);
   } catch (e) {
     setMsg(`Error: ${e.message}`);
+  }
+}
+
+// Start auto-polling — silent so it doesn't flash "Loading..." every 5 seconds
+function startPolling() {
+  stopPolling();
+  pollTimer = setInterval(() => refresh(true), POLL_INTERVAL);
+}
+
+function stopPolling() {
+  if (pollTimer) {
+    clearInterval(pollTimer);
+    pollTimer = null;
   }
 }
 
@@ -87,8 +126,11 @@ rowsEl.addEventListener("click", async (e) => {
   const btn = e.target.closest("button");
   if (!btn) return;
 
-  const id = btn.dataset.id;
+  const id     = btn.dataset.id;
   const action = btn.dataset.action;
+
+  // Stop polling while we process the action so they don't race
+  stopPolling();
 
   try {
     setMsg(`Updating ${id}...`);
@@ -97,10 +139,10 @@ rowsEl.addEventListener("click", async (e) => {
       await patch(id, { status: "VERIFIED" });
       sessionProgress[id] = "verified";
     } else if (action === "start") {
-      await patch(id, { status: "IN PROGRESS" });
+      await patch(id, { status: "IN_PROGRESS" });
       sessionProgress[id] = "started";
     } else if (action === "complete") {
-      const now = new Date().toISOString().slice(0, 19);
+      const now = new Date().toLocaleString('sv-SE', { timeZone: 'America/New_York' }).replace(' ', 'T');
       await patch(id, { status: "COMPLETED", checkOutTime: now });
       sessionProgress[id] = "completed";
     }
@@ -108,11 +150,13 @@ rowsEl.addEventListener("click", async (e) => {
     await refresh();
   } catch (err) {
     setMsg(`Error: ${err.message}`);
+  } finally {
+    startPolling();
   }
 });
 
-document.getElementById("refresh").addEventListener("click", refresh);
-filterEl.addEventListener("change", refresh);
+document.getElementById("refresh").addEventListener("click", () => refresh());
+filterEl.addEventListener("change", () => refresh());
 
-// Initial load
-refresh();
+// Initial load then start polling
+refresh().then(startPolling);
