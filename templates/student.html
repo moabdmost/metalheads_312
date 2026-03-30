@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="google-signin-client_id" content="318874378262-do4uihbnlojtv39fm05ctcncfjkgvb4v.apps.googleusercontent.com">
         <link rel="stylesheet" href="/static/student.css">
         <title>Student Login</title> 
     </head>
@@ -30,17 +31,31 @@
                     </div>
                 </div>
                 <input id="submit-btn" type="submit" value="Submit">
+                
             </form>
-            <div id="g_id_onload"
-                data-client_id="318874378262-do4uihbnlojtv39fm05ctcncfjkgvb4v.apps.googleusercontent.com"
-                data-callback="handleCredentialResponse">
-            </div>
-
-            <div class="g_id_signin"></div>
-            <div id="user-info"></div>
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
         </div>
               
         <script src="/static/student.js"></script>
-        <script src="https://accounts.google.com/gsi/client" async defer></script>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <script >
+            function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+  console.log('Name: ' + profile.getName());
+  console.log('Image URL: ' + profile.getImageUrl());
+  console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+}
+        </script>
+        <a href="#" onclick="signOut();">Sign out</a>
+<script>
+  function signOut() {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
+    });
+  }
+</script>
+
     </body>
 </html>
