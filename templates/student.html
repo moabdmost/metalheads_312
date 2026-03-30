@@ -33,11 +33,15 @@
                 <input id="submit-btn" type="submit" value="Submit">
                 
             </form>
-            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            <div id="g_id_onload"
+                 data-client_id="YOUR_CLIENT_ID_HERE"
+                 data-callback="handleCredentialResponse">
+            </div>
+            <div class="g-signin"></div>
         </div>
               
         <script src="/static/student.js"></script>
-        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
         <script >
             function onSignIn(googleUser) {
   var profile = googleUser.getBasicProfile();
