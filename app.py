@@ -243,7 +243,72 @@ def login():
 
 # ── API: Submissions ──────────────────────────────────────────────────────────
 
+<<<<<<< Updated upstream
 @app.route("/api/submissions", methods=["GET"])
+=======
+@app.route("/selection")
+def selection_page():
+    data = load_data()
+    return render_template("selection.html", submissions=data)
+
+@app.route("/professor")
+def professor_page():
+    return render_template("professor_analytics.html")
+
+
+@app.route("/qr_generate", methods=["POST"])
+def qr_generate():
+    # get form values
+    professor = request.form.get("facultyName")
+    course = request.form.get("courseName")
+    accommodation = request.form.get("accommodation")
+    new_id = "QS-" + str(random.randint(1000, 9999))
+
+    # create new submission
+    new_submission = {
+        "id": "QS-" + str(random.randint(1000, 9999)),
+        "studentId": "",
+        "studentName": "",
+        "courseCode": "",
+        "courseName": course,
+        "examName": "",
+        "checkInTime": None,
+        "checkOutTime": None,
+        "status": "PENDING",
+        "room": None,
+        "staffName": None,
+        "facultyName": professor,
+        "notes": accommodation
+    }
+
+    data = load_data()
+    data.append(new_submission)
+    save_data(data)
+
+    img = qrcode.make(new_id)
+    filename = f"qr_{new_id}.png"
+    filepath = os.path.join("static", filename)
+    img.save(filepath)
+
+    qr_url = url_for('static', filename=filename)
+
+    return render_template("qr_generate.html", qr=qr_url, submission=new_submission)
+
+
+@app.route("/scan/<submission_id>")
+def scan(submission_id):
+    data = load_data()
+
+    for s in data:
+        if s["id"] == submission_id:
+            s["status"] = "VERIFIED"
+            s["checkInTime"] = datetime.now().isoformat(timespec="seconds")
+
+    save_data(data)
+    return redirect("/dashboard")
+
+@app.route("/api/submissions")
+>>>>>>> Stashed changes
 def get_submissions():
     return jsonify(load_data())
 
