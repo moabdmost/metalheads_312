@@ -71,3 +71,39 @@ function submit_function(event) {
 
     return false;
 }
+
+function handleCredentialResponse(response) {
+    console.log("Encoded JWT ID token: " + response.credential);
+
+    // Decode JWT (basic client-side decode)
+    const data = parseJwt(response.credential);
+
+    console.log("User Info:", data);
+    const email = data.email;
+    if (email && email.endsWith("@davidson.edu")) {
+        // Optionally, you could auto-fill the email field and submit the form here
+        document.getElementById("email").value = email;
+        // You could also trigger the form submission if desired
+        // document.getElementById("loginForm").submit();
+    
+
+    // Example:
+    document.getElementById("user-info").innerText =
+        `Welcome ${data.name} (${data.email})`;
+    } else {
+        alert("Please sign in with a @davidson.edu account.");
+    }
+}
+
+function parseJwt(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+        atob(base64)
+            .split('')
+            .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+    );
+
+    return JSON.parse(jsonPayload);
+}
