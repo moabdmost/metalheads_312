@@ -11,7 +11,7 @@ import getpass
 # ── Gmail config ──────────────────────────────────────────────────────────────
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
-SMTP_USER = "chbri89067@gmail.com"
+SMTP_USER = "noreplyDCQC@gmail.com"
 # Password entered once at startup — never saved to any file.
 # Use a Gmail App Password (not your real password).
 # Get one at: myaccount.google.com/apppasswords

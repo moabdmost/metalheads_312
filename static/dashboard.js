@@ -142,7 +142,7 @@ rowsEl.addEventListener("click", async (e) => {
       await patch(id, { status: "IN_PROGRESS" });
       sessionProgress[id] = "started";
     } else if (action === "complete") {
-      const now = new Date().toISOString().slice(0, 19);
+      const now = new Date().toLocaleString('sv-SE', { timeZone: 'America/New_York' }).replace(' ', 'T');
       await patch(id, { status: "COMPLETED", checkOutTime: now });
       sessionProgress[id] = "completed";
     }
