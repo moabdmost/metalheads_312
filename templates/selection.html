@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="static/selection.css">
+  <title>Select Course</title>
+</head>
+
+<body>
+  <div class="page-wrapper">
+
+    <h1>Select Your Course</h1>
+
+    <form method="POST" action="/qr_generate" class="row" style="flex-direction: column; gap: 16px;">
+
+      <!-- Professor -->
+      <div>
+        <label>Professor</label>
+        <select id="professor" name="facultyName" onchange="updateCourses()" required>
+          <option value="">Select Professor</option>
+          <option value="Dr. Ramanujan">Dr. Ramanujan</option>
+          <option value="Dr. Lim">Dr. Lim</option>
+          <option value="Dr. Duhon">Dr. Duhon</option>
+        </select>
+      </div>
+
+      <!-- Course -->
+      <div>
+        <label>Course</label>
+        <select id="course" name="course" required>
+          <option value="">Select Course</option>
+        </select>
+      </div>
+
+      <!-- Accommodations -->
+      <div>
+        <label>Accommodations</label>
+        <select name="accommodation">
+          <option value="None">None</option>
+          <option value="Reduced Distraction">Reduced Distraction</option>
+          <option value="AADR">AADR</option>
+        </select>
+      </div>
+
+      <button type="submit" id="refresh">Generate QR Code</button>
+
+    </form>
+  </div>
+
+  <script>
+    const courses = {
+      "Dr. Ramanujan": [
+        "CSC371 - Machine Learning",
+        "CSC324 - Theory of Computation",
+        "CSC250 - Computer Organization"
+      ],
+      "Dr. Lim": [
+        "CSC221 - Data Structures",
+        "CSC312 - Software Design",
+        "CSC355 - Compiler Design",
+        "CSC356 - Computer Security"
+      ],
+      "Dr. Duhon": [
+        "MATH150 - Calculus I",
+        "MATH250 - Linear Algebra",
+        "MATH310 - Probability"
+      ]
+    };
+
+    function updateCourses() {
+      const prof = document.getElementById("professor").value;
+      const courseDropdown = document.getElementById("course");
+
+      courseDropdown.innerHTML = '<option value="">Select Course</option>';
+
+      if (courses[prof]) {
+        courses[prof].forEach(course => {
+          const option = document.createElement("option");
+          option.value = course;
+          option.textContent = course;
+          courseDropdown.appendChild(option);
+        });
+      }
+    }
+  </script>
+
+</body>
+</html>
