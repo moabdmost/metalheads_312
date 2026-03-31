@@ -1,0 +1,120 @@
+[
+  {
+    "roomName": "Watson 109",
+    "roomType": "General",
+    "Staffed": "True",
+    "Current Occupancy": null,
+    "Capacity": null,
+    "Available Seats ": null,
+    "Notes": ""
+  },
+  {
+    "roomName": "Watson 119",
+    "roomType": "General",
+    "Staffed": "True",
+    "Current Occupancy": null,
+    "Capacity": null,
+    "Available Seats ": null,
+    "Notes": ""
+  },
+  {
+    "roomName": "Watson 140",
+    "roomType": "General",
+    "Staffed": "True",
+    "Current Occupancy": null,
+    "Capacity": null,
+    "Available Seats ": null,
+    "Notes": ""
+  },
+  {
+    "roomName": "Watson 147",
+    "roomType": "General",
+    "Staffed": "True",
+    "Current Occupancy": null,
+    "Capacity": null,
+    "Available Seats ": null,
+    "Notes": ""
+  },
+  {
+    "roomName": "Watson 157",
+    "roomType": "General",
+    "Staffed": "True",
+    "Current Occupancy": null,
+    "Capacity": null,
+    "Available Seats ": null,
+    "Notes": ""
+  },
+  {
+    "roomName": "Watson 132",
+    "roomType": "Reduced Distraction",
+    "Staffed": "True",
+    "Current Occupancy": null,
+    "Capacity": null,
+    "Available Seats ": null,
+    "Notes": ""
+  },
+  {
+    "roomName": "Watson 248",
+    "roomType": "Reduced Distraction",
+    "Staffed": "True",
+    "Current Occupancy": null,
+    "Capacity": null,
+    "Available Seats ": null,
+    "Notes": ""
+  },
+  {
+    "roomName": "Watson 261",
+    "roomType": "Reduced Distraction",
+    "Staffed": "True",
+    "Current Occupancy": null,
+    "Capacity": null,
+    "Available Seats ": null,
+    "Notes": ""
+  },
+  {
+    "roomName": "Watson 310",
+    "roomType": "Reduced Distraction",
+    "Staffed": "True",
+    "Current Occupancy": null,
+    "Capacity": null,
+    "Available Seats ": null,
+    "Notes": ""
+    },
+    {
+    "roomName": "In-between 109-119",
+    "roomType": "Individual",
+    "Staffed": "True",
+    "Current Occupancy": null,
+    "Capacity": null,
+    "Available Seats ": null,
+    "Notes": ""
+    },
+    {
+    "roomName": "In-between 147-157",
+    "roomType": "Individual",
+    "Staffed": "True",
+    "Current Occupancy": null,
+    "Capacity": null,
+    "Available Seats ": null,
+    "Notes": ""
+    },
+    {
+    "roomName": "AADR reserved",
+    "roomType": "Individual",
+    "Staffed": "True",
+    "Current Occupancy": null,
+    "Capacity": null,
+    "Available Seats ": null,
+    "Notes": ""
+    },
+    {
+    "roomName": "Duke Atrium",
+    "roomType": "General",
+    "Staffed": "True",
+    "Current Occupancy": null,
+    "Capacity": null,
+    "Available Seats ": null,
+    "Notes": ""
+    }
+
+]

@@ -209,6 +209,9 @@ def scan_page():
 def qr_page():
     return render_template("qr_generate.html")
 
+@app.route("/analytics")
+def analytics_page():
+    return render_template("professor_analytics.html")
 
 # ── Form routes (original flow) ───────────────────────────────────────────────
 
