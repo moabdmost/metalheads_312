@@ -6,7 +6,6 @@ from email.mime.text import MIMEText
 import json
 import os
 import smtplib
-import getpass
 
 # ── Gmail config ──────────────────────────────────────────────────────────────
 SMTP_HOST = "smtp.gmail.com"
@@ -15,11 +14,8 @@ SMTP_USER = "noreplyDCQC@gmail.com"
 # Password entered once at startup — never saved to any file.
 # Use a Gmail App Password (not your real password).
 # Get one at: myaccount.google.com/apppasswords
-print("=" * 50)
-SMTP_PASSWORD = getpass.getpass(f"Enter Gmail App Password for {SMTP_USER}: ")
-print("=" * 50)
+SMTP_PASSWORD = "adct ymgm qikk kgsr"  # Gmail App Password for noreplyDCQC@gmail.com
 # ─────────────────────────────────────────────────────────────────────────────
-
 app = Flask(__name__)
 CORS(app)
 
@@ -269,9 +265,12 @@ def update_submission(id):
 
     save_data(data)
 
-    # Send receipt the moment staff marks the exam COMPLETED
+    # Send receipt the moment staff marks the exam COMPLETED,
+    # then clear login_email so the student has to log in again next time
     if submission.get("status") == "COMPLETED":
         send_completion_email(submission)
+        submission["login_email"] = None
+        save_data(data)
 
     return jsonify(submission)
 
@@ -310,6 +309,5 @@ def scan_page():
 def qr_page():
     return render_template("qr_generate.html")
 
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)

@@ -1,10 +1,10 @@
 const API_BASE = "http://127.0.0.1:5000/api";
 
-const rowsEl  = document.getElementById("rows");
-const msgEl   = document.getElementById("msg");
+const rowsEl   = document.getElementById("rows");
+const msgEl    = document.getElementById("msg");
 const filterEl = document.getElementById("filter");
 
-// Auto-poll interval in milliseconds — dashboard stays live without manual refresh
+// Auto-refresh every 5 seconds so the dashboard stays live.
 const POLL_INTERVAL = 5000;
 let pollTimer = null;
 
@@ -31,11 +31,11 @@ function fmtTime(t) {
   return t.replace("T", " ");
 }
 
-// Tracks button progress per row — persists across auto-refreshes this session
+// Tracks button progress per row for this session
 const sessionProgress = {};
 
 function getProgress(id) {
-  return sessionProgress[id] || "idle"; // idle → verified → started → completed
+  return sessionProgress[id] || "idle";
 }
 
 function pill(status) {
@@ -43,16 +43,8 @@ function pill(status) {
   return `<span class="pill" data-status="${status}">${label}</span>`;
 }
 
-function buttonsForProgress(progress, id) {
-  return `
-    <button data-action="verify"   data-id="${id}" ${progress !== "idle"     ? "disabled" : ""}>Verify</button>
-    <button data-action="start"    data-id="${id}" ${progress !== "verified" ? "disabled" : ""}>Start</button>
-    <button data-action="complete" data-id="${id}" ${progress !== "started"  ? "disabled" : ""}>Complete</button>
-  `;
-}
-
-// Badge shown next to the student name when they have logged in
-// login_email is stamped on the submission by /api/login when the student signs in
+// Green badge shown when student has logged in via student.html.
+// Disappears automatically after staff marks exam COMPLETED.
 function loginBadge(s) {
   if (!s.login_email) return "";
   return `<span style="
@@ -66,7 +58,36 @@ function loginBadge(s) {
     color:#3ecf8e;
     border:1px solid rgba(62,207,142,0.3);
     vertical-align:middle;
-  ">✓ Checked In</span>`;
+  ">&#10003; Checked In</span>`;
+}
+
+// Verify is always available.
+// Start and Complete are LOCKED until the student has checked in (login_email stamped).
+// After Complete the row resets to idle so the next exam can begin fresh.
+function buttonsForProgress(progress, id, checkedIn) {
+  const verifyDisabled  = progress !== "idle";
+  // Start requires: staff clicked Verify AND student has checked in
+  const startDisabled   = progress !== "verified" || !checkedIn;
+  // Complete requires: staff clicked Start AND student has checked in
+  const completeDisabled = progress !== "started" || !checkedIn;
+
+  const startTitle    = !checkedIn && progress === "verified"
+    ? "Waiting for student to check in"
+    : "";
+  const completeTitle = !checkedIn && progress === "started"
+    ? "Waiting for student to check in"
+    : "";
+
+  return `
+    <button data-action="verify"   data-id="${id}"
+      ${verifyDisabled   ? "disabled" : ""}>Verify</button>
+    <button data-action="start"    data-id="${id}"
+      ${startDisabled    ? "disabled" : ""}
+      title="${startTitle}">Start</button>
+    <button data-action="complete" data-id="${id}"
+      ${completeDisabled ? "disabled" : ""}
+      title="${completeTitle}">Complete</button>
+  `;
 }
 
 function render(submissions) {
@@ -78,6 +99,7 @@ function render(submissions) {
     : submissions.filter(s => s.status === filter);
 
   for (const s of filtered) {
+    const checkedIn = !!s.login_email;
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${s.id}</td>
@@ -90,7 +112,7 @@ function render(submissions) {
       <td>${pill(s.status)}</td>
       <td>Staff: ${s.staffName}<br>Faculty: ${s.facultyName}</td>
       <td style="display:flex; gap:8px; flex-wrap:wrap;">
-        ${buttonsForProgress(getProgress(s.id), s.id)}
+        ${buttonsForProgress(getProgress(s.id), s.id, checkedIn)}
       </td>
     `;
     rowsEl.appendChild(tr);
@@ -109,28 +131,20 @@ async function refresh(silent = false) {
   }
 }
 
-// Start auto-polling — silent so it doesn't flash "Loading..." every 5 seconds
 function startPolling() {
-  stopPolling();
+  if (pollTimer) clearInterval(pollTimer);
   pollTimer = setInterval(() => refresh(true), POLL_INTERVAL);
-}
-
-function stopPolling() {
-  if (pollTimer) {
-    clearInterval(pollTimer);
-    pollTimer = null;
-  }
 }
 
 rowsEl.addEventListener("click", async (e) => {
   const btn = e.target.closest("button");
-  if (!btn) return;
+  if (!btn || btn.disabled) return;
 
   const id     = btn.dataset.id;
   const action = btn.dataset.action;
 
-  // Stop polling while we process the action so they don't race
-  stopPolling();
+  // Pause polling while the action is in flight
+  if (pollTimer) clearInterval(pollTimer);
 
   try {
     setMsg(`Updating ${id}...`);
@@ -138,13 +152,18 @@ rowsEl.addEventListener("click", async (e) => {
     if (action === "verify") {
       await patch(id, { status: "VERIFIED" });
       sessionProgress[id] = "verified";
+
     } else if (action === "start") {
       await patch(id, { status: "IN_PROGRESS" });
       sessionProgress[id] = "started";
+
     } else if (action === "complete") {
       const now = new Date().toLocaleString('sv-SE', { timeZone: 'America/New_York' }).replace(' ', 'T');
       await patch(id, { status: "COMPLETED", checkOutTime: now });
-      sessionProgress[id] = "completed";
+      // Reset the row back to idle so it's ready for the next exam session.
+      // The backend clears login_email and the Checked In badge disappears
+      // on the next poll.
+      delete sessionProgress[id];
     }
 
     await refresh();
@@ -158,5 +177,5 @@ rowsEl.addEventListener("click", async (e) => {
 document.getElementById("refresh").addEventListener("click", () => refresh());
 filterEl.addEventListener("change", () => refresh());
 
-// Initial load then start polling
+// Initial load then start auto-polling
 refresh().then(startPolling);

@@ -7,12 +7,13 @@
     "courseName": "Data Structures",
     "examName": "Midterm 1",
     "checkInTime": "2026-02-14T09:05:00",
-    "checkOutTime": "2026-02-15T14:55:37",
-    "status": "VERIFIED",
+    "checkOutTime": "2026-03-31T23:00:34",
+    "status": "COMPLETED",
     "room": null,
     "staffName": "Maya Lopez",
     "facultyName": "Raghu Ramanujan",
-    "notes": "1.5x extended time accommodation"
+    "notes": "1.5x extended time accommodation",
+    "login_email": null
   },
   {
     "id": "QS-0002",
@@ -22,13 +23,13 @@
     "courseName": "Linear Algebra",
     "examName": "Quiz 3",
     "checkInTime": "2026-02-14T11:00:00",
-    "checkOutTime": "2026-03-30T10:00:30",
+    "checkOutTime": "2026-03-31T20:08:05",
     "status": "COMPLETED",
     "room": null,
     "staffName": "James Thompson",
     "facultyName": "Terrance Kim",
     "notes": "",
-    "login_email": "brchung@davidson.edu"
+    "login_email": null
   },
   {
     "id": "QS-0003",
@@ -68,12 +69,13 @@
     "courseName": "Probability Theory",
     "examName": "Midterm",
     "checkInTime": "2026-02-12T10:30:00",
-    "checkOutTime": "2026-02-12T12:00:00",
+    "checkOutTime": "2026-03-31T22:58:09",
     "status": "COMPLETED",
     "room": null,
     "staffName": "Maya Lopez",
     "facultyName": "John Doe",
-    "notes": "Calculator checked before start"
+    "notes": "Calculator checked before start",
+    "login_email": null
   },
   {
     "id": "QS-0006",
@@ -83,11 +85,12 @@
     "courseName": "Introduction to Psychology",
     "examName": "Quiz 5",
     "checkInTime": "2026-02-14T15:00:00",
-    "checkOutTime": null,
-    "status": "VERIFIED",
+    "checkOutTime": "2026-03-31T22:58:14",
+    "status": "COMPLETED",
     "room": null,
     "staffName": "James Thompson",
     "facultyName": "Rachel Adams",
-    "notes": ""
+    "notes": "",
+    "login_email": null
   }
 ]
