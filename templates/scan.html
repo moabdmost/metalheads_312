@@ -1,53 +1,370 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Scan QR</title>
-    <style>
-      body { font-family: system-ui; max-width: 900px; margin: 24px auto; padding: 0 16px; }
-      #reader { width: 360px; }
-      pre { background: #f6f6f6; padding: 12px; border: 1px solid #ddd; overflow: auto; }
-      .row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
-      .muted { color: #666; }
-      nav a { margin-right: 12px; }
-      input, button { padding: 10px; font-size: 14px; }
-    </style>
-  </head>
-  <body>
-    <h1>Scan QR</h1>
-    <nav>
-      <a href="/dashboard">Dashboard</a>
-      <a href="/qr">QR Generator</a>
-    </nav>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Quiz Center — Scan QR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <!-- ZXing for camera-based QR scanning -->
+  <script src="https://unpkg.com/@zxing/library@0.18.6/umd/index.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0c0e14;
+      --surface: #13161f;
+      --border:  #1e2333;
+      --accent:  #4f8ef7;
+      --accent2: #7c5cfc;
+      --text:    #e8eaf6;
+      --muted:   #5a6080;
+      --success: #3ecf8e;
+      --error:   #f87171;
+    }
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 44px 40px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
+    .logo {
+      display: flex; align-items: center;
+      gap: 10px; margin-bottom: 4px;
+    }
+    .logo-mark {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 12px; color: #fff;
+    }
+    .logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; }
 
-    <p class="muted">
-      The QR should contain a submission id like <b>QS-0002</b>. On scan, we call:
-      <code>/api/submissions/&lt;id&gt;</code>
-    </p>
+    nav {
+      display: flex; gap: 16px;
+      margin: 16px 0 28px;
+      font-size: 0.85rem;
+    }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--accent); }
 
-    <div class="row">
-      <div>
-        <h3>Camera Scanner</h3>
-        <div id="reader"></div>
-        <p class="muted">Camera permissions will fail ofc so use Manual Lookup</p>
-      </div>
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem; font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 24px; }
 
-      <div style="flex: 1; min-width: 320px;">
-        <h3>Manual Lookup</h3>
-        <div class="row" style="gap: 8px;">
-          <input id="manualId" value="QS-0002" placeholder="QS-0002" />
-          <button id="lookupBtn">Lookup</button>
-        </div>
+    /* Tabs */
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+    .tab {
+      flex: 1;
+      padding: 9px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border-radius: 7px;
+      cursor: pointer;
+      color: var(--muted);
+      transition: background 0.2s, color 0.2s;
+      border: none;
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .tab.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
 
-        <h3 style="margin-top: 16px;">Result</h3>
-        <pre id="output">Waiting for scan or lookup...</pre>
-      </div>
+    /* Camera panel */
+    #camera-panel, #manual-panel { display: none; }
+    #camera-panel.active, #manual-panel.active { display: block; }
+
+    .video-wrap {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      margin-bottom: 16px;
+    }
+    video {
+      width: 100%;
+      display: block;
+      border-radius: 12px;
+    }
+    /* Scan overlay reticle */
+    .reticle {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 180px; height: 180px;
+      border: 2px solid var(--accent);
+      border-radius: 16px;
+      pointer-events: none;
+    }
+    .reticle::before, .reticle::after {
+      content: '';
+      position: absolute;
+      width: 24px; height: 24px;
+      border-color: var(--accent);
+      border-style: solid;
+    }
+    .reticle::before {
+      top: -2px; left: -2px;
+      border-width: 3px 0 0 3px;
+      border-radius: 4px 0 0 0;
+    }
+    .reticle::after {
+      bottom: -2px; right: -2px;
+      border-width: 0 3px 3px 0;
+      border-radius: 0 0 4px 0;
+    }
+
+    .scan-status {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .btn-start-cam {
+      width: 100%;
+      padding: 13px;
+      background: rgba(79,142,247,0.1);
+      border: 1px solid rgba(79,142,247,0.3);
+      border-radius: 10px;
+      color: var(--accent);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 12px;
+    }
+    .btn-start-cam:hover { background: rgba(79,142,247,0.18); }
+
+    /* Manual entry */
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    input[type="text"] {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 16px;
+      color: var(--text);
+      font-family: 'DM Sans', monospace;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    input:focus { border-color: var(--accent); }
+
+    .btn-primary {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* Result banner */
+    #result {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    #result.success {
+      background: rgba(62,207,142,0.1);
+      border: 1px solid rgba(62,207,142,0.3);
+      color: var(--success);
+    }
+    #result.error {
+      background: rgba(248,113,113,0.1);
+      border: 1px solid rgba(248,113,113,0.3);
+      color: var(--error);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-mark">QC</div>
+      <span class="logo-text">Davidson Quiz Center</span>
     </div>
 
-    <!-- QR scanner library -->
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <script src="/static/scan.js"></script>
-  </body>
-</html>
+    <nav>
+      <a href="/dashboard">← Dashboard</a>
+    </nav>
 
+    <h1>Scan QR Code</h1>
+    <p class="subtitle">Use the camera to scan a student's QR code, or enter their Submission ID manually.</p>
+
+    <div class="tab-bar">
+      <button class="tab active" onclick="switchTab('camera')">📷 Camera Scan</button>
+      <button class="tab"       onclick="switchTab('manual')">⌨️ Manual Entry</button>
+    </div>
+
+    <!-- Camera tab -->
+    <div id="camera-panel" class="active">
+      <button class="btn-start-cam" id="start-cam-btn" onclick="startCamera()">
+        Start Camera
+      </button>
+      <div class="video-wrap" id="video-wrap" style="display:none;">
+        <video id="video" autoplay playsinline></video>
+        <div class="reticle"></div>
+      </div>
+      <div class="scan-status" id="cam-status">Camera not started</div>
+    </div>
+
+    <!-- Manual tab -->
+    <div id="manual-panel">
+      <label for="manual-id">Submission ID</label>
+      <input type="text" id="manual-id" placeholder="QS-12345" maxlength="12"/>
+      <button class="btn-primary" onclick="manualSubmit()">Check In Student</button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // ── Tab switching ──────────────────────────────────────────────────────────
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('camera-panel').classList.remove('active');
+      document.getElementById('manual-panel').classList.remove('active');
+
+      if (tab === 'camera') {
+        document.querySelectorAll('.tab')[0].classList.add('active');
+        document.getElementById('camera-panel').classList.add('active');
+      } else {
+        document.querySelectorAll('.tab')[1].classList.add('active');
+        document.getElementById('manual-panel').classList.add('active');
+        stopCamera();
+      }
+    }
+
+    // ── Camera scan via ZXing ──────────────────────────────────────────────────
+    let codeReader = null;
+
+    async function startCamera() {
+      document.getElementById('start-cam-btn').style.display = 'none';
+      document.getElementById('video-wrap').style.display = 'block';
+      document.getElementById('cam-status').textContent = 'Scanning…';
+
+      try {
+        codeReader = new ZXing.BrowserQRCodeReader();
+        const videoEl = document.getElementById('video');
+
+        codeReader.decodeFromConstraints(
+          { video: { facingMode: 'environment' } },
+          videoEl,
+          (result, err) => {
+            if (result) {
+              const id = result.getText().trim().toUpperCase();
+              document.getElementById('cam-status').textContent = `Scanned: ${id}`;
+              stopCamera();
+              processCheckIn(id);
+            }
+          }
+        );
+      } catch (e) {
+        document.getElementById('cam-status').textContent = 'Camera error: ' + e.message;
+      }
+    }
+
+    function stopCamera() {
+      if (codeReader) {
+        try { codeReader.reset(); } catch (e) {}
+        codeReader = null;
+      }
+      document.getElementById('video-wrap').style.display = 'none';
+      document.getElementById('start-cam-btn').style.display = 'block';
+    }
+
+    // ── Manual entry ───────────────────────────────────────────────────────────
+    function manualSubmit() {
+      const id = document.getElementById('manual-id').value.trim().toUpperCase();
+      if (!id) { showResult('error', 'Please enter a Submission ID.'); return; }
+      processCheckIn(id);
+    }
+
+    document.getElementById('manual-id').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') manualSubmit();
+    });
+
+    // ── Core: redirect to /scan/<id> which marks VERIFIED and assigns room ─────
+    function processCheckIn(id) {
+      showResult('success', `Processing ${id}…`);
+      // The Flask /scan/<id> route handles the VERIFIED status update and
+      // room assignment, then redirects to /dashboard.
+      window.location.href = `/scan/${encodeURIComponent(id)}`;
+    }
+
+    function showResult(type, msg) {
+      const el = document.getElementById('result');
+      el.className = type;
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

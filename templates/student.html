@@ -1,61 +1,322 @@
 <!DOCTYPE html>
-<html lang = 'en'>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="google-signin-client_id" content="318874378262-do4uihbnlojtv39fm05ctcncfjkgvb4v.apps.googleusercontent.com">
-        <link rel="stylesheet" href="/static/student.css">
-        <title>Student Login</title> 
-    </head>
-    <body>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Quiz Center — Student Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        <div class="triangle-container">
-            <h1 id="Title">Quiz Center Login In</h1>
-            <p id="Instructions"> Please enter either your @davidson email or 
-                Student ID and password</p>
-            <form class="triangle-form" id="loginForm">
-                <div class="top-row">
-                    <div class="field">
-                        <label for="email">Enter your email:</label>
-                        <input type="email" id="email" name="email" placeholder="@davidson.edu">
-                    </div>
-                    <div class="field">
-                        <label for="studentID">Student ID:</label>
-                        <input type="text" id="studentID" name="studentID" placeholder="Student ID">
-                    </div>
-                </div>
-                <div class="bottom-row">
-                    <div class="field">
-                        <label for="pwd">Password:</label>
-                        <input type="password" id="pwd" name="pwd" placeholder="Password" required>
-                    </div>
-                </div>
-                <input id="submit-btn" type="submit" value="Submit">
-                
-            </form>
-            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    :root {
+      --bg:       #0c0e14;
+      --surface:  #13161f;
+      --border:   #1e2333;
+      --accent:   #4f8ef7;
+      --accent2:  #7c5cfc;
+      --text:     #e8eaf6;
+      --muted:    #5a6080;
+      --error:    #f87171;
+      --success:  #3ecf8e;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* subtle grid pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px 44px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .logo-mark {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--text) 40%, var(--muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Google button (rendered by GIS) ── */
+    #google-btn-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ── Manual form ── */
+    .field { margin-bottom: 16px; }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 6px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    input[type="email"],
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus { border-color: var(--accent); }
+
+    .row-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      margin-top: 8px;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    #error-msg {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(248,113,113,0.1);
+      border: 1px solid rgba(248,113,113,0.3);
+      border-radius: 8px;
+      color: var(--error);
+      font-size: 0.85rem;
+    }
+
+    .note {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-mark">QC</div>
+      <span class="logo-text">Davidson Quiz Center</span>
+    </div>
+
+    <h1>Student Login</h1>
+    <p class="subtitle">Sign in with your Davidson Google account, or enter your credentials below.</p>
+
+    <!-- Google Sign-In button injected here by GIS -->
+    <div id="google-btn-wrapper"></div>
+
+    <div class="divider">or continue manually</div>
+
+    <form id="loginForm" novalidate>
+      <div class="row-fields">
+        <div class="field">
+          <label for="email">Davidson Email</label>
+          <input type="email" id="email" placeholder="you@davidson.edu"/>
         </div>
-              
-        <script src="/static/student.js"></script>
-        <script src="https://apis.google.com/js/platform.js" async defer></script>
-        <script >
-            function onSignIn(googleUser) {
-  var profile = googleUser.getBasicProfile();
-  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-  console.log('Name: ' + profile.getName());
-  console.log('Image URL: ' + profile.getImageUrl());
-  console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-}
-        </script>
-        <a href="#" onclick="signOut();">Sign out</a>
-<script>
-  function signOut() {
-    var auth2 = gapi.auth2.getAuthInstance();
-    auth2.signOut().then(function () {
-      console.log('User signed out.');
-    });
-  }
-</script>
+        <div class="field">
+          <label for="studentID">Student ID</label>
+          <input type="text" id="studentID" placeholder="9-digit ID"/>
+        </div>
+      </div>
+      <div class="field">
+        <label for="pwd">Password</label>
+        <input type="password" id="pwd" placeholder="••••••••" required/>
+      </div>
+      <button class="btn-primary" type="submit">Sign In</button>
+      <div id="error-msg"></div>
+    </form>
 
-    </body>
+    <p class="note">Only @davidson.edu accounts are accepted.</p>
+  </div>
+
+  <!--
+    NEW Google Identity Services library.
+    The old apis.google.com/js/platform.js was shut down in March 2023.
+  -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    // ── Google Identity Services ───────────────────────────────────────────────
+    window.addEventListener('load', () => {
+      if (typeof google === 'undefined') return;
+
+      google.accounts.id.initialize({
+        client_id: '318874378262-do4uihbnlojtv39fm05ctcncfjkgvb4v.apps.googleusercontent.com',
+        callback:  handleGoogleCredential,
+        auto_select: false,
+      });
+
+      // Render a styled button
+      google.accounts.id.renderButton(
+        document.getElementById('google-btn-wrapper'),
+        { theme: 'filled_black', size: 'large', width: 352, text: 'signin_with', shape: 'rectangular' }
+      );
+    });
+
+    async function handleGoogleCredential(response) {
+      // response.credential is a signed JWT from Google
+      try {
+        const res = await fetch('/api/google-login', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ token: response.credential }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || 'Google sign-in failed.');
+          return;
+        }
+
+        // Flask session is set server-side; just redirect
+        window.location.href = '/selection';
+      } catch (e) {
+        showError('Unable to reach server. Please try again.');
+      }
+    }
+
+    // ── Manual login form ──────────────────────────────────────────────────────
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email     = document.getElementById('email').value.trim().toLowerCase();
+      const studentId = document.getElementById('studentID').value.trim();
+      const pwd       = document.getElementById('pwd').value;
+
+      if (!email && !studentId) {
+        showError('Enter your Davidson email or Student ID.'); return;
+      }
+      if (email && !email.endsWith('@davidson.edu')) {
+        showError('Please use your @davidson.edu email.'); return;
+      }
+      if (!pwd) {
+        showError('Password is required.'); return;
+      }
+
+      try {
+        const res  = await fetch('/api/login', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ email, studentId, password: pwd }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || 'Invalid credentials.'); return;
+        }
+
+        window.location.href = '/selection';
+      } catch (e) {
+        showError('Unable to reach server.');
+      }
+    });
+
+    function showError(msg) {
+      const el = document.getElementById('error-msg');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+  </script>
+</body>
 </html>

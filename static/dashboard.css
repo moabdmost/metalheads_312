@@ -243,3 +243,107 @@ td button:hover {
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Paste these at the bottom of dashboard.css ── */
+
+/* Room badge in the submissions table */
+.room-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.room-badge.assigned {
+  color: var(--accent);
+  border: 1px solid rgba(79, 142, 247, 0.3);
+  background: rgba(79, 142, 247, 0.08);
+}
+
+.room-badge.unassigned {
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+/* Room cards in the room panel */
+.room-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.2s;
+}
+
+.room-card:hover {
+  border-color: var(--accent);
+}
+
+.room-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.room-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.room-cap {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.room-card-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.room-features {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.feature-tag {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(124, 92, 252, 0.1);
+  color: var(--accent-2);
+  border: 1px solid rgba(124, 92, 252, 0.25);
+  text-transform: capitalize;
+}
+
+.staff-toggle-btn {
+  width: 100%;
+  font-size: 0.8rem;
+  padding: 7px 12px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.staff-toggle-btn:hover {
+  border-color: var(--success);
+  color: var(--success);
+  background: rgba(62, 207, 142, 0.08);
+}
+
+.staff-toggle-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

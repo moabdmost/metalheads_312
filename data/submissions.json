@@ -7,7 +7,7 @@
     "courseName": "Data Structures",
     "examName": "Midterm 1",
     "checkInTime": "2026-02-14T09:05:00",
-    "checkOutTime": "2026-02-15T14:55:37",
+    "checkOutTime": "2026-04-01T18:13:40",
     "status": "VERIFIED",
     "room": null,
     "staffName": "Maya Lopez",
@@ -119,5 +119,20 @@
     "staffName": null,
     "facultyName": "Dr. Lim",
     "notes": "AADR"
+  },
+  {
+    "id": "QS-11611",
+    "studentName": "",
+    "login_email": "",
+    "courseCode": "CSC371",
+    "courseName": "Machine Learning",
+    "examName": "Midterm",
+    "facultyName": "Dr. Ramanujan",
+    "notes": "None",
+    "status": "PENDING",
+    "room": null,
+    "staffName": null,
+    "checkInTime": null,
+    "checkOutTime": null
   }
 ]
