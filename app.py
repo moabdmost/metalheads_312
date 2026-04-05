@@ -72,36 +72,40 @@ def fmt_time(iso_str):
         return iso_str
 
 def auto_assign_room(submission):
-    """
-    Assign the room with the fewest current occupants that is staffed
-    and (if needed) has extended_time feature.
-    Falls back to any staffed room if no extended room is available.
-    """
     rooms = load_rooms()
     data  = load_data()
 
-    # Count occupants per room
+    # Count current occupants per room
     occupant_count = {}
     for s in data:
         if s["status"] in ("VERIFIED", "IN_PROGRESS", "LEAVING") and s.get("room"):
             occupant_count[s["room"]] = occupant_count.get(s["room"], 0) + 1
 
-    notes = (submission.get("notes") or "").lower()
-    needs_extended = "extended" in notes or "aadr" in notes
+    accommodation = (submission.get("notes") or "").lower()
 
-    def room_score(r):
-        return occupant_count.get(r["id"], 0)
+    # Determine target room type based on accommodation
+    if "aadr" in accommodation:
+        target_type = "aadr"
+    elif "reduced" in accommodation:
+        target_type = "reduced"
+    else:
+        # None or Extended Time → general
+        target_type = "general"
 
-    candidates = [r for r in rooms if r.get("staffed", False)]
+    # Get staffed rooms of the right type
+    candidates = [
+        r for r in rooms
+        if r.get("staffed", False)
+        and r.get("type", "").lower() == target_type
+    ]
 
-    if needs_extended:
-        extended = [r for r in candidates if "extended_time" in r.get("features", [])]
-        if extended:
-            candidates = extended
+    if not candidates:
+        return None
 
-    candidates.sort(key=room_score)
-    return candidates[0]["id"] if candidates else None
-
+    # Pick randomly among the least-occupied rooms
+    min_occupants = min(occupant_count.get(r["id"], 0) for r in candidates)
+    least_busy    = [r for r in candidates if occupant_count.get(r["id"], 0) == min_occupants]
+    return random.choice(least_busy)["id"]
 # ── Email ──────────────────────────────────────────────────────────────────────
 
 def send_completion_email(submission):
