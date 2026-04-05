@@ -179,5 +179,20 @@
     "staffName": null,
     "checkInTime": null,
     "checkOutTime": null
+  },
+  {
+    "id": "QS-78672",
+    "studentName": "Riana Doctor",
+    "login_email": "ridoctor@davidson.edu",
+    "courseCode": "CSC356",
+    "courseName": "Computer Security",
+    "examName": "",
+    "facultyName": "Dr. Lim",
+    "notes": "None",
+    "status": "VERIFIED",
+    "room": null,
+    "staffName": null,
+    "checkInTime": "2026-04-05T18:12:56",
+    "checkOutTime": null
   }
 ]

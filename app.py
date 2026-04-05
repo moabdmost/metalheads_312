@@ -75,6 +75,8 @@ def auto_assign_room(submission):
     rooms = load_rooms()
     data  = load_data()
 
+    print(f"[room] accommodation='{submission.get('notes')}' rooms loaded: {len(rooms)}")  # ADD THIS
+
     # Count current occupants per room
     occupant_count = {}
     for s in data:
@@ -92,12 +94,14 @@ def auto_assign_room(submission):
         # None or Extended Time → general
         target_type = "general"
 
+    print(f"[room] target_type='{target_type}'") 
     # Get staffed rooms of the right type
     candidates = [
         r for r in rooms
         if r.get("staffed", False)
         and r.get("type", "").lower() == target_type
     ]
+    print(f"[room] candidates={[r['id'] for r in candidates]}")
 
     if not candidates:
         return None
@@ -218,6 +222,11 @@ def dashboard_page():
 def scan_page():
     return render_template("scan.html")
 
+@app.route("/room-assigned/<submission_id>")
+def room_assigned_page(submission_id):
+    return render_template("room_assigned.html",
+        student_name = session.get("student_name", ""))
+
 @app.route("/qr")
 def qr_page():
     return render_template("qr_generate.html")
@@ -304,7 +313,8 @@ def qr_generate():
     save_data(data)
 
     # Generate QR image
-    img      = qrcode.make(new_id)
+    scan_url = url_for("scan_redirect", submission_id=new_id, _external=True)
+    img = qrcode.make(scan_url)
     filename = f"qr_{new_id}.png"
     filepath = os.path.join("static", filename)
     img.save(filepath)
@@ -479,4 +489,4 @@ def test_email(id):
 if __name__ == "__main__":
     os.makedirs("data", exist_ok=True)
     os.makedirs("static", exist_ok=True)
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5001)
