@@ -20,6 +20,8 @@ function submit_function(event) {
     const email     = email_input.value.trim().toLowerCase();
     const studentId = student_id_input.value.trim();
     const pwd       = password_input.value;
+    const firstName = document.getElementById('su-fname').value.trim();
+    const lastName  = document.getElementById('su-lname').value.trim()
 
     // ── Client-side validation ────────────────────────────────────────────
     if (!email && !studentId) {
@@ -37,6 +39,9 @@ function submit_function(event) {
         return false;
     }
 
+    if (!firstName || !lastName) {
+        return showError('signup', 'Please enter your first and last name.');
+    } 
     if (!pwd) {
         alert("Please enter your password.");
         return false;
