@@ -162,10 +162,6 @@
           <span class="info-label">Course</span>
           <span class="info-value">{{ submission.courseCode }} — {{ submission.courseName }}</span>
         </div>
-        <div class="info-row">
-          <span class="info-label">Exam</span>
-          <span class="info-value">{{ submission.examName or '—' }}</span>
-        </div>
         {% if submission.notes and submission.notes != 'None' %}
         <div class="info-row">
           <span class="info-label">Accommodation</span>

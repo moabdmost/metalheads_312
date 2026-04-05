@@ -27,7 +27,7 @@ app.secret_key = os.environ.get("FLASK_SECRET", "dev-secret-change-in-prod")
 CORS(app)
 
 DATA_FILE  = os.path.join("data", "submissions.json")
-ROOMS_FILE = os.path.join("data", "rooms.json")
+ROOMS_FILE = os.path.join("data", "room-assignment.json")
 
 # ── Data helpers ───────────────────────────────────────────────────────────────
 
