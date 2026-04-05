@@ -384,7 +384,10 @@
 
   <script>
     // ── Pull submission ID from the URL: /room-assigned/<id> ──────────────────
-    const submissionId = window.location.pathname.split('/').pop();
+    //const submissionId = window.location.pathname.split('/').pop();
+    const parts = window.location.pathname.split('/').filter(p => p.length > 0);
+    const submissionId = parts[parts.length - 1];
+    console.log('URL:', window.location.pathname, '→ ID:', submissionId);
     const POLL_INTERVAL = 3000; // check every 3 seconds
 
     async function poll() {

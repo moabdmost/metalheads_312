@@ -218,9 +218,6 @@ def selection_page():
 def dashboard_page():
     return render_template("dashboard.html")
 
-@app.route("/scan")
-def scan_page():
-    return render_template("scan.html")
 
 @app.route("/room-assigned/<submission_id>")
 def room_assigned_page(submission_id):
@@ -230,6 +227,10 @@ def room_assigned_page(submission_id):
 @app.route("/qr")
 def qr_page():
     return render_template("qr_generate.html")
+
+@app.route("/staff-rooms")
+def staff_rooms_page():
+    return render_template("staff_rooms.html")
 
 @app.route("/analytics")
 def analytics_page():

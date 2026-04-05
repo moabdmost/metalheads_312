@@ -169,13 +169,12 @@
         </div>
         {% endif %}
       </div>
-
       <div class="instruction">
         📋 Present this QR code to the intake staff at the front desk. Once scanned, you'll be assigned a room automatically.
       </div>
 
       <!-- Link to the student status/waiting page -->
-      <a href="{{ status_url }}" class="btn-status">Check My Room Assignment →</a>
+      <a href="/room-assigned/{{ submission.id }}" class="btn-status">Check My Room Assignment →</a>
 
     {% else %}
       <h1>No QR Yet</h1>
