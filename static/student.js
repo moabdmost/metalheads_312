@@ -1,78 +1,102 @@
-// JavaScript for student.html
-// Calls /api/login which validates credentials against subs_copy.json
-// and stamps the student's email onto their submission record so the
-// staff dashboard knows where to send the receipt on completion.
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function showError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
 
-window.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('loginForm');
-    if (form) {
-        form.addEventListener('submit', submit_function);
-    }
-});
+function clearError() {
+  const el = document.getElementById('login-error');
+  el.textContent = '';
+  el.style.display = 'none';
+}
 
-function submit_function(event) {
-    event.preventDefault();
+// ── Progressive signup reveal ─────────────────────────────────────────────────
+function showRegistrationFields(email, studentId, password) {
+  if (email)     document.getElementById('su-email').value = email;
+  if (studentId) document.getElementById('su-sid').value   = studentId;
+                 document.getElementById('su-pwd').value   = password;
 
-    const email_input      = document.getElementById("email");
-    const student_id_input = document.getElementById("studentID");
-    const password_input   = document.getElementById("pwd");
+  document.getElementById('card-subtitle').textContent =
+    "We didn't find an account — fill in the details below to register.";
 
-    const email     = email_input.value.trim().toLowerCase();
-    const studentId = student_id_input.value.trim();
-    const pwd       = password_input.value;
-    const firstName = document.getElementById('su-fname').value.trim();
-    const lastName  = document.getElementById('su-lname').value.trim()
+  document.getElementById('reg-fields').style.display = '';
+  document.querySelector('#loginForm .btn-primary').textContent = 'Create Account & Sign In';
+  document.getElementById('loginForm').dataset.mode = 'signup';
+  clearError();
+}
 
-    // ── Client-side validation ────────────────────────────────────────────
-    if (!email && !studentId) {
-        alert("Please enter either your @davidson.edu email or your Student ID.");
-        return false;
-    }
+// ── Single submit handler ─────────────────────────────────────────────────────
+document.getElementById('loginForm').onsubmit = async (e) => {
+  e.preventDefault();
+  clearError();
 
-    if (!email && studentId && !/^\d{9}$/.test(studentId)) {
-        alert("Please enter your 9-digit Student ID.");
-        return false;
-    }
+  const mode = document.getElementById('loginForm').dataset.mode || 'login';
 
-    if (email && !email.endsWith("@davidson.edu")) {
-        alert("Please enter your @davidson.edu email.");
-        return false;
-    }
+  if (mode === 'login') {
+    await handleLogin();
+  } else {
+    await handleSignup();
+  }
+};
 
-    if (!firstName || !lastName) {
-        return showError('signup', 'Please enter your first and last name.');
-    } 
-    if (!pwd) {
-        alert("Please enter your password.");
-        return false;
-    }
+// ── Sign In ───────────────────────────────────────────────────────────────────
+async function handleLogin() {
+  const email     = document.getElementById('email').value.trim().toLowerCase();
+  const studentId = document.getElementById('studentID').value.trim();
+  const password  = document.getElementById('pwd').value;
 
-    // ── POST to /api/login ────────────────────────────────────────────────
-    // Backend validates credentials and stamps login_email onto the
-    // submission — this is the link between student login and staff dashboard.
-    fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, studentId, password: pwd })
-    })
-    .then(res => {
-        if (res.status === 401) throw new Error('invalid');
-        if (!res.ok)            throw new Error('server');
-        return res.json();
-    })
-    .then(student => {
-        // Show a simple confirmation alert then redirect
-        alert(`Checked in successfully! Your exam session has started, ${student.studentName}.`);
-        window.location.href = '/student'; // stay on page or redirect wherever you want
-    })
-    .catch(err => {
-        if (err.message === 'invalid') {
-            alert('Invalid email/ID or password. Please try again.');
-        } else {
-            alert('Unable to reach the server. Please try again.');
-            console.error('Login error:', err);
-        }
+  if (!email && !studentId) return showError('Enter your email or Student ID.');
+  if (email && !email.endsWith('@davidson.edu')) return showError('Use your @davidson.edu email.');
+  if (!password) return showError('Password is required.');
+
+  try {
+    const res  = await fetch('/api/login', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email, studentId, password }),
     });
+    const data = await res.json();
 
-    return false;
+    if (res.status === 404) {
+      showRegistrationFields(email, studentId, password);
+      return;
+    }
+    if (!res.ok) return showError(data.error || 'Invalid credentials.');
+
+    window.location.href = '/selection';
+  } catch {
+    showError('Unable to reach server.');
+  }
+}
+
+// ── Sign Up ───────────────────────────────────────────────────────────────────
+async function handleSignup() {
+  const firstName = document.getElementById('su-fname').value.trim();
+  const lastName  = document.getElementById('su-lname').value.trim();
+  const email     = document.getElementById('su-email').value.trim().toLowerCase();
+  const studentId = document.getElementById('su-sid').value.trim();
+  const password  = document.getElementById('su-pwd').value;
+  const password2 = document.getElementById('su-pwd2').value;
+
+  if (!firstName || !lastName)         return showError('Enter your first and last name.');
+  if (!email.endsWith('@davidson.edu')) return showError('Use your @davidson.edu email.');
+  if (!/^\d{9}$/.test(studentId))      return showError('Student ID must be 9 digits.');
+  if (password.length < 6)             return showError('Password must be at least 6 characters.');
+  if (password !== password2)          return showError('Passwords do not match.');
+
+  try {
+    const res  = await fetch('/api/signup', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email, studentId, password, firstName, lastName }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) return showError(data.error || 'Sign-up failed.');
+
+    window.location.href = '/selection';
+  } catch {
+    showError('Unable to reach server.');
+  }
 }

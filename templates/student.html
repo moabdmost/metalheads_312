@@ -16,14 +16,16 @@
     </div>
 
     <h1>Student Login</h1>
-    <p class="subtitle">Sign in with your Davidson Google account, or enter your credentials below.</p>
+    <p class="subtitle" id="card-subtitle">
+      Sign in with your Davidson Google account, or enter your credentials below.
+    </p>
 
-    <!-- Google Sign-In button injected here by GIS -->
     <div id="google-btn-wrapper"></div>
-
     <div class="divider">or continue manually</div>
 
-    <form id="loginForm" novalidate>
+    <form id="loginForm" data-mode="login" novalidate>
+
+      <!-- Always visible -->
       <div class="row-fields">
         <div class="field">
           <label for="email">Davidson Email</label>
@@ -34,34 +36,52 @@
           <input type="text" id="studentID" placeholder="9-digit ID"/>
         </div>
       </div>
-      <div class="row-fields">
-        <div class="field">
-          <label for="su-fname">First Name</label>
-          <input type="text" id="su-fname" placeholder="John"/>
-        </div>
-        <div class="field">
-          <label for="su-lname">Last Name</label>
-          <input type="text" id="su-lname" placeholder="Smith"/>
-        </div>
-      </div>
       <div class="field">
         <label for="pwd">Password</label>
-        <input type="password" id="pwd" placeholder="••••••••" required/>
+        <input type="password" id="pwd" placeholder="••••••••"/>
       </div>
+
+      <!-- Hidden until email not recognised -->
+      <div id="reg-fields" style="display:none">
+        <div class="reg-banner">
+          👋 Looks like you're new — just a few more details to create your account.
+        </div>
+        <div class="row-fields">
+          <div class="field">
+            <label for="su-fname">First Name</label>
+            <input type="text" id="su-fname" placeholder="John"/>
+          </div>
+          <div class="field">
+            <label for="su-lname">Last Name</label>
+            <input type="text" id="su-lname" placeholder="Smith"/>
+          </div>
+        </div>
+        <div class="row-fields">
+          <div class="field">
+            <label for="su-email">Confirm Email</label>
+            <input type="email" id="su-email" placeholder="you@davidson.edu"/>
+          </div>
+          <div class="field">
+            <label for="su-sid">Confirm Student ID</label>
+            <input type="text" id="su-sid" placeholder="9-digit ID"/>
+          </div>
+        </div>
+        <div class="field">
+          <label for="su-pwd2">Confirm Password</label>
+          <input type="password" id="su-pwd2" placeholder="••••••••"/>
+        </div>
+      </div>
+
       <button class="btn-primary" type="submit">Sign In</button>
-      <div id="error-msg"></div>
+      <div class="error-msg" id="login-error"></div>
     </form>
 
     <p class="note">Only @davidson.edu accounts are accepted.</p>
   </div>
 
-  <!--
-    NEW Google Identity Services library.
-    The old apis.google.com/js/platform.js was shut down in March 2023.
-  -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script>
-    // ── Google Identity Services ───────────────────────────────────────────────
+    // ── Google Identity Services ──────────────────────────────────────────────
     window.addEventListener('load', () => {
       if (typeof google === 'undefined') return;
 
@@ -71,7 +91,6 @@
         auto_select: false,
       });
 
-      // Render a styled button
       google.accounts.id.renderButton(
         document.getElementById('google-btn-wrapper'),
         { theme: 'filled_black', size: 'large', width: 352, text: 'signin_with', shape: 'rectangular' }
@@ -79,67 +98,28 @@
     });
 
     async function handleGoogleCredential(response) {
-      // response.credential is a signed JWT from Google
       try {
-        const res = await fetch('/api/google-login', {
+        const res  = await fetch('/api/google-login', {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify({ token: response.credential }),
         });
         const data = await res.json();
-
-        if (!res.ok) {
-          showError(data.error || 'Google sign-in failed.');
-          return;
-        }
-
-        // Flask session is set server-side; just redirect
+        if (!res.ok) { showLoginError(data.error || 'Google sign-in failed.'); return; }
         window.location.href = '/selection';
-      } catch (e) {
-        showError('Unable to reach server. Please try again.');
+      } catch {
+        showLoginError('Unable to reach server. Please try again.');
       }
     }
 
-    // ── Manual login form ──────────────────────────────────────────────────────
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email     = document.getElementById('email').value.trim().toLowerCase();
-      const studentId = document.getElementById('studentID').value.trim();
-      const pwd       = document.getElementById('pwd').value;
-
-      if (!email && !studentId) {
-        showError('Enter your Davidson email or Student ID.'); return;
-      }
-      if (email && !email.endsWith('@davidson.edu')) {
-        showError('Please use your @davidson.edu email.'); return;
-      }
-      if (!pwd) {
-        showError('Password is required.'); return;
-      }
-
-      try {
-        const res  = await fetch('/api/login', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ email, studentId, password: pwd }),
-        });
-        const data = await res.json();
-
-        if (!res.ok) {
-          showError(data.error || 'Invalid credentials.'); return;
-        }
-
-        window.location.href = '/selection';
-      } catch (e) {
-        showError('Unable to reach server.');
-      }
-    });
-
-    function showError(msg) {
-      const el = document.getElementById('error-msg');
+    function showLoginError(msg) {
+      const el = document.getElementById('login-error');
       el.textContent = msg;
       el.style.display = 'block';
     }
   </script>
+
+  <!-- Separate file handles manual login + progressive signup -->
+  <script src="/static/student.js"></script>
 </body>
 </html>

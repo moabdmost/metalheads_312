@@ -10,10 +10,13 @@ import os
 import smtplib
 import random
 import qrcode
+from werkzeug.security import generate_password_hash, check_password_hash
+from pathlib import Path
+import re
 
 # ── Config ─────────────────────────────────────────────────────────────────────
 GOOGLE_CLIENT_ID = "318874378262-do4uihbnlojtv39fm05ctcncfjkgvb4v.apps.googleusercontent.com"
-
+USERS_FILE = os.path.join("data", "users.json")
 SMTP_HOST     = "smtp.gmail.com"
 SMTP_PORT     = 587
 SMTP_USER     = "noreplyDCQC@gmail.com"
@@ -27,6 +30,16 @@ DATA_FILE  = os.path.join("data", "submissions.json")
 ROOMS_FILE = os.path.join("data", "rooms.json")
 
 # ── Data helpers ───────────────────────────────────────────────────────────────
+
+def load_users():
+    if not os.path.exists(USERS_FILE):
+        return {}
+    with open(USERS_FILE) as f:
+        return json.load(f)
+
+def save_users(users):
+    with open(USERS_FILE, "w") as f:
+        json.dump(users, f, indent=2)
 
 def load_data():
     if not os.path.exists(DATA_FILE):
@@ -383,6 +396,71 @@ def update_room(room_id):
 
     save_rooms(rooms)
     return jsonify(room)
+
+
+@app.route("/api/signup", methods=["POST"])
+def signup():
+    data       = request.get_json()
+    email      = (data.get("email") or "").strip().lower()
+    student_id = (data.get("studentId") or "").strip()
+    password   = data.get("password") or ""
+    first_name = (data.get("firstName") or "").strip().capitalize()
+    last_name  = (data.get("lastName") or "").strip().capitalize()
+
+    if not email.endswith("@davidson.edu"):
+        return jsonify({"error": "Must use a @davidson.edu email."}), 400
+    if not re.fullmatch(r'\d{9}', student_id):
+        return jsonify({"error": "Student ID must be exactly 9 digits."}), 400
+    if len(password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters."}), 400
+    if not first_name or not last_name:
+        return jsonify({"error": "First and last name are required."}), 400
+
+    users = load_users()
+    if email in users:
+        return jsonify({"error": "An account with that email already exists."}), 409
+
+    users[email] = {
+        "student_id": student_id,
+        "password":   generate_password_hash(password),
+        "first_name": first_name,
+        "last_name":  last_name,
+    }
+    save_users(users)
+
+    session["student_email"] = email
+    session["student_name"]  = f"{first_name} {last_name}"
+    return jsonify({"first_name": first_name}), 201
+
+
+@app.route("/api/login", methods=["POST"])
+def login():
+    data       = request.get_json()
+    email      = (data.get("email") or "").strip().lower()
+    student_id = (data.get("studentId") or "").strip()
+    password   = data.get("password") or ""
+
+    users = load_users()
+
+    # Find by email or student ID
+    matched_email = None
+    if email:
+        matched_email = email if email in users else None
+    elif student_id:
+        matched_email = next(
+            (k for k, v in users.items() if v.get("student_id") == student_id), None
+        )
+
+    if matched_email is None:
+        return jsonify({"error": "No account found."}), 404
+
+    user = users[matched_email]
+    if not check_password_hash(user["password"], password):
+        return jsonify({"error": "Incorrect password."}), 401
+
+    session["student_email"] = matched_email
+    session["student_name"]  = f"{user['first_name']} {user['last_name']}"
+    return jsonify({"first_name": user["first_name"]}), 200
 
 # ── Debug ──────────────────────────────────────────────────────────────────────
 
