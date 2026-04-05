@@ -6,199 +6,7 @@
   <title>Quiz Center — Exam Selection</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:      #0c0e14;
-      --surface: #13161f;
-      --border:  #1e2333;
-      --accent:  #4f8ef7;
-      --accent2: #7c5cfc;
-      --text:    #e8eaf6;
-      --muted:   #5a6080;
-    }
-
-    body {
-      min-height: 100vh;
-      background: var(--bg);
-      font-family: 'DM Sans', sans-serif;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 32px 24px;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(var(--border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 40px 40px;
-      opacity: 0.4;
-      pointer-events: none;
-    }
-
-    .card {
-      position: relative;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 48px 44px;
-      width: 100%;
-      max-width: 480px;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 28px;
-    }
-    .logo-mark {
-      width: 32px; height: 32px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800; font-size: 12px; color: #fff;
-    }
-    .logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; }
-
-    /* Student greeting badge */
-    .student-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(62,207,142,0.1);
-      border: 1px solid rgba(62,207,142,0.25);
-      border-radius: 999px;
-      padding: 6px 14px;
-      margin-bottom: 20px;
-      font-size: 0.82rem;
-      color: #3ecf8e;
-    }
-    .student-badge::before { content: '✓'; font-weight: 700; }
-
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.6rem;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-    .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 28px; }
-
-    .field { margin-bottom: 18px; }
-
-    label {
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--muted);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
-    select, input[type="text"] {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 16px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s;
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6080' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-    }
-
-    input[type="text"] {
-      background-image: none;
-    }
-
-    select:focus, input:focus { border-color: var(--accent); }
-
-    select:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .accom-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .accom-option {
-      position: relative;
-    }
-
-    .accom-option input[type="radio"] {
-      position: absolute;
-      opacity: 0;
-      width: 0; height: 0;
-    }
-
-    .accom-option label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 14px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 400;
-      color: var(--text);
-      text-transform: none;
-      letter-spacing: 0;
-      transition: border-color 0.2s, background 0.2s;
-    }
-
-    .accom-option input:checked + label {
-      border-color: var(--accent);
-      background: rgba(79,142,247,0.08);
-      color: var(--accent);
-    }
-
-    .accom-option label::before {
-      content: '';
-      width: 14px; height: 14px;
-      border-radius: 50%;
-      border: 1.5px solid var(--border);
-      flex-shrink: 0;
-      transition: border-color 0.2s, background 0.2s;
-    }
-
-    .accom-option input:checked + label::before {
-      border-color: var(--accent);
-      background: var(--accent);
-    }
-
-    .btn-primary {
-      width: 100%;
-      margin-top: 8px;
-      padding: 15px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.15s;
-    }
-    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-  </style>
+  <link rel="stylesheet" href="/static/selection.css">
 </head>
 <body>
   <div class="card">
@@ -206,7 +14,6 @@
       <div class="logo-mark">QC</div>
       <span class="logo-text">Davidson Quiz Center</span>
     </div>
-
     <!-- Show who is logged in (Jinja2 injects name from session) -->
     {% if student_name %}
     <div class="student-badge">Signed in as {{ student_name }}</div>
@@ -234,7 +41,6 @@
           <option value="Dr. Duhon">Dr. Duhon</option>
         </select>
       </div>
-
       <div class="field">
         <label>Course</label>
         <select id="course" name="course" required disabled>
@@ -262,49 +68,9 @@
           </div>
         </div>
       </div>
-
       <button class="btn-primary" type="submit">Generate QR Code →</button>
     </form>
   </div>
-
-  <script>
-    const COURSES = {
-      "Dr. Ramanujan": [
-        "CSC371 - Machine Learning",
-        "CSC324 - Theory of Computation",
-        "CSC250 - Computer Organization",
-      ],
-      "Dr. Lim": [
-        "CSC221 - Data Structures",
-        "CSC312 - Software Design",
-        "CSC355 - Compiler Design",
-        "CSC356 - Computer Security",
-      ],
-      "Dr. Duhon": [
-        "MATH150 - Calculus I",
-        "MATH250 - Linear Algebra",
-        "MATH310 - Probability",
-      ],
-    };
-
-    function updateCourses() {
-      const prof   = document.getElementById('professor').value;
-      const sel    = document.getElementById('course');
-      sel.innerHTML = '';
-      sel.disabled  = !prof;
-
-      if (!prof) {
-        sel.innerHTML = '<option value="">Select professor first</option>';
-        return;
-      }
-
-      sel.innerHTML = '<option value="">Select course…</option>';
-      (COURSES[prof] || []).forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = opt.textContent = c;
-        sel.appendChild(opt);
-      });
-    }
-  </script>
+  <script src="/static/selection.js"></script>
 </body>
 </html>

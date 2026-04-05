@@ -6,131 +6,7 @@
   <title>Quiz Center — Your QR Code</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg:      #0c0e14;
-      --surface: #13161f;
-      --border:  #1e2333;
-      --accent:  #4f8ef7;
-      --accent2: #7c5cfc;
-      --text:    #e8eaf6;
-      --muted:   #5a6080;
-    }
-    body {
-      min-height: 100vh;
-      background: var(--bg);
-      font-family: 'DM Sans', sans-serif;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 32px 24px;
-    }
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image:
-        linear-gradient(var(--border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 40px 40px;
-      opacity: 0.4;
-      pointer-events: none;
-    }
-    .card {
-      position: relative;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 48px 44px;
-      width: 100%;
-      max-width: 460px;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
-      text-align: center;
-    }
-    .logo {
-      display: flex; align-items: center; justify-content: center;
-      gap: 10px; margin-bottom: 28px;
-    }
-    .logo-mark {
-      width: 32px; height: 32px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800; font-size: 12px; color: #fff;
-    }
-    .logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; }
-
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.5rem; font-weight: 800;
-      margin-bottom: 6px;
-    }
-    .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 28px; }
-
-    /* QR box */
-    .qr-wrap {
-      display: inline-block;
-      background: #fff;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 24px;
-      box-shadow: 0 0 0 1px var(--border);
-    }
-    .qr-wrap img { display: block; width: 220px; height: 220px; }
-
-    .sub-id {
-      font-family: monospace;
-      font-size: 1.1rem;
-      color: var(--accent2);
-      margin-bottom: 20px;
-      letter-spacing: 0.1em;
-    }
-
-    /* Info rows */
-    .info-table {
-      text-align: left;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 28px;
-    }
-    .info-row {
-      display: flex;
-      padding: 12px 18px;
-      border-bottom: 1px solid var(--border);
-    }
-    .info-row:last-child { border-bottom: none; }
-    .info-label { width: 130px; font-size: 0.8rem; color: var(--muted); flex-shrink: 0; }
-    .info-value { font-size: 0.9rem; color: var(--text); font-weight: 500; }
-
-    .instruction {
-      background: rgba(79,142,247,0.08);
-      border: 1px solid rgba(79,142,247,0.2);
-      border-radius: 12px;
-      padding: 16px 20px;
-      font-size: 0.88rem;
-      color: var(--accent);
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
-
-    .btn-status {
-      display: inline-block;
-      padding: 13px 28px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff;
-      text-decoration: none;
-      border-radius: 10px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 500;
-      transition: opacity 0.2s, transform 0.15s;
-    }
-    .btn-status:hover { opacity: 0.9; transform: translateY(-1px); }
-  </style>
+  <link rel="stylesheet" href="/static/qr_generate.css">
 </head>
 <body>
   <div class="card">
@@ -182,5 +58,6 @@
       <a href="/selection" class="btn-status">← Back to Selection</a>
     {% endif %}
   </div>
+  <script src="/static/qr_generate.js"></script>
 </body>
 </html>

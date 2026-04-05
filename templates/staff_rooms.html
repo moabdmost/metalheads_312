@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Quiz Center — Room Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/staff_rooms.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <div class="header-row">
+      <div class="header-left">
+        <a href="/dashboard" class="back-btn">← Dashboard</a>
+        <h1>Room Management</h1>
+      </div>
+      <div class="header-right">
+        <span class="last-updated" id="last-updated"></span>
+        <button class="refresh-btn" onclick="loadRooms()">↻ Refresh</button>
+      </div>
+    </div>
+    <!-- Stats bar -->
+    <div class="stats-bar" id="stats-bar">
+      <div class="stat-pill">
+        <span class="stat-dot staffed"></span>
+        <span class="stat-count" id="stat-staffed">—</span>
+        <span class="stat-label">Staffed</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-dot unstaffed"></span>
+        <span class="stat-count" id="stat-unstaffed">—</span>
+        <span class="stat-label">Unstaffed</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-dot occupied"></span>
+        <span class="stat-count" id="stat-occupied">—</span>
+        <span class="stat-label">Occupied</span>
+      </div>
+    </div>
+
+    <!-- General rooms -->
+    <div class="section-label">General Rooms</div>
+    <div class="room-grid" id="grid-general">
+      <div class="state-msg"><div class="spinner"></div>Loading…</div>
+    </div>
+
+    <!-- Reduced distraction rooms -->
+    <div class="section-label">Reduced Distraction</div>
+    <div class="room-grid" id="grid-reduced">
+      <div class="state-msg"><div class="spinner"></div>Loading…</div>
+    </div>
+    <!-- Individual / AADR rooms -->
+    <div class="section-label">Individual &amp; AADR</div>
+    <div class="room-grid" id="grid-individual">
+      <div class="state-msg"><div class="spinner"></div>Loading…</div>
+    </div>
+  </div>
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+  <script src="/static/staff_rooms.js"></script>
+</body>
+</html>
