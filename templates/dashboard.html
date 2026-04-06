@@ -25,7 +25,58 @@
         </select>
 
         <button id="refresh">Refresh</button>
+
+        <!-- Manual Entry -->
+        <button id="manual" onclick="openForm()">Manual Entry</button>
+        <div class="form-popup" id="myForm">
+          <!-- Entry form which is hidden over times -->
+          <form class="form-container" id="manualEntryForm">
+            <h1>Manual Entry</h1>
+            
+            <!-- Email -->
+            <label for="email"><b>Email</b></label>
+            <input type="text" placeholder="Enter Email" name="email">
+
+            <!-- Password (Required) -->
+            <label for="psw"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="psw" class="Man_Required">
+
+            <!-- StudentID -->
+            <label for="id"><b>Student ID</b></label>
+            <input input type="text" placeholder="Enter Student ID" name="id">
+
+            <!-- Professor (Required) -->
+            <label>Professor</label>
+            <select id="professor" name="facultyName" onchange="updateCourses()" class="Man_Required">
+              <option value="">Select Professor</option>
+              <option value="Dr. Ramanujan">Dr. Ramanujan</option>
+              <option value="Dr. Lim">Dr. Lim</option>
+              <option value="Dr. Duhon">Dr. Duhon</option>
+            </select>
+            
+
+            <!-- Course (Required)-->
+            <label>Course</label>
+            <select id="course" name="course" class="Man_Required">
+              <option value="">Select Course</option>
+            </select>
+        
+            <!-- Accommodations -->
+            <label>Accommodations</label>
+            <select name="accommodation">
+              <option value="None">None</option>
+              <option value="Reduced Distraction">Reduced Distraction</option>
+              <option value="AADR">AADR</option>
+            </select>
+
+
+            <button id="manEntry" type="button" class="btn" onclick="closeForm()">Submit</button>
+            
+          </form>
+        </div>
         <span id="msg" class="muted"></span>
+
+        
       </div>
 
       <table>
@@ -45,5 +96,42 @@
     </div>
 
     <script src="/static/dashboard.js"></script>
+    <script>
+    const courses = {
+      "Dr. Ramanujan": [
+        "CSC371 - Machine Learning",
+        "CSC324 - Theory of Computation",
+        "CSC250 - Computer Organization"
+      ],
+      "Dr. Lim": [
+        "CSC221 - Data Structures",
+        "CSC312 - Software Design",
+        "CSC355 - Compiler Design",
+        "CSC356 - Computer Security"
+      ],
+      "Dr. Duhon": [
+        "MATH150 - Calculus I",
+        "MATH250 - Linear Algebra",
+        "MATH310 - Probability"
+      ]
+    };
+
+    function updateCourses() {
+      const prof = document.getElementById("professor").value;
+      const courseDropdown = document.getElementById("course");
+
+      courseDropdown.innerHTML = '<option value="">Select Course</option>';
+
+      if (courses[prof]) {
+        courses[prof].forEach(course => {
+          const option = document.createElement("option");
+          option.value = course;
+          option.textContent = course;
+          courseDropdown.appendChild(option);
+        });
+      }
+    }
+  </script>
+
   </body>
 </html>

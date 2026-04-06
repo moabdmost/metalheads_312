@@ -158,5 +158,49 @@ rowsEl.addEventListener("click", async (e) => {
 document.getElementById("refresh").addEventListener("click", () => refresh());
 filterEl.addEventListener("change", () => refresh());
 
+const manualEntryForm = document.getElementById("manualEntryForm");
+if (manualEntryForm) {
+  manualEntryForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    closeForm();
+  });
+}
+
 // Initial load then start polling
 refresh().then(startPolling);
+
+//Opens the manual entry form when the "Manual Entry" button is clicked
+function openForm() {
+  const form = document.getElementById("myForm");
+  form.style.display = "block";
+  const required_inputs = form.querySelectorAll('.Man_Required');
+  required_inputs.forEach(element => {
+    element.required = true;
+  });
+
+
+}
+// This function is called when the manual entry form is 
+// submitted. It currently just logs the data to the console 
+// and closes the form, but you can modify it to send the 
+// data to the backend or perform other actions as needed.
+function closeForm(){
+
+  const myForm = document.getElementById("myForm");
+  myForm.style.display = "none";
+  const required_inputs = myForm.querySelectorAll('.Man_Required');
+  required_inputs.forEach(element => {
+    element.required = false;
+  });
+  
+  const data = new FormData(myForm.querySelector("form"));
+  const id = data.get("id");
+  const email = data.get("email");
+  const password = data.get("psw");
+  const professor = data.get("facultyName");
+  const course = data.get("course");
+  const accommodation = data.get("accommodation");
+  console.log(`Manual entry submitted: ID=${id}, Professor=${professor}, Course=${course}, Accommodation=${accommodation}`);
+
+  myForm.querySelector("form").reset();
+}
