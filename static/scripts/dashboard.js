@@ -1,13 +1,10 @@
 const API_BASE = "/api";
-
 const rowsEl   = document.getElementById("rows");
 const msgEl    = document.getElementById("msg");
 const filterEl = document.getElementById("filter");
-
 const POLL_INTERVAL = 5000;
 let pollTimer = null;
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function setMsg(text) { msgEl.textContent = text || ""; }
 
@@ -59,11 +56,16 @@ function pill(status) {
   return `<span class="pill" data-status="${status}">${label}</span>`;
 }
 
-function buttonsForProgress(progress, id) {
+function buttonsForProgress(s) {
+  const id     = s.id;
+  const status = s.status;
+
+  const canStart    = status === "VERIFIED";
+  const canComplete = status === "IN_PROGRESS";
+
   return `
-    <button data-action="verify"   data-id="${id}" ${progress !== "idle"     ? "disabled" : ""}>Verify</button>
-    <button data-action="start"    data-id="${id}" ${progress !== "verified" ? "disabled" : ""}>Start</button>
-    <button data-action="complete" data-id="${id}" ${progress !== "started"  ? "disabled" : ""}>Complete</button>
+    <button data-action="start"    data-id="${id}" ${!canStart    ? "disabled" : ""}>Start</button>
+    <button data-action="complete" data-id="${id}" ${!canComplete ? "disabled" : ""}>Complete</button>
   `;
 }
 
@@ -89,7 +91,7 @@ function roomBadge(room) {
 }
 
 
-// ── Render submissions table ───────────────────────────────────────────────────
+// Render the main table based on submissions and current filter
 
 function render(submissions) {
   rowsEl.innerHTML = "";
@@ -116,20 +118,18 @@ function render(submissions) {
       <td>In: ${fmtTime(s.checkInTime)}<br>Out: ${fmtTime(s.checkOutTime)}</td>
       <td>${pill(s.status)}</td>
       <td>
-        <span class="muted">Staff:</span> ${s.staffName || "—"}<br>
         <span class="muted">Faculty:</span> ${s.facultyName || "—"}
       </td>
       <td>${roomBadge(s.room)}</td>
       <td style="display:flex; gap:8px; flex-wrap:wrap;">
-        ${buttonsForProgress(getProgress(s.id), s.id)}
+        ${buttonsForProgress(s)}
       </td>
     `;
     rowsEl.appendChild(tr);
   }
 }
 
-
-// ── Room panel ────────────────────────────────────────────────────────────────
+// Room panel rendering and interactions
 
 async function renderRoomPanel() {
   const panel = document.getElementById("room-panel");
@@ -151,7 +151,6 @@ async function renderRoomPanel() {
   panel.innerHTML = rooms.map(r => {
     const staffed   = r.staffed   ? "staffed"   : "unstaffed";
     const available = r.available ? "available" : "occupied";
-
     return `
       <div class="room-card" data-room-id="${r.id}">
         <div class="room-card-top">
@@ -207,8 +206,7 @@ document.getElementById("room-panel")?.addEventListener("click", async (e) => {
 });
 
 
-// ── Main refresh ──────────────────────────────────────────────────────────────
-
+// Refreshing data and polling for updates
 async function refresh(silent = false) {
   try {
     if (!silent) setMsg("Loading...");
@@ -221,6 +219,7 @@ async function refresh(silent = false) {
   }
 }
 
+// Start polling for updates every POLL_INTERVAL milliseconds, with ability to stop when performing actions
 function startPolling() {
   stopPolling();
   pollTimer = setInterval(() => refresh(true), POLL_INTERVAL);
@@ -244,18 +243,17 @@ rowsEl.addEventListener("click", async (e) => {
   try {
     setMsg(`Updating ${id}...`);
 
-    if (action === "verify") {
-      await patch(id, { status: "VERIFIED" });
-      sessionProgress[id] = "verified";
-    } else if (action === "start") {
-      await patch(id, { status: "IN_PROGRESS" });
-      sessionProgress[id] = "started";
+    if (action === "start") {
+      const now = new Date()
+        .toLocaleString('sv-SE', { timeZone: 'America/New_York' })
+        .replace(' ', 'T');
+      await patch(id, { status: "IN_PROGRESS", checkInTime: now });
+
     } else if (action === "complete") {
       const now = new Date()
         .toLocaleString('sv-SE', { timeZone: 'America/New_York' })
         .replace(' ', 'T');
       await patch(id, { status: "COMPLETED", checkOutTime: now });
-      sessionProgress[id] = "completed";
     }
 
     await refresh();

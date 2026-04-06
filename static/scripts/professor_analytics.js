@@ -167,7 +167,7 @@ function exportPDF() {
     // Table
     doc.autoTable({
         startY: 96,
-        head: [["ID", "Student", "Student ID", "Course", "Exam", "Check-In", "Check-Out", "Status", "Faculty"]],
+        head: [["ID", "Student", "Student ID", "Course", "Check-In", "Check-Out", "Status", "Faculty"]],
         body: filteredSubmissions.map(s => [
             s.id || "—",
             s.studentName || "—",
@@ -220,7 +220,7 @@ function exportPDF() {
 
 function exportCSV() {
     const headers = ["ID", "Student Name", "Student ID", "Course Code", "Course Name",
-                     "Exam", "Check-In", "Check-Out", "Status", "Faculty", "Staff", "Notes"];
+                     "Check-In", "Check-Out", "Status", "Faculty", "Notes"];
 
     const rows = filteredSubmissions.map(s => [
         s.id            || "",
@@ -228,13 +228,10 @@ function exportCSV() {
         s.studentId     || "",
         s.courseCode    || "",
         s.courseName    || "",
-        s.examName      || "",
         formatTime(s.checkInTime),
         formatTime(s.checkOutTime),
         s.status        || "",
         s.facultyName   || "",
-        s.staffName     || "",
-        s.notes         || ""
     ]);
 
     const csv = [headers, ...rows]

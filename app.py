@@ -1,3 +1,4 @@
+import json, os, smtplib, random, qrcode, re
 from flask import Flask, jsonify, request, render_template, redirect, url_for, session
 from flask_cors import CORS
 from datetime import datetime
@@ -5,16 +6,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from google.oauth2 import id_token
 from google.auth.transport import requests as grequests
-import json
-import os
-import smtplib
-import random
-import qrcode
 from werkzeug.security import generate_password_hash, check_password_hash
 from pathlib import Path
-import re
 
-# ── Config ─────────────────────────────────────────────────────────────────────
+
+# Configuration
 GOOGLE_CLIENT_ID = "318874378262-do4uihbnlojtv39fm05ctcncfjkgvb4v.apps.googleusercontent.com"
 USERS_FILE = os.path.join("data", "users.json")
 SMTP_HOST     = "smtp.gmail.com"
@@ -29,7 +25,7 @@ CORS(app)
 DATA_FILE  = os.path.join("data", "submissions.json")
 ROOMS_FILE = os.path.join("data", "room-assignment.json")
 
-# ── Data helpers ───────────────────────────────────────────────────────────────
+# Data loading/saving utilities
 
 def load_users():
     if not os.path.exists(USERS_FILE):
@@ -110,7 +106,7 @@ def auto_assign_room(submission):
     min_occupants = min(occupant_count.get(r["id"], 0) for r in candidates)
     least_busy    = [r for r in candidates if occupant_count.get(r["id"], 0) == min_occupants]
     return random.choice(least_busy)["id"]
-# ── Email ──────────────────────────────────────────────────────────────────────
+# Email sending utility
 
 def send_completion_email(submission):
     student_email = submission.get("login_email")
@@ -200,7 +196,7 @@ body{{margin:0;padding:0;background:#0f1117;font-family:'DM Sans',Arial,sans-ser
     except Exception as e:
         print(f"[email] Error: {e}")
 
-# ── Page routes ────────────────────────────────────────────────────────────────
+# Pages
 
 @app.route("/")
 @app.route("/student")
@@ -241,7 +237,7 @@ def status_page(submission_id):
     """Student waits here after generating QR — polls for room assignment."""
     return render_template("student_status.html", submission_id=submission_id)
 
-# ── Auth routes ────────────────────────────────────────────────────────────────
+# Authorization 
 
 @app.route("/api/google-login", methods=["POST"])
 def google_login():
@@ -272,7 +268,7 @@ def google_login():
     print(f"[google-login] {name} <{email}> authenticated")
     return jsonify({"name": name, "email": email})
 
-# ── Form / QR routes ───────────────────────────────────────────────────────────
+# QR code generation and scanning
 
 @app.route("/qr_generate", methods=["POST"])
 def qr_generate():
@@ -344,7 +340,7 @@ def scan_redirect(submission_id):
     save_data(data)
     return redirect("/dashboard")
 
-# ── Submissions API ────────────────────────────────────────────────────────────
+# Submissions API
 
 @app.route("/api/submissions", methods=["GET"])
 def get_submissions():
@@ -365,8 +361,8 @@ def update_submission(id):
         return jsonify({"error": "Not found"}), 404
 
     updates = request.json or {}
-    allowed = ["status", "checkInTime", "checkOutTime", "notes", "staffName",
-               "room", "studentName", "courseCode", "courseName", "examName", "facultyName"]
+    allowed = ["status", "checkInTime", "checkOutTime", "notes",
+               "room", "studentName", "courseCode", "courseName", "facultyName"]
     for key in allowed:
         if key in updates:
             sub[key] = updates[key]
@@ -378,7 +374,7 @@ def update_submission(id):
 
     return jsonify(sub)
 
-# ── Rooms API ──────────────────────────────────────────────────────────────────
+# Rooms API
 
 @app.route("/api/rooms", methods=["GET"])
 def get_rooms():
@@ -477,7 +473,7 @@ def login():
     session["student_name"]  = f"{user['first_name']} {user['last_name']}"
     return jsonify({"first_name": user["first_name"]}), 200
 
-# ── Debug ──────────────────────────────────────────────────────────────────────
+# Debug endpoint to test email sending without going through the whole flow
 
 @app.route("/api/test-email/<id>")
 def test_email(id):
