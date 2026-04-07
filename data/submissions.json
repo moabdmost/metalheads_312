@@ -1,17 +1,3 @@
 [
-  {
-    "id": "QS-74483",
-    "studentName": "Riana Doctor",
-    "login_email": "ridoctor@davidson.edu",
-    "courseCode": "CSC312",
-    "courseName": "Software Design",
-    "examName": "",
-    "facultyName": "Dr. Lim",
-    "notes": "None",
-    "status": "COMPLETED",
-    "room": "Watson 157",
-    "staffName": null,
-    "checkInTime": "2026-04-05T20:41:31",
-    "checkOutTime": "2026-04-05T20:41:33"
-  }
+
 ]
