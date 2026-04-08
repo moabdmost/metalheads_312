@@ -58,5 +58,35 @@
     "staffName": null,
     "checkInTime": "2026-04-08T14:08:49",
     "checkOutTime": null
+  },
+  {
+    "id": "QS-68774",
+    "studentName": "Riana Doctor",
+    "login_email": "ridoctor@davidson.edu",
+    "courseCode": "MATH310",
+    "courseName": "Probability",
+    "examName": "",
+    "facultyName": "Dr. Duhon",
+    "notes": "None",
+    "status": "VERIFIED",
+    "room": "Watson 109",
+    "staffName": null,
+    "checkInTime": "2026-04-08T19:18:30",
+    "checkOutTime": null
+  },
+  {
+    "id": "QS-64581",
+    "studentName": "Riana Doctor",
+    "login_email": "ridoctor@davidson.edu",
+    "courseCode": "CSC221",
+    "courseName": "Data Structures",
+    "examName": "",
+    "facultyName": "Dr. Lim",
+    "notes": "None",
+    "status": "COMPLETED",
+    "room": "Watson 140",
+    "staffName": null,
+    "checkInTime": "2026-04-08T19:37:44",
+    "checkOutTime": "2026-04-08T19:37:45"
   }
 ]
