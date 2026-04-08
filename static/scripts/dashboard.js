@@ -97,9 +97,9 @@ function render(submissions) {
   rowsEl.innerHTML = "";
   const filter = filterEl.value;
 
-  const filtered = filter === "ALL"
+  const filtered = (filter === "ALL"
     ? submissions
-    : submissions.filter(s => s.status === filter);
+    : submissions.filter(s => s.status === filter)).slice().reverse();
 
   if (filtered.length === 0) {
     rowsEl.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:32px;">No submissions match this filter.</td></tr>`;
