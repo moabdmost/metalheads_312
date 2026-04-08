@@ -1,0 +1,74 @@
+[
+  {
+    "id": "Watson 109",
+    "type": "general",
+    "staffed": true,
+    "capacity": 30
+  },
+  {
+    "id": "Watson 119",
+    "type": "general",
+    "staffed": true,
+    "capacity": 25
+  },
+  {
+    "id": "Watson 140",
+    "type": "general",
+    "staffed": true,
+    "capacity": 20
+  },
+  {
+    "id": "Watson 147",
+    "type": "general",
+    "staffed": true,
+    "capacity": 20
+  },
+  {
+    "id": "Watson 157",
+    "type": "general",
+    "staffed": true,
+    "capacity": 15
+  },
+  {
+    "id": "Watson 132",
+    "type": "reduced",
+    "staffed": true,
+    "capacity": 10
+  },
+  {
+    "id": "Watson 248",
+    "type": "reduced",
+    "staffed": true,
+    "capacity": 8
+  },
+  {
+    "id": "Watson 261",
+    "type": "reduced",
+    "staffed": true,
+    "capacity": 8
+  },
+  {
+    "id": "Watson 310",
+    "type": "reduced",
+    "staffed": true,
+    "capacity": 6
+  },
+  {
+    "id": "In-between 109-119",
+    "type": "individual",
+    "staffed": true,
+    "capacity": 1
+  },
+  {
+    "id": "In-between 147-157",
+    "type": "individual",
+    "staffed": true,
+    "capacity": 1
+  },
+  {
+    "id": "AADR reserved",
+    "type": "aadr",
+    "staffed": true,
+    "capacity": 1
+  }
+]

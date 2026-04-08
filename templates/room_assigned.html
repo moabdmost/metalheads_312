@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Quiz Center — Room Assignment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/style_sheets/room_assigned.css">
+</head>
+<body>
+  <div class="card" data-submission-id="{{ submission_id }}">
+    <div class="logo">
+      <div class="logo-mark">QC</div>
+      <span class="logo-text">Davidson Quiz Center</span>
+    </div>
+    <button class="btn-back" onclick="history.back()">← Back to QR Code</button>
+    <!-- WAITING STATE — shown while QR hasn't been scanned yet -->
+    <div id="waiting-view">
+      <div class="waiting">
+        <div class="spinner"></div>
+        <strong>Waiting for check-in…</strong>
+        <p>Show your QR code to a staff member.<br/>Your room will appear here once scanned.</p>
+      </div>
+    </div>
+
+    <!-- ASSIGNED STATE — shown once room is assigned -->
+    <div id="assigned-view" style="display: none;">
+      <div class="success-icon">✓</div>
+
+      <div class="greeting">
+        <h1>You're checked in, <span id="student-first-name">{{ student_name.split()[0] if student_name else 'Student' }}</span>!</h1>
+        <p>Head to your assigned room and wait for instructions.</p>
+      </div>
+
+      <div class="room-hero">
+        <div class="room-label">Your Room</div>
+        <div class="room-number" id="room-number">—</div>
+        <div class="room-building">Watson Building</div>
+      </div>
+
+      <div class="details">
+        <div class="detail-row">
+          <span class="detail-key">Course</span>
+          <span class="detail-val" id="detail-course">—</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Professor</span>
+          <span class="detail-val" id="detail-prof">—</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Accommodation</span>
+          <span class="detail-val">
+            <span class="accom-pill" id="detail-accom">None</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="instructions">
+        <span class="instructions-icon">⚠️</span>
+        <span>Do not enter the room until a staff member directs you. Keep this page open — you may be asked to show your check-in confirmation.</span>
+      </div>
+
+      <div class="sub-id">Submission ID: <span id="detail-subid">—</span></div>
+
+      <button class="btn-done" onclick="window.location.href='/'">Done — Return to Home</button>
+    </div>
+  </div>
+  <script src="/static/scripts/room_assigned.js"></script>
+</body>
+</html>

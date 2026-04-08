@@ -1,2 +1,4 @@
 flask
 flask-cors
+qrcode[pil]
+google-auth

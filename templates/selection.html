@@ -1,89 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="static/selection.css">
-  <title>Select Course</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Quiz Center — Exam Selection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/style_sheets/selection.css">
 </head>
-
 <body>
-  <div class="page-wrapper">
+  <div class="card">
+    <div class="logo">
+      <div class="logo-mark">QC</div>
+      <span class="logo-text">Davidson Quiz Center</span>
+    </div>
+    <!-- Show who is logged in (Jinja2 injects name from session) -->
+    {% if student_name %}
+    <div class="student-badge">Signed in as {{ student_name }}</div>
+    {% endif %}
 
-    <h1>Select Your Course</h1>
+    <h1>Select Your Exam</h1>
+    <p class="subtitle">Choose your professor, course, and exam. A QR code will be generated for check-in.</p>
 
-    <form method="POST" action="/qr_generate" class="row" style="flex-direction: column; gap: 16px;">
+    <form method="POST" action="/qr_generate">
 
-      <!-- Professor -->
-      <div>
+      <!--
+        Hidden fields carry student identity from Flask session
+        into the qr_generate POST so the submission record gets
+        the student's name and email.
+      -->
+      <input type="hidden" name="studentName"  value="{{ student_name }}"/>
+      <input type="hidden" name="studentEmail" value="{{ student_email }}"/>
+
+      <div class="field">
         <label>Professor</label>
         <select id="professor" name="facultyName" onchange="updateCourses()" required>
-          <option value="">Select Professor</option>
+          <option value="">Select professor…</option>
           <option value="Dr. Ramanujan">Dr. Ramanujan</option>
           <option value="Dr. Lim">Dr. Lim</option>
           <option value="Dr. Duhon">Dr. Duhon</option>
         </select>
       </div>
-
-      <!-- Course -->
-      <div>
+      <div class="field">
         <label>Course</label>
-        <select id="course" name="course" required>
-          <option value="">Select Course</option>
+        <select id="course" name="course" required disabled>
+          <option value="">Select professor first</option>
         </select>
       </div>
-
-      <!-- Accommodations -->
-      <div>
+      <div class="field">
         <label>Accommodations</label>
-        <select name="accommodation">
-          <option value="None">None</option>
-          <option value="Reduced Distraction">Reduced Distraction</option>
-          <option value="AADR">AADR</option>
-        </select>
+        <div class="accom-grid">
+          <div class="accom-option">
+            <input type="radio" id="acc-none" name="accommodation" value="None" checked/>
+            <label for="acc-none">None</label>
+          </div>
+          <div class="accom-option">
+            <input type="radio" id="acc-rd" name="accommodation" value="Reduced Distraction"/>
+            <label for="acc-rd">Reduced Distraction</label>
+          </div>
+          <div class="accom-option">
+            <input type="radio" id="acc-et" name="accommodation" value="extended time"/>
+            <label for="acc-et">Extended Time</label>
+          </div>
+          <div class="accom-option">
+            <input type="radio" id="acc-aadr" name="accommodation" value="AADR extended"/>
+            <label for="acc-aadr">AADR</label>
+          </div>
+        </div>
       </div>
-
-      <button type="submit" id="refresh">Generate QR Code</button>
-
+      <button class="btn-primary" type="submit">Generate QR Code →</button>
     </form>
   </div>
-
-  <script>
-    const courses = {
-      "Dr. Ramanujan": [
-        "CSC371 - Machine Learning",
-        "CSC324 - Theory of Computation",
-        "CSC250 - Computer Organization"
-      ],
-      "Dr. Lim": [
-        "CSC221 - Data Structures",
-        "CSC312 - Software Design",
-        "CSC355 - Compiler Design",
-        "CSC356 - Computer Security"
-      ],
-      "Dr. Duhon": [
-        "MATH150 - Calculus I",
-        "MATH250 - Linear Algebra",
-        "MATH310 - Probability"
-      ]
-    };
-
-    function updateCourses() {
-      const prof = document.getElementById("professor").value;
-      const courseDropdown = document.getElementById("course");
-
-      courseDropdown.innerHTML = '<option value="">Select Course</option>';
-
-      if (courses[prof]) {
-        courses[prof].forEach(course => {
-          const option = document.createElement("option");
-          option.value = course;
-          option.textContent = course;
-          courseDropdown.appendChild(option);
-        });
-      }
-    }
-  </script>
-
+  <script src="/static/scripts/selection.js"></script>
 </body>
 </html>

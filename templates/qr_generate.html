@@ -1,48 +1,63 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>QR Generator</title>
-    <style>
-      body { font-family: system-ui; max-width: 900px; margin: 24px auto; padding: 0 16px; }
-      .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-      input, select, button { padding: 10px; font-size: 14px; }
-      #qrcode { margin-top: 16px; padding: 16px; border: 1px solid #ddd; display: inline-block; }
-      .hint { color: #666; margin-top: 8px; }
-      nav a { margin-right: 12px; }
-    </style>
-  </head>
-  <body>
-    <h1>QR Generator</h1>
-    <nav>
-      <a href="/dashboard">Dashboard</a>
-      <a href="/scan">Scan</a>
-    </nav>
-
-    <p>Generate a QR code that encodes a submission <b>id</b> like <b>QS-0002</b>.</p>
-
-    <div class="row">
-      <label for="preset">Quick pick:</label>
-      <select id="preset">
-        <option value="QS-0001">QS-0001</option>
-        <option value="QS-0002" selected>QS-0002</option>
-        <option value="QS-0003">QS-0003</option>
-        <option value="QS-0004">QS-0004</option>
-        <option value="QS-0005">QS-0005</option>
-        <option value="QS-0006">QS-0006</option>
-      </select>
-
-      <label for="sid">Or type ID:</label>
-      <input id="sid" type="text" value="QS-0002" placeholder="QS-0002" />
-
-      <button id="make">Generate</button>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Quiz Center — Your QR Code</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/style_sheets/qr_generate.css">
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-mark">QC</div>
+      <span class="logo-text">Davidson Quiz Center</span>
     </div>
 
-    <div id="qrcode"></div>
+    {% if qr %}
+      <h1>Your QR Code</h1>
+      <p class="subtitle">Show this to intake staff when you arrive.</p>
 
-    <!-- QR Code library -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-    <script src="/static/qr_generate.js"></script>
-  </body>
+      <div class="qr-wrap">
+        <img src="{{ qr }}" alt="QR code for {{ submission.id }}"/>
+      </div>
+
+      <div class="sub-id">{{ submission.id }}</div>
+
+      <div class="info-table">
+        <div class="info-row">
+          <span class="info-label">Student</span>
+          <span class="info-value">{{ submission.studentName or '—' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Professor</span>
+          <span class="info-value">{{ submission.facultyName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Course</span>
+          <span class="info-value">{{ submission.courseCode }} — {{ submission.courseName }}</span>
+        </div>
+        {% if submission.notes and submission.notes != 'None' %}
+        <div class="info-row">
+          <span class="info-label">Accommodation</span>
+          <span class="info-value">{{ submission.notes }}</span>
+        </div>
+        {% endif %}
+      </div>
+      <div class="instruction">
+        📋 Present this QR code to the intake staff at the front desk. Once scanned, you'll be assigned a room automatically.
+      </div>
+
+      <!-- Link to the student status/waiting page -->
+      <a href="/status/{{ submission.id }}" class="btn-status">Check My Room Assignment →</a>
+
+    {% else %}
+      <h1>No QR Yet</h1>
+      <p class="subtitle">Please complete the exam selection form first.</p>
+      <a href="/selection" class="btn-status">← Back to Selection</a>
+    {% endif %}
+  </div>
+  <script src="/static/scripts/qr_generate.js"></script>
+</body>
 </html>

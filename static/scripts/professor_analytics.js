@@ -1,121 +1,121 @@
-const API_BASE = "http://127.0.0.1:5000/api";
+const API_BASE = "/api";
 
 let allSubmissions = [];
 let filteredSubmissions = [];
 
-// Load data on page load
+// ── Init ──────────────────────────────────────────────────────────────────────
+
 window.addEventListener('DOMContentLoaded', () => {
     loadSubmissions();
-    
     document.getElementById('applyFilters').addEventListener('click', applyFilters);
     document.getElementById('exportPDF').addEventListener('click', exportPDF);
     document.getElementById('exportCSV').addEventListener('click', exportCSV);
 });
 
+
+// ── Data loading ──────────────────────────────────────────────────────────────
+
 async function loadSubmissions() {
     try {
         const response = await fetch(`${API_BASE}/submissions`);
         allSubmissions = await response.json();
-        
-        // Populate course filter
         populateCourseFilter();
-        
-        // Show all data initially
         filteredSubmissions = allSubmissions;
         renderTable();
         updateStats();
-        
     } catch (error) {
         console.error('Failed to load submissions:', error);
-        alert('Failed to load data');
+        alert('Failed to load data. Make sure the Flask server is running.');
     }
 }
 
 function populateCourseFilter() {
     const courseFilter = document.getElementById('courseFilter');
     const courses = new Set();
-    
+
     allSubmissions.forEach(sub => {
-        courses.add(`${sub.courseCode} - ${sub.courseName}`);
+        if (sub.courseCode && sub.courseName) {
+            courses.add(`${sub.courseCode} - ${sub.courseName}`);
+        }
     });
-    
+
     courses.forEach(course => {
         const option = document.createElement('option');
-        option.value = course.split(' - ')[0]; // Just the code
+        option.value = course.split(' - ')[0];
         option.textContent = course;
         courseFilter.appendChild(option);
     });
 }
 
+
+// ── Filtering ─────────────────────────────────────────────────────────────────
+
 function applyFilters() {
     const courseFilter = document.getElementById('courseFilter').value;
     const statusFilter = document.getElementById('statusFilter').value;
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-    
+    const startDate    = document.getElementById('startDate').value;
+    const endDate      = document.getElementById('endDate').value;
+
     filteredSubmissions = allSubmissions.filter(sub => {
-        // Course filter
-        if (courseFilter && sub.courseCode !== courseFilter) {
-            return false;
+        if (courseFilter && sub.courseCode !== courseFilter) return false;
+        if (statusFilter && sub.status !== statusFilter)     return false;
+
+        if (startDate && sub.checkInTime) {
+            const d = sub.checkInTime.split('T')[0];
+            if (d < startDate) return false;
         }
-        
-        // Status filter
-        if (statusFilter && sub.status !== statusFilter) {
-            return false;
+        if (endDate && sub.checkInTime) {
+            const d = sub.checkInTime.split('T')[0];
+            if (d > endDate) return false;
         }
-        
-        // Date filters
-        if (startDate) {
-            const checkInDate = new Date(sub.checkInTime).toISOString().split('T')[0];
-            if (checkInDate < startDate) {
-                return false;
-            }
-        }
-        
-        if (endDate) {
-            const checkInDate = new Date(sub.checkInTime).toISOString().split('T')[0];
-            if (checkInDate > endDate) {
-                return false;
-            }
-        }
-        
         return true;
     });
-    
+
     renderTable();
     updateStats();
 }
 
+
+// ── Rendering ─────────────────────────────────────────────────────────────────
+
 function renderTable() {
     const tbody = document.getElementById('analyticsRows');
     tbody.innerHTML = '';
-    
+
+    if (filteredSubmissions.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:32px;">No submissions match the current filters.</td></tr>`;
+        return;
+    }
+
     filteredSubmissions.forEach(sub => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${sub.id}</td>
-            <td><b>${sub.studentName}</b><br><span class="muted">${sub.studentId}</span></td>
-            <td><b>${sub.courseCode}</b> — ${sub.courseName}<br>${sub.examName}</td>
+            <td><b>${sub.studentName || '—'}</b><br><span class="muted">${sub.studentId || '—'}</span></td>
+            <td><b>${sub.courseCode || '—'}</b> — ${sub.courseName || '—'}<br><span class="muted">${sub.examName || '—'}</span></td>
             <td>${formatTime(sub.checkInTime)}</td>
             <td>${formatTime(sub.checkOutTime)}</td>
             <td>${pill(sub.status)}</td>
-            <td>${sub.facultyName}</td>
+            <td>${sub.facultyName || '—'}</td>
         `;
         tbody.appendChild(row);
     });
 }
 
 function updateStats() {
-    const total = filteredSubmissions.length;
-    const completed = filteredSubmissions.filter(s => s.status === 'COMPLETED').length;
+    const total      = filteredSubmissions.length;
+    const completed  = filteredSubmissions.filter(s => s.status === 'COMPLETED').length;
     const inProgress = filteredSubmissions.filter(s => s.status === 'IN_PROGRESS').length;
-    const pending = filteredSubmissions.filter(s => s.status === 'PENDING').length;
-    
-    document.getElementById('totalCount').textContent = total;
-    document.getElementById('completedCount').textContent = completed;
+    const pending    = filteredSubmissions.filter(s => s.status === 'PENDING').length;
+
+    document.getElementById('totalCount').textContent      = total;
+    document.getElementById('completedCount').textContent  = completed;
     document.getElementById('inProgressCount').textContent = inProgress;
-    document.getElementById('pendingCount').textContent = pending;
+    document.getElementById('pendingCount').textContent    = pending;
 }
+
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function formatTime(t) {
     if (!t) return "—";
@@ -123,54 +123,128 @@ function formatTime(t) {
 }
 
 function pill(status) {
-    const label = status.replace(/_/g, ' ');
+    const label = (status || 'UNKNOWN').replace(/_/g, ' ');
     return `<span class="pill" data-status="${status}">${label}</span>`;
 }
 
-async function exportPDF() {
-    try {
-        // Build query params from current filters
-        const params = new URLSearchParams();
-        
-        const courseFilter = document.getElementById('courseFilter').value;
-        const statusFilter = document.getElementById('statusFilter').value;
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        
-        if (courseFilter) params.append('course', courseFilter);
-        if (statusFilter) params.append('status', statusFilter);
-        if (startDate) params.append('start_date', startDate);
-        if (endDate) params.append('end_date', endDate);
-        
-        // Trigger download
-        window.location.href = `${API_BASE}/export-pdf?${params.toString()}`;
-        
-    } catch (error) {
-        console.error('PDF export failed:', error);
-        alert('Failed to export PDF');
+
+// ── PDF Export (client-side via jsPDF) ────────────────────────────────────────
+// Requires in your HTML <head>:
+//   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+//   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+function exportPDF() {
+    if (typeof window.jspdf === 'undefined') {
+        alert('PDF library not loaded. Make sure jsPDF script tags are in your HTML.');
+        return;
     }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "letter" });
+
+    // Header
+    doc.setFontSize(18);
+    doc.setTextColor(79, 142, 247);
+    doc.text("Davidson College Quiz Center", 40, 40);
+
+    doc.setFontSize(11);
+    doc.setTextColor(180, 180, 200);
+    doc.text("Professor Analytics Report", 40, 58);
+
+    // Timestamp
+    const now = new Date().toLocaleString();
+    doc.setFontSize(9);
+    doc.setTextColor(120, 120, 150);
+    doc.text(`Generated: ${now}`, 40, 72);
+
+    // Filter summary
+    const courseVal = document.getElementById('courseFilter').value || 'All';
+    const statusVal = document.getElementById('statusFilter').value || 'All';
+    const startVal  = document.getElementById('startDate').value   || 'Any';
+    const endVal    = document.getElementById('endDate').value     || 'Any';
+    doc.text(`Filters — Course: ${courseVal}  |  Status: ${statusVal}  |  Date: ${startVal} → ${endVal}  |  Showing: ${filteredSubmissions.length} records`, 40, 84);
+
+    // Table
+    doc.autoTable({
+        startY: 96,
+        head: [["ID", "Student", "Student ID", "Course", "Check-In", "Check-Out", "Status", "Faculty"]],
+        body: filteredSubmissions.map(s => [
+            s.id || "—",
+            s.studentName || "—",
+            s.studentId || "—",
+            `${s.courseCode || ""} ${s.courseName || ""}`.trim() || "—",
+            s.examName || "—",
+            formatTime(s.checkInTime),
+            formatTime(s.checkOutTime),
+            (s.status || "—").replace(/_/g, " "),
+            s.facultyName || "—"
+        ]),
+        styles: {
+            fontSize: 8,
+            cellPadding: 5,
+            textColor: [232, 234, 246],
+            fillColor: [34, 38, 58]
+        },
+        headStyles: {
+            fillColor: [79, 142, 247],
+            textColor: [255, 255, 255],
+            fontStyle: "bold",
+            fontSize: 8
+        },
+        alternateRowStyles: {
+            fillColor: [26, 29, 39]
+        },
+        tableLineColor: [46, 51, 80],
+        tableLineWidth: 0.5,
+    });
+
+    // Footer on each page
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 130);
+        doc.text(
+            `Davidson College Quiz Center  —  Page ${i} of ${pageCount}`,
+            doc.internal.pageSize.getWidth() / 2,
+            doc.internal.pageSize.getHeight() - 16,
+            { align: "center" }
+        );
+    }
+
+    doc.save(`quiz-center-report-${new Date().toISOString().split('T')[0]}.pdf`);
 }
 
-async function exportCSV() {
-    try {
-        // Build query params from current filters
-        const params = new URLSearchParams();
-        
-        const courseFilter = document.getElementById('courseFilter').value;
-        const statusFilter = document.getElementById('statusFilter').value;
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-        
-        if (courseFilter) params.append('course', courseFilter);
-        if (statusFilter) params.append('status', statusFilter);
-        if (startDate) params.append('start_date', startDate);
-        if (endDate) params.append('end_date', endDate);
-        
-        // Trigger download
-        window.location.href = `${API_BASE}/export-csv?${params.toString()}`;
-        
-    } catch (error) {
-        console.error('CSV export failed:', error);
-        alert('Failed to export CSV');
-    }
+
+// ── CSV Export (client-side, no server needed) ────────────────────────────────
+
+function exportCSV() {
+    const headers = ["ID", "Student Name", "Student ID", "Course Code", "Course Name",
+                     "Check-In", "Check-Out", "Status", "Faculty", "Notes"];
+
+    const rows = filteredSubmissions.map(s => [
+        s.id            || "",
+        s.studentName   || "",
+        s.studentId     || "",
+        s.courseCode    || "",
+        s.courseName    || "",
+        formatTime(s.checkInTime),
+        formatTime(s.checkOutTime),
+        s.status        || "",
+        s.facultyName   || "",
+    ]);
+
+    const csv = [headers, ...rows]
+        .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+        .join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href     = url;
+    a.download = `quiz-center-report-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
