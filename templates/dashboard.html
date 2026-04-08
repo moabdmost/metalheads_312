@@ -11,7 +11,6 @@
       <h1>Staff Dashboard</h1>
       <nav>
         <a href="/staff-rooms">Room Management</a>
-        <a href="/qr">Manual Entry</a>
       </nav>
 
       <div class="row" style="margin: 12px 0;">
@@ -25,9 +24,51 @@
         </select>
 
         <button id="refresh">Refresh</button>
+        <button id="open-manual">+ Manual Entry</button>
         <span id="msg" class="muted"></span>
       </div>
 
+      <div id="manual-modal" class="modal-overlay">
+        <div class="modal">
+          <button class="modal-close" onclick="closeManual()">✕</button>
+          <h2>Manual Entry</h2>
+
+          <div class="field">
+            <label>Student Name</label>
+            <input type="text" id="m-name" placeholder="Full name" />
+          </div>
+          <div class="field">
+            <label>Student Email</label>
+            <input type="email" id="m-email" placeholder="student@davidson.edu" />
+          </div>
+          <div class="field">
+            <label>Professor</label>
+            <select id="m-professor" onchange="updateManualCourses()">
+              <option value="">Select Professor</option>
+              <option value="Dr. Ramanujan">Dr. Ramanujan</option>
+              <option value="Dr. Lim">Dr. Lim</option>
+              <option value="Dr. Duhon">Dr. Duhon</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Course</label>
+            <select id="m-course">
+              <option value="">Select Course</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Accommodation</label>
+            <select id="m-accommodation">
+              <option value="None">None</option>
+              <option value="Reduced Distraction">Reduced Distraction</option>
+              <option value="AADR">AADR</option>
+            </select>
+          </div>
+
+          <div id="manual-error" class="modal-error"></div>
+          <button id="submit-manual">Submit Entry</button>
+        </div>
+      </div>
       <table>
         <thead>
           <tr>
@@ -46,5 +87,117 @@
     </div>
 
     <script src="/static/scripts/dashboard.js"></script>
+    <script>
+      const manualCourses = {
+        "Dr. Ramanujan": [
+          "CSC371 - Machine Learning",
+          "CSC324 - Theory of Computation",
+          "CSC250 - Computer Organization"
+        ],
+        "Dr. Lim": [
+          "CSC221 - Data Structures",
+          "CSC312 - Software Design",
+          "CSC355 - Compiler Design",
+          "CSC356 - Computer Security"
+        ],
+        "Dr. Duhon": [
+          "MATH150 - Calculus I",
+          "MATH250 - Linear Algebra",
+          "MATH310 - Probability"
+        ]
+      };
+
+      function updateManualCourses() {
+        const prof = document.getElementById("m-professor").value;
+        const dropdown = document.getElementById("m-course");
+        dropdown.innerHTML = '<option value="">Select Course</option>';
+        (manualCourses[prof] || []).forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c;
+          opt.textContent = c;
+          dropdown.appendChild(opt);
+        });
+      }
+
+      function openManual() {
+        const modal = document.getElementById("manual-modal");
+        modal.style.display = "flex";
+      }
+
+      function closeManual() {
+        const modal = document.getElementById("manual-modal");
+        modal.style.display = "none";
+        // Reset form
+        document.getElementById("m-name").value = "";
+        document.getElementById("m-email").value = "";
+        document.getElementById("m-professor").value = "";
+        document.getElementById("m-course").innerHTML = '<option value="">Select Course</option>';
+        document.getElementById("m-accommodation").value = "None";
+        document.getElementById("manual-error").style.display = "none";
+      }
+
+      // Close modal on backdrop click
+      document.getElementById("manual-modal").addEventListener("click", (e) => {
+        if (e.target === document.getElementById("manual-modal")) closeManual();
+      });
+
+      document.getElementById("open-manual").addEventListener("click", openManual);
+
+      document.getElementById("submit-manual").addEventListener("click", async () => {
+        const name          = document.getElementById("m-name").value.trim();
+        const email         = document.getElementById("m-email").value.trim();
+        const professor     = document.getElementById("m-professor").value;
+        const course        = document.getElementById("m-course").value;
+        const accommodation = document.getElementById("m-accommodation").value;
+        const errEl         = document.getElementById("manual-error");
+
+        // Basic validation
+        if (!name || !professor || !course) {
+          errEl.textContent = "Name, professor, and course are required.";
+          errEl.style.display = "block";
+          return;
+        }
+
+        const [courseCode, courseName] = course.includes(" - ")
+          ? course.split(" - ", 2)
+          : [course, course];
+
+        const newId = "QS-" + String(Math.floor(10000 + Math.random() * 90000));
+
+        const submission = {
+          id:           newId,
+          studentName:  name,
+          login_email:  email || null,
+          courseCode:   courseCode.trim(),
+          courseName:   courseName.trim(),
+          examName:     "",
+          facultyName:  professor,
+          notes:        accommodation,
+          status:       "PENDING",
+          room:         null,
+          staffName:    null,
+          checkInTime:  null,
+          checkOutTime: null,
+        };
+
+        try {
+          // POST directly to submissions via a fetch to your scan endpoint
+          // We create the record then immediately scan it to assign a room
+          const res = await fetch("/api/submissions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(submission)
+          });
+
+          if (!res.ok) throw new Error("Failed to create submission");
+
+          closeManual();
+          await refresh();
+        } catch (err) {
+          errEl.textContent = err.message;
+          errEl.style.display = "block";
+        }
+      });
+    </script>
   </body>
 </html>

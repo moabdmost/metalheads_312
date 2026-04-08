@@ -337,6 +337,24 @@ def scan_redirect(submission_id):
 
 # Submissions API
 
+@app.route("/api/submissions", methods=["POST"])
+def create_submission():
+    body = request.json or {}
+    data = load_data()
+
+    # Ensure ID is unique
+    if any(s["id"] == body.get("id") for s in data):
+        return jsonify({"error": "Duplicate ID"}), 409
+
+    body["room"] = auto_assign_room(body)
+    body["status"] = "VERIFIED"
+    body["checkInTime"] = datetime.now().isoformat(timespec="seconds")
+
+    data.append(body)
+    save_data(data)
+    return jsonify(body), 201
+
+
 @app.route("/api/submissions", methods=["GET"])
 def get_submissions():
     return jsonify(load_data())

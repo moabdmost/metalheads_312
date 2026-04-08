@@ -148,5 +148,20 @@
     "staffName": null,
     "checkInTime": "2026-04-08T10:28:26",
     "checkOutTime": null
+  },
+  {
+    "id": "QS-47654",
+    "studentName": "Frank Howden",
+    "login_email": "frhowden@davidson.edu",
+    "courseCode": "CSC312",
+    "courseName": "Software Design",
+    "examName": "",
+    "facultyName": "Dr. Lim",
+    "notes": "Reduced Distraction",
+    "status": "VERIFIED",
+    "room": "Watson 261",
+    "staffName": null,
+    "checkInTime": "2026-04-08T10:34:42",
+    "checkOutTime": null
   }
 ]
