@@ -9,11 +9,12 @@
   <link rel="stylesheet" href="/static/style_sheets/room_assigned.css">
 </head>
 <body>
-  <div class="card">
+  <div class="card" data-submission-id="{{ submission_id }}">
     <div class="logo">
       <div class="logo-mark">QC</div>
       <span class="logo-text">Davidson Quiz Center</span>
     </div>
+    <button class="btn-back" onclick="history.back()">← Back to QR Code</button>
     <!-- WAITING STATE — shown while QR hasn't been scanned yet -->
     <div id="waiting-view">
       <div class="waiting">
@@ -39,10 +40,6 @@
       </div>
 
       <div class="details">
-        <div class="detail-row">
-          <span class="detail-key">Exam</span>
-          <span class="detail-val" id="detail-exam">—</span>
-        </div>
         <div class="detail-row">
           <span class="detail-key">Course</span>
           <span class="detail-val" id="detail-course">—</span>

@@ -214,12 +214,6 @@ def selection_page():
 def dashboard_page():
     return render_template("dashboard.html")
 
-
-@app.route("/room-assigned/<submission_id>")
-def room_assigned_page(submission_id):
-    return render_template("room_assigned.html",
-        student_name = session.get("student_name", ""))
-
 @app.route("/qr")
 def qr_page():
     return render_template("qr_generate.html")
@@ -234,8 +228,9 @@ def analytics_page():
 
 @app.route("/status/<submission_id>")
 def status_page(submission_id):
-    """Student waits here after generating QR — polls for room assignment."""
-    return render_template("student_status.html", submission_id=submission_id)
+    return render_template("room_assigned.html",
+        submission_id = submission_id,
+        student_name  = session.get("student_name", ""))
 
 # Authorization 
 

@@ -1,5 +1,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+
+
     :root {
       --bg:      #0c0e14;
       --surface: #13161f;
@@ -20,18 +22,6 @@
       align-items: center;
       justify-content: center;
       padding: 32px 24px;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(var(--border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 40px 40px;
-      opacity: 0.4;
-      pointer-events: none;
     }
 
     /* Animated success glow */
@@ -308,3 +298,24 @@
 
     /* ── Hidden by default, shown by JS ── */
     #assigned-view { display: none; }
+
+
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.75);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: background 0.15s, color 0.15s;
+}
+  .btn-back:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+  }
