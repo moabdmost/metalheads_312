@@ -16,11 +16,13 @@
     <title>Professor Analytics</title>
 </head>
 <body>
+    <!-- Professor analytics dashboard: filter, review, and export submission data for faculty reporting. -->
     <div class="page-wrapper">
         <div class="analytics-header">
             <h1>Professor Analytics Dashboard</h1>
         </div>
 
+        <!-- Filter controls to narrow analytics results by course, status, and date range. -->
         <div class="filters">
             <div class="filter-group">
                 <label for="courseFilter">Course</label>
@@ -92,6 +94,7 @@
             <tbody id="analyticsRows"></tbody>
         </table>
 
+        <!-- Export panel: allows the current filtered analytics view to be downloaded for reporting. -->
         <div class="export-buttons">
             <button class="export-btn pdf" id="exportPDF">
                 📄 Export as PDF
@@ -102,6 +105,7 @@
         </div>
     </div>
 
+    <!-- Analytics script loads filtered data, renders the table, and enables PDF/CSV export. -->
     <script src="/static/scripts/professor_analytics.js"></script>
 </body>
 </html>

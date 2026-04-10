@@ -9,12 +9,14 @@
   <link rel="stylesheet" href="/static/style_sheets/qr_generate.css">
 </head>
 <body>
+  <!-- QR display page: renders the generated code and submission metadata for student check-in. -->
   <div class="card">
     <div class="logo">
       <div class="logo-mark">QC</div>
       <span class="logo-text">Davidson Quiz Center</span>
     </div>
 
+    <!-- Render the QR and submission details when a valid QR payload exists. -->
     {% if qr %}
       <h1>Your QR Code</h1>
       <p class="subtitle">Show this to intake staff when you arrive.</p>
@@ -53,6 +55,7 @@
       <a href="/status/{{ submission.id }}" class="btn-status">Check My Room Assignment →</a>
 
     {% else %}
+      <!-- If no QR is available, direct the student back to the selection flow. -->
       <h1>No QR Yet</h1>
       <p class="subtitle">Please complete the exam selection form first.</p>
       <a href="/selection" class="btn-status">← Back to Selection</a>
