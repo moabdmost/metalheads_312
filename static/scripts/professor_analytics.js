@@ -17,6 +17,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // ── Data loading ──────────────────────────────────────────────────────────────
 
+/**
+ * Loads all submission records from the server and refreshes the analytics UI.
+ * This includes populating the course filter, rendering the table, and updating summary counts.
+ */
 async function loadSubmissions() {
     try {
         const response = await fetch(`${API_BASE}/submissions`);
@@ -31,6 +35,9 @@ async function loadSubmissions() {
     }
 }
 
+/**
+ * Builds the course dropdown filter options from loaded submissions.
+ */
 function populateCourseFilter() {
     const courseFilter = document.getElementById('courseFilter');
     const courses = new Set();
@@ -52,6 +59,10 @@ function populateCourseFilter() {
 
 // ── Filtering ─────────────────────────────────────────────────────────────────
 
+/**
+ * Applies the current course, status, and date filters to the submissions.
+ * Updates the table and summary statistics after filtering.
+ */
 function applyFilters() {
     const courseFilter = document.getElementById('courseFilter').value;
     const statusFilter = document.getElementById('statusFilter').value;
@@ -80,6 +91,9 @@ function applyFilters() {
 
 // ── Rendering ─────────────────────────────────────────────────────────────────
 
+/**
+ * Renders the analytics table rows for the currently filtered submissions.
+ */
 function renderTable() {
     const tbody = document.getElementById('analyticsRows');
     tbody.innerHTML = '';
@@ -104,6 +118,9 @@ function renderTable() {
     });
 }
 
+/**
+ * Updates the summary statistics shown in the analytics dashboard.
+ */
 function updateStats() {
     const total      = filteredSubmissions.length;
     const completed  = filteredSubmissions.filter(s => s.status === 'COMPLETED').length;
@@ -119,11 +136,21 @@ function updateStats() {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+/**
+ * Formats an ISO timestamp for display in the analytics table.
+ * @param {string} t - The timestamp string to format.
+ * @returns {string} A more human-readable timestamp or a placeholder.
+ */
 function formatTime(t) {
     if (!t) return "—";
     return t.replace("T", " ");
 }
 
+/**
+ * Converts a submission status into a styled pill label.
+ * @param {string} status - The status value to render.
+ * @returns {string} HTML markup for a styled status pill.
+ */
 function pill(status) {
     const label = (status || 'UNKNOWN').replace(/_/g, ' ');
     return `<span class="pill" data-status="${status}">${label}</span>`;
@@ -135,6 +162,10 @@ function pill(status) {
 //   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 //   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
+/**
+ * Exports the currently filtered analytics data to a PDF document.
+ * This client-side function requires jsPDF and autotable to be loaded.
+ */
 function exportPDF() {
     if (typeof window.jspdf === 'undefined') {
         alert('PDF library not loaded. Make sure jsPDF script tags are in your HTML.');
@@ -220,6 +251,10 @@ function exportPDF() {
 
 // ── CSV Export (client-side, no server needed) ────────────────────────────────
 
+/**
+ * Exports the currently filtered analytics data to a CSV file.
+ * The CSV is generated client-side and downloaded without server interaction.
+ */
 function exportCSV() {
     const headers = ["ID", "Student Name", "Student ID", "Course Code", "Course Name",
                      "Check-In", "Check-Out", "Status", "Faculty", "Notes"];

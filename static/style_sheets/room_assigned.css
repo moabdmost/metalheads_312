@@ -25,6 +25,7 @@
     }
 
     /* Animated success glow */
+    /* Animated glow effect behind the assigned room panel. */
     body::after {
       content: '';
       position: fixed;
@@ -38,6 +39,7 @@
       animation: glow-pulse 3s ease-in-out infinite;
     }
 
+    /* Animation for the subtle pulsing glow behind the hero section. */
     @keyframes glow-pulse {
       0%, 100% { opacity: 0.6; }
       50%       { opacity: 1; }

@@ -12,7 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const POLL_INTERVAL = 3000;
   let poller;
 
-async function poll() {
+/**
+   * Polls the submission endpoint until a room has been assigned.
+   * This runs on a timer and switches to the assigned view once room data is available.
+   */
+  async function poll() {
     try {
       const res = await fetch(`/api/submissions/${submissionId}`);
       if (!res.ok) return;
@@ -25,6 +29,10 @@ async function poll() {
     }
   }
 
+  /**
+   * Displays the assigned room details and transitions the page from waiting to assigned state.
+   * @param {Object} sub - The submission object containing room and course assignment details.
+   */
   function showAssigned(sub) {
     clearInterval(poller);
     const roomFull   = sub.room || '—';

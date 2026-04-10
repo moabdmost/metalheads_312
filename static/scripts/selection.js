@@ -17,6 +17,10 @@
       ],
     };
 
+    /**
+     * Updates the course dropdown based on the selected professor.
+     * The available course list is defined by the COURSES map above.
+     */
     function updateCourses() {
       const prof   = document.getElementById('professor').value;
       const sel    = document.getElementById('course');

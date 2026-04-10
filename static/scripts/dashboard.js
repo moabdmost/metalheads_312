@@ -6,20 +6,40 @@ const POLL_INTERVAL = 5000;
 let pollTimer = null;
 
 
+/**
+ * Sets the page status message displayed above the dashboard table.
+ * @param {string} text - The text to show in the status area.
+ */
 function setMsg(text) { msgEl.textContent = text || ""; }
 
+/**
+ * Fetches all submissions from the backend API.
+ * @param {string} id - The ID of the submission to update.
+ * @param {Object} patchObj - An object containing the fields to update.    
+ * @returns res.json
+ */
 async function getAll() {
   const res = await fetch(`${API_BASE}/submissions`);
   if (!res.ok) throw new Error("Failed to load submissions");
   return res.json();
 }
 
+/**
+ * Retrieves the list of rooms from the backend API.
+ * @returns {Promise<Array>} The room list, or an empty array when unavailable.
+ */
 async function getRooms() {
   const res = await fetch(`${API_BASE}/rooms`);
   if (!res.ok) return [];
   return res.json();
 }
 
+/**
+ * Sends an update patch for a submission record.
+ * @param {string} id - The submission ID being updated.
+ * @param {Object} patchObj - The fields to patch on the submission.
+ * @returns {Promise<Object>} The updated submission response.
+ */
 async function patch(id, patchObj) {
   const res = await fetch(`${API_BASE}/submissions/${encodeURIComponent(id)}`, {
     method: "PATCH",
@@ -30,6 +50,12 @@ async function patch(id, patchObj) {
   return res.json();
 }
 
+/**
+ * Sends a PATCH request to update a room's status.
+ * @param {string} roomId - The ID of the room to update.
+ * @param {Object} patchObj - An object containing the fields to update.
+ * @returns res.json
+ */
 async function patchRoom(roomId, patchObj) {
   const res = await fetch(`${API_BASE}/rooms/${encodeURIComponent(roomId)}`, {
     method: "PATCH",
@@ -40,6 +66,14 @@ async function patchRoom(roomId, patchObj) {
   return res.json();
 }
 
+/**
+ * Formats a timestamp string for display, converting from 
+ * ISO format to a more readable form.
+ * @param {string} t - The timestamp string to format.
+ * @param {string} t - An ISO timestamp string (e.g., "2024-06-01T14:30:00").
+ * @param {string} t - A timestamp string in ISO format (YYYY-MM-DDTHH:MM:SS).
+ * @returns A formatted timestamp string, or "—" if input is falsy.
+ */
 function fmtTime(t) {
   if (!t) return "—";
   return t.replace("T", " ");
@@ -47,15 +81,32 @@ function fmtTime(t) {
 
 const sessionProgress = {};
 
+/**
+ * Gets the current progress status of a submission by its ID.
+ * @param {string} id - The ID of the submission to check progress for.
+ * @returns  The current progress status of the submission with the given ID, or "idle" if not found.
+ */
 function getProgress(id) {
   return sessionProgress[id] || "idle";
 }
 
+
+
+/**
+ * Creates a rendered status pill element for a submission row.
+ * @param {string} status - The submission status value to display.
+ * @returns {string} HTML markup for a styled status pill.
+ */
 function pill(status) {
   const label = status.replace(/_/g, ' ');
   return `<span class="pill" data-status="${status}">${label}</span>`;
 }
 
+/**
+ * Builds the action buttons for controlling submission progress.
+ * @param {Object} s - The submission record that determines button state.
+ * @returns {string} HTML for the start and complete action buttons.
+ */
 function buttonsForProgress(s) {
   const id     = s.id;
   const status = s.status;
@@ -69,6 +120,11 @@ function buttonsForProgress(s) {
   `;
 }
 
+/**
+ * Renders a check-in badge for submissions with a login email.
+ * @param {Object} s - The submission object to inspect for login state.
+ * @returns {string} HTML markup for the checked-in badge or an empty string.
+ */
 function loginBadge(s) {
   if (!s.login_email) return "";
   return `<span style="
@@ -85,14 +141,21 @@ function loginBadge(s) {
   ">✓ Checked In</span>`;
 }
 
+/**
+ * Returns a room assignment badge for table display.
+ * @param {string|null|undefined} room - The assigned room label.
+ * @returns {string} HTML markup for the room badge.
+ */
 function roomBadge(room) {
   if (!room) return `<span class="room-badge unassigned">No Room</span>`;
   return `<span class="room-badge assigned">${room}</span>`;
 }
 
 
-// Render the main table based on submissions and current filter
-
+/**
+ * Renders the dashboard table based on the current filter selection.
+ * @param {Array<Object>} submissions - The list of submission records to display.
+ */
 function render(submissions) {
   rowsEl.innerHTML = "";
   const filter = filterEl.value;
@@ -131,6 +194,10 @@ function render(submissions) {
 
 // Room panel rendering and interactions
 
+/**
+ * Loads room metadata and renders the room status panel.
+ * This function is invoked when the room panel is expanded and when room state changes.
+ */
 async function renderRoomPanel() {
   const panel = document.getElementById("room-panel");
   if (!panel) return;
@@ -207,6 +274,10 @@ document.getElementById("room-panel")?.addEventListener("click", async (e) => {
 
 
 // Refreshing data and polling for updates
+/**
+ * Refreshes dashboard data from the API and updates the rendered table.
+ * @param {boolean} [silent=false] - When true, suppresses the loading message.
+ */
 async function refresh(silent = false) {
   try {
     if (!silent) setMsg("Loading...");
@@ -219,12 +290,20 @@ async function refresh(silent = false) {
   }
 }
 
-// Start polling for updates every POLL_INTERVAL milliseconds, with ability to stop when performing actions
+/**
+ * Starts background polling to refresh dashboard data at a fixed interval.
+ */
+/**
+ * Starts background polling to refresh dashboard data at a fixed interval.
+ */
 function startPolling() {
   stopPolling();
   pollTimer = setInterval(() => refresh(true), POLL_INTERVAL);
 }
 
+/**
+ * Stops the active polling interval used to refresh the dashboard.
+ */
 function stopPolling() {
   if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
 }
