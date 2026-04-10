@@ -9,13 +9,14 @@
   <link rel="stylesheet" href="/static/style_sheets/room_assigned.css">
 </head>
 <body>
+  <!-- Room assignment page: polls the backend and swaps between waiting and assigned states. -->
   <div class="card" data-submission-id="{{ submission_id }}">
     <div class="logo">
       <div class="logo-mark">QC</div>
       <span class="logo-text">Davidson Quiz Center</span>
     </div>
     <button class="btn-back" onclick="history.back()">← Back to QR Code</button>
-    <!-- WAITING STATE — shown while QR hasn't been scanned yet -->
+    <!-- Waiting state shown while the student QR has not yet been processed by intake staff. -->
     <div id="waiting-view">
       <div class="waiting">
         <div class="spinner"></div>

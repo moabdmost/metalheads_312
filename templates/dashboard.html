@@ -7,6 +7,7 @@
     <title>Staff Dashboard</title>
   </head>
   <body>
+    <!-- Staff dashboard: displays submissions, status filters, and action controls for staff workflow. -->
     <div class="page-wrapper">
       <h1>Staff Dashboard</h1>
       <nav>
@@ -28,6 +29,7 @@
         <span id="msg" class="muted"></span>
       </div>
 
+      <!-- Manual entry modal: allows staff to add a new submission record for a student who needs a manual check-in. -->
       <div id="manual-modal" class="modal-overlay">
         <div class="modal">
           <button class="modal-close" onclick="closeManual()">✕</button>
@@ -69,6 +71,7 @@
           <button id="submit-manual">Submit Entry</button>
         </div>
       </div>
+      <!-- Main submissions table populated by dashboard.js from backend data and filtered by the selected status. -->
       <table>
         <thead>
           <tr>
@@ -199,5 +202,6 @@
         }
       });
     </script>
+    <!-- Inline dashboard script handles manual modal behavior and direct submission creation. -->
   </body>
 </html>
