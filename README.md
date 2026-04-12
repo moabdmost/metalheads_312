@@ -6,6 +6,40 @@
 - Brian Chung --> Developer
 - Mohamed Mostafa --> Developer
 
+
+---
+
+## Project Structure
+
+```
+project/
+│
+├── data/                        # JSON data files
+│   ├── users.json               # Stored user credentials (add new users here)
+│   ├── room-assignment.json     # Tracks room occupancy and room type (Accommodations / General)
+│   └── submissions.json         # Logs all student sign-in entries
+│
+├── static/
+│   ├── scripts/                 # JavaScript files (.js)
+│   └── style_sheets/            # CSS stylesheets (.css)
+│
+├── templates/                   # HTML page templates (.html)
+│   ├── dashboard.html
+│   ├── professor_analytics.html
+│   ├── qr_generate.html
+│   ├── room_assigned.html
+│   └── selection.html
+│   └── staff_rooms.html
+│   └── student.html
+│ 
+├── app.py                       # Main Flask application
+├── hash.py                      # Password hashing utility
+├── requirements.txt             # Python dependencies
+└── .gitignore                   # Git ignore rules
+```
+
+---
+
 ## Running the App
 
 This project runs on a local server using your laptop's IP address.
@@ -88,38 +122,6 @@ Lets you view which **room a student has been assigned to** after signing in.
 
 ### `staff_rooms.html` — Staff Room Management
 Allows staff to **view and toggle whether a room is staffed or not**, giving real-time visibility into room availability.
-
----
-
-## Project Structure
-
-```
-project/
-│
-├── data/                        # JSON data files
-│   ├── users.json               # Stored user credentials (add new users here)
-│   ├── room-assignment.json     # Tracks room occupancy and room type (Accommodations / General)
-│   └── submissions.json         # Logs all student sign-in entries
-│
-├── static/
-│   ├── scripts/                 # JavaScript files (.js)
-│   └── style_sheets/            # CSS stylesheets (.css)
-│
-├── templates/                   # HTML page templates (.html)
-│   ├── dashboard.html
-│   ├── professor_analytics.html
-│   ├── qr_generate.html
-│   ├── room_assigned.html
-│   └── selection.html
-│   └── staff_rooms.html
-│   └── student.html
-│ 
-├── app.py                       # Main Flask application
-├── hash.py                      # Password hashing utility
-├── requirements.txt             # Python dependencies
-└── .gitignore                   # Git ignore rules
-```
-
 ---
 
 ## Data Files
