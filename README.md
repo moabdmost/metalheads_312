@@ -30,10 +30,10 @@ pip3 install -r requirements.txt
 python3 app.py
 
 # To see the data 
-http://127.0.0.1:5000/api/submissions
+http://127.0.0.1:5001/api/submissions
 
 # To see speicifc data
-http://127.0.0.1:5000/api/submissions/QS-0002
+http://127.0.0.1:5001/api/submissions/QS-0002
 
 # To see a page
-http://127.0.0.1:5000/dashboard
+http://127.0.0.1:5001/dashboard

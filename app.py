@@ -263,8 +263,7 @@ Questions? Contact the Quiz Center.
 
 
 
-# Pages
-
+# Routes for rendering HTML pages
 @app.route("/")
 @app.route("/student")
 def student_page():
@@ -299,8 +298,7 @@ def status_page(submission_id):
         submission_id = submission_id,
         student_name  = session.get("student_name", ""))
 
-# Authorization 
-
+# API endpoints
 @app.route("/api/google-login", methods=["POST"])
 def google_login():
     """
@@ -331,7 +329,6 @@ def google_login():
     return jsonify({"name": name, "email": email})
 
 # QR code generation and scanning
-
 @app.route("/qr_generate", methods=["POST"])
 def qr_generate():
     professor     = request.form.get("facultyName", "")
@@ -403,7 +400,6 @@ def scan_redirect(submission_id):
     return redirect("/dashboard")
 
 # Submissions API
-
 @app.route("/api/submissions", methods=["POST"])
 def create_submission():
     body = request.json or {}
