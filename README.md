@@ -10,31 +10,32 @@
 
 This project runs on a local server using your laptop's IP address.
 
-## Setup
+## Step 1 — Install Dependencies
 
 Install dependencies with:
 
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
-Then run the app:
+### Step 2 — Find Your IP Address
 
-```bash
-python app.py
-```
-
-### Find Your IP Address
-
-Run the following command in your terminal:
+Before running the app, you need your local IP address. Run the following command in your terminal:
 
 ```bash
 ipconfig getifaddr en0
 ```
 
-### Access the App
+### Step 3 — Run the App
+Then run the app:
 
-Once you have your IP, open a browser and navigate to:
+```bash
+python3 app.py
+```
+
+### Step 4 — Access the App
+
+Once the server is running, open a browser and navigate to:
 
 ```
 http://<your-ip>:5001
