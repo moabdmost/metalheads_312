@@ -85,18 +85,6 @@ http://10.53.20.114:5001
 
 > The typical student flow goes: **Sign In** (`student.html`) → **Course Selection** (`selection.html`) → **QR Code** (`qr_generate.html`) → **Room Assignment** (`room_assigned.html`)
 
-### `student.html` — Student Sign-In Page
-The main sign-in page where students check in. Authentication is built in by default:
-
-- **Email:** `ridoctor@davidson.edu`
-- **Password:** `rianapass`
-- **ID:** `801420479`
-
-To add your own credentials:
-1. Add your user entry to `data/users.json`
-2. Hash your password using `hash.py`
-
-
 ---
 
 ### `dashboard.html` — Submissions Dashboard
@@ -117,7 +105,7 @@ Supports exporting data as:
 
 ---
 
-### `qr_generate.html` — Submissions Dashboard
+### `qr_generate.html` — QR Code Generation
 Once a student completes the selection page, a **unique QR code is generated** and associated with that student's session. The QR code:
 
 - Is **unique per student per session**
@@ -131,7 +119,7 @@ Lets you view which **room a student has been assigned to** after signing in.
 
 ---
 
-### `selection.html` — Submissions Dashboard
+### `selection.html` — Course & Accommodation Selection
 After logging in, students are brought to this page to provide details about their exam session:
 
 - Select their **course/class**
@@ -147,8 +135,17 @@ Allows staff to **view and toggle whether a room is staffed or not**, giving rea
 
 ---
 
-### `student.html` — Submissions Dashboard
-Displays **all student submissions** in one place. A quick overview of every check-in that has been recorded.
+### `student.html` — Student Sign-In Page
+The main sign-in page where students check in. Authentication is built in by default:
+
+- **Email:** `ridoctor@davidson.edu`
+- **Password:** `rianapass`
+- **ID:** `801420479`
+
+To add your own credentials:
+1. Add your user entry to `data/users.json`
+2. Hash your password using `hash.py`
+
 
 ---
 
