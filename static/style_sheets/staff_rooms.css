@@ -1,3 +1,4 @@
+    /* Staff room management styling for the room cards, toggle controls, and toast feedback. */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -308,6 +309,7 @@
       animation: spin 0.8s linear infinite;
       margin: 0 auto 12px;
     }
+    /* Simple rotating spinner used during data load and refresh operations. */
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ── Save feedback toast ── */

@@ -1,10 +1,17 @@
 // ── Helpers ───────────────────────────────────────────────────────────────────
+/**
+ * Displays an inline login error message to the student.
+ * @param {string} msg - The error text to show.
+ */
 function showError(msg) {
   const el = document.getElementById('login-error');
   el.textContent = msg;
   el.style.display = 'block';
 }
 
+/**
+ * Clears any visible login error message from the form.
+ */
 function clearError() {
   const el = document.getElementById('login-error');
   el.textContent = '';
@@ -12,6 +19,12 @@ function clearError() {
 }
 
 // ── Progressive signup reveal ─────────────────────────────────────────────────
+/**
+ * Reveals the registration fields and pre-fills values when an account is not found.
+ * @param {string} email - The email address to prepopulate.
+ * @param {string} studentId - The student ID to prepopulate.
+ * @param {string} password - The password to prepopulate.
+ */
 function showRegistrationFields(email, studentId, password) {
   if (email)     document.getElementById('su-email').value = email;
   if (studentId) document.getElementById('su-sid').value   = studentId;
@@ -41,6 +54,9 @@ document.getElementById('loginForm').onsubmit = async (e) => {
 };
 
 // ── Sign In ───────────────────────────────────────────────────────────────────
+/**
+ * Attempts to authenticate the student and either logs them in or prompts account creation.
+ */
 async function handleLogin() {
   const email     = document.getElementById('email').value.trim().toLowerCase();
   const studentId = document.getElementById('studentID').value.trim();
@@ -71,6 +87,10 @@ async function handleLogin() {
 }
 
 // ── Sign Up ───────────────────────────────────────────────────────────────────
+/**
+ * Submits a new student signup request to the backend.
+ * Performs client-side validation before sending the request.
+ */
 async function handleSignup() {
   const firstName = document.getElementById('su-fname').value.trim();
   const lastName  = document.getElementById('su-lname').value.trim();

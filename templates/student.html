@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/static/style_sheets/student.css"/>
 </head>
 <body>
+  <!-- Student login page: supports both Davidson Google sign-in and manual credentials. -->
   <div class="card">
     <div class="logo">
       <div class="logo-mark">QC</div>
@@ -20,6 +21,7 @@
       Sign in with your Davidson Google account, or enter your credentials below.
     </p>
 
+    <!-- Google Identity Services button rendered here when supported by the browser. -->
     <div id="google-btn-wrapper"></div>
     <div class="divider">or continue manually</div>
 
@@ -41,7 +43,7 @@
         <input type="password" id="pwd" placeholder="••••••••"/>
       </div>
 
-      <!-- Hidden until email not recognised -->
+      <!-- Hidden until a login attempt determines the student must register with additional details. -->
       <div id="reg-fields" style="display:none">
         <div class="reg-banner">
           👋 Looks like you're new — just a few more details to create your account.
@@ -119,7 +121,7 @@
     }
   </script>
 
-  <!-- Separate file handles manual login + progressive signup -->
+  <!-- Separate file handles manual login validation and the progressive signup flow. -->
   <script src="/static/scripts/student.js"></script>
 </body>
 </html>

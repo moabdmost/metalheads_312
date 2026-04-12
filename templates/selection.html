@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/static/style_sheets/selection.css">
 </head>
 <body>
+  <!-- Exam selection page: allows students to choose professor, course, and accommodations before QR generation. -->
   <div class="card">
     <div class="logo">
       <div class="logo-mark">QC</div>
@@ -31,6 +32,7 @@
       -->
       <input type="hidden" name="studentName"  value="{{ student_name }}"/>
       <input type="hidden" name="studentEmail" value="{{ student_email }}"/>
+      <!-- Hidden fields preserve authenticated student identity while submitting the exam selection form. -->
 
       <div class="field">
         <label>Professor</label>
@@ -49,6 +51,7 @@
       </div>
       <div class="field">
         <label>Accommodations</label>
+        <!-- Accommodation options help staff route students into appropriately supported rooms. -->
         <div class="accom-grid">
           <div class="accom-option">
             <input type="radio" id="acc-none" name="accommodation" value="None" checked/>

@@ -1,6 +1,10 @@
 let allRooms = [];
 
     // ── Load rooms from API ───────────────────────────────────────────────────
+    /**
+     * Loads the full room dataset from the API and refreshes the staff room dashboard.
+     * If the request fails, the UI is updated with an error state.
+     */
     async function loadRooms() {
       try {
         const res   = await fetch('/api/rooms');
@@ -19,6 +23,10 @@ let allRooms = [];
     }
 
     // ── Render into section grids ─────────────────────────────────────────────
+    /**
+     * Renders the room cards into their respective category grids.
+     * @param {Array<Object>} rooms - The list of room objects to display.
+     */
     function renderRooms(rooms) {
       const sections = { general: [], reduced: [], individual: [] };
 
@@ -54,6 +62,11 @@ let allRooms = [];
       });
     }
 
+    /**
+     * Returns the HTML markup for a single room card.
+     * @param {Object} r - The room data record used to populate the card.
+     * @returns {string} Rendered room card HTML.
+     */
     function roomCardHTML(r) {
       const staffed    = r.staffed;
       const occupants  = r.occupants || 0;
@@ -101,6 +114,11 @@ let allRooms = [];
     }
 
     // ── Handle staffed toggle ─────────────────────────────────────────────────
+    /**
+     * Handles the staffed-state toggle for a room.
+     * It updates the UI optimistically, persists the change to the server, then reconciles the local state.
+     * @param {HTMLInputElement} checkbox - The toggle input element that was changed.
+     */
     async function handleToggle(checkbox) {
       const roomId  = checkbox.dataset.roomId;
       const staffed = checkbox.checked;
@@ -140,6 +158,10 @@ let allRooms = [];
     }
 
     // ── Stats ─────────────────────────────────────────────────────────────────
+    /**
+     * Updates the numeric summary counts for staffed, unstaffed, and occupied rooms.
+     * @param {Array<Object>} rooms - The collection of rooms to calculate the stats from.
+     */
     function updateStats(rooms) {
       const staffed   = rooms.filter(r => r.staffed).length;
       const unstaffed = rooms.length - staffed;
@@ -151,6 +173,11 @@ let allRooms = [];
 
     // ── Toast ─────────────────────────────────────────────────────────────────
     let toastTimer;
+    /**
+     * Shows a transient toast message at the bottom of the page.
+     * @param {string} msg - The text message to display.
+     * @param {boolean} [isError=false] - Whether the message is an error variant.
+     */
     function showToast(msg, isError = false) {
       const el = document.getElementById('toast');
       el.textContent = msg;
