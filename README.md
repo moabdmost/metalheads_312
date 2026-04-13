@@ -44,7 +44,29 @@ project/
 
 This project runs on a local server using your laptop's IP address.
 
-## Step 1 — Install Dependencies
+### Step 1 — Create & Activate the Virtual Environment
+
+This project uses a Python virtual environment to manage dependencies cleanly.
+
+**Create the virtual environment** (only needs to be done once):
+
+```bash
+python3 -m venv venv
+```
+
+**Activate it** each time before running the app:
+
+```bash
+# macOS / Linux
+source venv/bin/activate
+
+# Windows
+venv\Scripts\activate
+```
+
+You should see `(venv)` appear at the start of your terminal prompt, confirming it's active.
+
+## Step 2 — Install Dependencies
 
 Install dependencies with:
 
@@ -52,7 +74,7 @@ Install dependencies with:
 pip3 install -r requirements.txt
 ```
 
-### Step 2 — Find Your IP Address
+### Step 3 — Find Your IP Address
 
 Before running the app, you need your local IP address. Run the following command in your terminal:
 
@@ -60,14 +82,14 @@ Before running the app, you need your local IP address. Run the following comman
 ipconfig getifaddr en0
 ```
 
-### Step 3 — Run the App
+### Step 4 — Run the App
 Then run the app:
 
 ```bash
 python3 app.py
 ```
 
-### Step 4 — Access the App
+### Step 5 — Access the App
 
 Once the server is running, open a browser and navigate to:
 

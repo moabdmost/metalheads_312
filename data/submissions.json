@@ -1,7 +1,7 @@
 [
   {
     "id": "QS-15616",
-    "studentName": "Riana Doctor",
+    "studentName": "Frank Howden",
     "login_email": "ridoctor@davidson.edu",
     "courseCode": "CSC324",
     "courseName": "Theory of Computation",
@@ -13,5 +13,20 @@
     "staffName": null,
     "checkInTime": "2026-04-12T18:36:07",
     "checkOutTime": "2026-04-12T18:36:08"
+  },
+  {
+    "id": "QS-76004",
+    "studentName": "Riana Doctor",
+    "login_email": "ridoctor@davidson.edu",
+    "courseCode": "CSC371",
+    "courseName": "Machine Learning",
+    "examName": "",
+    "facultyName": "Dr. Ramanujan",
+    "notes": "Reduced Distraction",
+    "status": "COMPLETED",
+    "room": "Watson 310",
+    "staffName": null,
+    "checkInTime": "2026-04-13T09:53:26",
+    "checkOutTime": "2026-04-13T09:53:34"
   }
 ]
