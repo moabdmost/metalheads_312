@@ -54,7 +54,7 @@ This project uses a Python virtual environment to manage dependencies cleanly.
 python3 -m venv venv
 ```
 
-**Activate it** each time before running the app:
+**Activate it** before running the app:
 
 ```bash
 # macOS / Linux
