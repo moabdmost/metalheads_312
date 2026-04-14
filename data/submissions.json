@@ -1,47 +1,32 @@
 [
   {
-    "id": "QS-56074",
-    "studentName": "Mohamed Mostafa",
-    "login_email": "mmostafa@davidson.edu",
+    "id": "QS-57953",
+    "studentName": "Riana Doctor",
+    "login_email": "ridoctor@davidson.edu",
     "courseCode": "CSC312",
     "courseName": "Software Design",
     "examName": "",
     "facultyName": "Dr. Lim",
     "notes": "None",
-    "status": "COMPLETED",
-    "room": "Watson 140",
+    "status": "PENDING",
+    "room": null,
     "staffName": null,
-    "checkInTime": "2026-04-08T19:46:27",
-    "checkOutTime": "2026-04-08T19:46:31"
+    "checkInTime": null,
+    "checkOutTime": null
   },
   {
-    "id": "QS-56073",
-    "studentName": "Brian Chung",
-    "login_email": "brchung@davidson.edu",
-    "courseCode": "CSC312",
-    "courseName": "Software Design",
+    "id": "QS-29114",
+    "studentName": "Riana Doctor",
+    "login_email": "ridoctor@davidson.edu",
+    "courseCode": "CSC371",
+    "courseName": "Machine Learning",
     "examName": "",
-    "facultyName": "Dr. Lim",
+    "facultyName": "Dr. Ramanujan",
     "notes": "None",
-    "status": "COMPLETED",
+    "status": "IN_PROGRESS",
     "room": "Watson 147",
     "staffName": null,
-    "checkInTime": "2026-04-08T19:46:27",
-    "checkOutTime": "2026-04-08T19:46:31"
-  },
-  {
-    "id": "QS-56072",
-    "studentName": "Frank Howden",
-    "login_email": "frank.howden@davidson.edu",
-    "courseCode": "CSC312",
-    "courseName": "Software Design",
-    "examName": "",
-    "facultyName": "Dr. Lim",
-    "notes": "None",
-    "status": "COMPLETED",
-    "room": "Watson 109",
-    "staffName": null,
-    "checkInTime": "2026-04-08T19:46:27",
-    "checkOutTime": "2026-04-08T19:46:31"
+    "checkInTime": "2026-04-13T22:27:02",
+    "checkOutTime": null
   }
 ]
