@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="/static/student.css">
+        <title>Reset Password — Quiz Center</title>
+    </head>
+    <body>
+        <div class="triangle-container">
+
+            <!-- Step 1: Enter email -->
+            <div id="step1">
+                <h1 id="Title">Reset Password</h1>
+                <p id="Instructions">Enter your @davidson.edu email and we'll send you a 6-digit verification code.</p>
+                <form class="triangle-form" id="requestForm">
+                    <div class="bottom-row">
+                        <div class="field">
+                            <label for="email">Davidson Email:</label>
+                            <input type="email" id="email" name="email" placeholder="@davidson.edu" required>
+                        </div>
+                    </div>
+                    <input id="submit-btn" type="submit" value="Send Code">
+                </form>
+                <p style="margin-top:16px; text-align:center; font-size:0.85rem;">
+                    <a href="/student" style="color:var(--accent); text-decoration:none;">&larr; Back to Login</a>
+                </p>
+            </div>
+
+            <!-- Step 2: Enter code + new password (hidden until code sent) -->
+            <div id="step2" style="display:none;">
+                <h1 id="Title">Enter Your Code</h1>
+                <p id="Instructions">A 6-digit code was sent to your Davidson email. It expires in 15 minutes.</p>
+                <form class="triangle-form" id="verifyForm">
+                    <div class="bottom-row">
+                        <div class="field">
+                            <label for="code">Verification Code:</label>
+                            <input type="text" id="code" name="code" placeholder="6-digit code"
+                                maxlength="6" inputmode="numeric" autocomplete="one-time-code" required>
+                        </div>
+                    </div>
+                    <div class="bottom-row">
+                        <div class="field">
+                            <label for="newPwd">New Password:</label>
+                            <input type="password" id="newPwd" name="newPwd" placeholder="New password" required>
+                        </div>
+                    </div>
+                    <div class="bottom-row">
+                        <div class="field">
+                            <label for="confirmPwd">Confirm Password:</label>
+                            <input type="password" id="confirmPwd" name="confirmPwd" placeholder="Confirm new password" required>
+                        </div>
+                    </div>
+                    <input id="submit-btn" type="submit" value="Reset Password">
+                </form>
+                <p style="margin-top:16px; text-align:center; font-size:0.85rem;">
+                    <a href="/forgot" style="color:var(--accent); text-decoration:none;">Resend code</a>
+                    &nbsp;·&nbsp;
+                    <a href="/student" style="color:var(--accent); text-decoration:none;">&larr; Back to Login</a>
+                </p>
+            </div>
+
+        </div>
+
+        <script src="/static/forgot.js"></script>
+    </body>
+</html>

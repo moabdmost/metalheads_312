@@ -4,7 +4,11 @@
     "password": "pbkdf2:sha256:1000000$0cnKx9sIzhvGtCkA$756dd97e369fe7d1cd0227f1d8a8b04febe027d92a01c97fe18c69859638feed",
     "first_name": "Riana",
     "last_name": "Doctor"
+  },
+  "brchung@davidson.edu": {
+    "student_id": "801320789",
+    "password": "scrypt:32768:8:1$e6FyaOpCEzCa8f6u$24d7510155c9f5ea7a01d3d829a8c1af3979aefee779adf3359be08b6b7faa9883257784d87818354d473a9afeaede882026a46438c3df2a9d67ae7c736fe90b",
+    "first_name": "Brian",
+    "last_name": "Chung"
   }
-
-  
 }

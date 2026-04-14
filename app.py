@@ -1,144 +1,110 @@
-import json, os, smtplib, random, qrcode, re
-from flask import Flask, jsonify, request, render_template, redirect, url_for, session
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
-from datetime import datetime
+from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from google.oauth2 import id_token
-from google.auth.transport import requests as grequests
+import json
+import os
+import smtplib
+import random
+import string
 from werkzeug.security import generate_password_hash, check_password_hash
-from pathlib import Path
-
-
-# Configuration
-SMTP_HOST = "smtp.gmail.com"
-SMTP_PORT = 587
-SMTP_USER = "noreplyDCQC@gmail.com"
-# Password entered once at startup — never saved to any file.
-# Use a Gmail App Password (not your real password).
-# Get one at: myaccount.google.com/apppasswords
-SMTP_PASSWORD = "adct ymgm qikk kgsr"  # Gmail App Password for noreplyDCQC@gmail.com
-# 
-
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET", "dev-secret-change-in-prod")
 CORS(app)
 
-DATA_FILE  = os.path.join("data", "submissions.json")
-ROOMS_FILE = os.path.join("data", "room-assignment.json")
-USERS_FILE = os.path.join("data", "users.json")
+DATA_FILE      = os.path.join("data", "submissions.json")
+SUBS_COPY_FILE = os.path.join("data", "subs_copy.json")
+USERS_FILE     = os.path.join("data", "users.json")
 
-# Data loading/saving utilities
+# ── Gmail config ──────────────────────────────────────────────────────────────
+SMTP_HOST     = "smtp.gmail.com"
+SMTP_PORT     = 587
+SMTP_USER     = "noreplyDCQC@gmail.com"
+SMTP_PASSWORD = "atau irjm wtqb rrwf"   # ← REPLACE: Google Account → Security → App Passwords
+# ─────────────────────────────────────────────────────────────────────────────
 
-def load_users():
-    if not os.path.exists(USERS_FILE):
-        return {}
-    with open(USERS_FILE) as f:
-        return json.load(f)
+# ── In-memory token store ─────────────────────────────────────────────────────
+# Stores { email: { code, expires_at } }
+# Lives only while Flask is running — clears on restart which is fine.
+reset_tokens = {}
+# ─────────────────────────────────────────────────────────────────────────────
 
-def save_users(users):
-    with open(USERS_FILE, "w") as f:
-        json.dump(users, f, indent=2)
+
+# ── Data helpers ──────────────────────────────────────────────────────────────
 
 def load_data():
-    if not os.path.exists(DATA_FILE):
-        return []
-    with open(DATA_FILE) as f:
+    with open(DATA_FILE, "r") as f:
         return json.load(f)
 
 def save_data(data):
     with open(DATA_FILE, "w") as f:
         json.dump(data, f, indent=2)
 
-def load_rooms():
-    if not os.path.exists(ROOMS_FILE):
-        return []
-    with open(ROOMS_FILE) as f:
+def load_subs_copy():
+    # Fall back to submissions.json if subs_copy.json doesn't exist
+    path = SUBS_COPY_FILE if os.path.exists(SUBS_COPY_FILE) else DATA_FILE
+    with open(path, "r") as f:
         return json.load(f)
 
-def save_rooms(rooms):
-    with open(ROOMS_FILE, "w") as f:
-        json.dump(rooms, f, indent=2)
+def save_subs_copy(data):
+    # Save to whichever file is being used
+    path = SUBS_COPY_FILE if os.path.exists(SUBS_COPY_FILE) else DATA_FILE
+    with open(path, "w") as f:
+        json.dump(data, f, indent=2)
+
+def load_users():
+    if not os.path.exists(USERS_FILE):
+        return {}
+    with open(USERS_FILE, "r") as f:
+        return json.load(f)
+
+def save_users(users):
+    with open(USERS_FILE, "w") as f:
+        json.dump(users, f, indent=2)
 
 def fmt_time(iso_str):
     if not iso_str:
         return "N/A"
     try:
-        dt   = datetime.fromisoformat(iso_str)
+        dt = datetime.fromisoformat(iso_str)
         hour = dt.strftime("%I").lstrip("0") or "12"
         return dt.strftime(f"%b %d, %Y at {hour}:%M %p")
     except Exception:
         return iso_str
 
-def auto_assign_room(submission):
-    rooms = load_rooms()
-    data  = load_data()
 
-    print(f"[room] accommodation='{submission.get('notes')}' rooms loaded: {len(rooms)}")  # ADD THIS
+# ── Email helper ──────────────────────────────────────────────────────────────
 
-    # Count current occupants per room
-    occupant_count = {}
-    for s in data:
-        if s["status"] in ("VERIFIED", "IN_PROGRESS", "LEAVING") and s.get("room"):
-            occupant_count[s["room"]] = occupant_count.get(s["room"], 0) + 1
+def send_email(to_address, subject, plain, html):
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"]    = f"Davidson Quiz Center <{SMTP_USER}>"
+    msg["To"]      = to_address
+    msg.attach(MIMEText(plain, "plain"))
+    msg.attach(MIMEText(html,  "html"))
+    try:
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+            server.ehlo()
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASSWORD)
+            server.sendmail(SMTP_USER, to_address, msg.as_string())
+        print(f"[email] Sent to {to_address}")
+        return True
+    except Exception as e:
+        print(f"[email] Gmail SMTP error: {e}")
+        return False
 
-    accommodation = (submission.get("notes") or "").lower()
 
-    # Determine target room type based on accommodation
-    if "aadr" in accommodation:
-        target_type = "aadr"
-    elif "reduced" in accommodation:
-        target_type = "reduced"
-    else:
-        # None or Extended Time → general
-        target_type = "general"
+# ── Completion receipt email ──────────────────────────────────────────────────
 
-    print(f"[room] target_type='{target_type}'") 
-    # Get staffed rooms of the right type
-    candidates = [
-        r for r in rooms
-        if r.get("staffed", False)
-        and r.get("type", "").lower() == target_type
-    ]
-    print(f"[room] candidates={[r['id'] for r in candidates]}")
-
-    if not candidates:
-        return None
-
-    # Pick randomly among the least-occupied rooms
-    min_occupants = min(occupant_count.get(r["id"], 0) for r in candidates)
-    least_busy    = [r for r in candidates if occupant_count.get(r["id"], 0) == min_occupants]
-    return random.choice(least_busy)["id"]
-# Email sending utility
-
-# ── Email via local Outlook app (pywin32) ─────────────────────────────────────
-# This uses your already signed-in Outlook desktop app directly.
-# No SMTP config, no passwords, no credentials needed.
-
-# ── Email via local Outlook app (pywin32) ─────────────────────────────────────
-# This uses your already signed-in Outlook desktop app directly.
-# No SMTP config, no passwords, no credentials needed.
-
-def load_subs_copy():
-    with open(DATA_FILE, "r") as f:
-        return json.load(f)
-    
 def send_completion_email(submission):
-    """
-    Look up the student's email from submission.json by submission id
-    (uses the exact email from JSON so brchung2 etc. are handled correctly),
-    then send a receipt through the local Outlook app.
-    """
-    # Get the email — prefer login_email (stamped at login), fall back to subs_copy
     student_email = submission.get("login_email")
-
     if not student_email:
         subs_copy = load_subs_copy()
         record = next((s for s in subs_copy if s["id"] == submission["id"]), None)
         if record:
             student_email = record.get("email")
-
     if not student_email:
         print(f"[email] No email found for {submission['id']} — skipping.")
         return
@@ -146,7 +112,6 @@ def send_completion_email(submission):
     start = fmt_time(submission.get("checkInTime"))
     end   = fmt_time(submission.get("checkOutTime"))
     name  = submission["studentName"]
-
     subject = f"Quiz Center Receipt — {submission['examName']} ({submission['courseCode']})"
 
     plain = f"""\
@@ -156,6 +121,7 @@ Your exam session at the Davidson Quiz Center has been marked COMPLETED.
 
 EXAM RECEIPT
 ------------
+Exam      : {submission['examName']}
 Course    : {submission['courseCode']} - {submission['courseName']}
 Professor : {submission['facultyName']}
 
@@ -208,11 +174,7 @@ Questions? Contact the Quiz Center.
     <p>Davidson College Quiz Center</p>
   </div>
   <div class="body">
-    <p class="greeting">
-      Hi <strong style="color:#e8eaf6">{name}</strong>,
-      your exam session has been marked <strong style="color:#3ecf8e">COMPLETED</strong>.
-      Here is your official receipt.
-    </p>
+    <p class="greeting">Hi <strong style="color:#e8eaf6">{name}</strong>, your exam session has been marked <strong style="color:#3ecf8e">COMPLETED</strong>. Here is your official receipt.</p>
     <div class="card">
       <div class="card-title">Exam Details</div>
       <div class="detail-row"><span class="label">Exam</span><span class="value">{submission['examName']}</span></div>
@@ -229,194 +191,222 @@ Questions? Contact the Quiz Center.
     </div>
     <div class="card">
       <div class="card-title">Reference</div>
-      <div class="detail-row">
-        <span class="label">Submission ID</span>
-        <span class="value" style="font-family:monospace;color:#7c5cfc">{submission['id']}</span>
-      </div>
+      <div class="detail-row"><span class="label">Submission ID</span><span class="value" style="font-family:monospace;color:#7c5cfc">{submission['id']}</span></div>
     </div>
   </div>
-  <div class="footer">
-    Questions? Contact the Quiz Center.<br/>
-    Davidson College — Quiz Center Exam Management System
-  </div>
+  <div class="footer">Questions? Contact the Quiz Center.<br/>Davidson College — Quiz Center Exam Management System</div>
 </div>
 </body>
 </html>
 """
-
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = subject
-    msg["From"]    = f"Davidson Quiz Center <{SMTP_USER}>"
-    msg["To"]      = student_email
-    msg.attach(MIMEText(plain, "plain"))
-    msg.attach(MIMEText(html,  "html"))
-
-    try:
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-            server.ehlo()
-            server.starttls()
-            server.login(SMTP_USER, SMTP_PASSWORD)
-            server.sendmail(SMTP_USER, student_email, msg.as_string())
-        print(f"[email] Receipt sent to {student_email} for {submission['id']}")
-    except Exception as e:
-        print(f"[email] Gmail SMTP error: {e}")
+    send_email(student_email, subject, plain, html)
 
 
+# ── API: Signup ───────────────────────────────────────────────────────────────
 
-# Routes for rendering HTML pages
-@app.route("/")
-@app.route("/student")
-def student_page():
-    return render_template("student.html")
+@app.route("/api/signup", methods=["POST"])
+def signup():
+    body       = request.json or {}
+    email      = (body.get("email") or "").strip().lower()
+    student_id = (body.get("studentId") or "").strip()
+    password   = body.get("password", "")
+    first_name = (body.get("firstName") or "").strip()
+    last_name  = (body.get("lastName") or "").strip()
 
-@app.route("/selection")
-def selection_page():
-    # Pass student info from session so the template can prefill hidden fields
-    return render_template("selection.html",
-        student_name  = session.get("student_name", ""),
-        student_email = session.get("student_email", ""))
+    if not all([email, student_id, password, first_name, last_name]):
+        return jsonify({"error": "All fields required"}), 400
 
-@app.route("/dashboard")
-def dashboard_page():
-    return render_template("dashboard.html")
+    users = load_users()
+    if email in users:
+        return jsonify({"error": "Account already exists"}), 409
 
-@app.route("/qr")
-def qr_page():
-    return render_template("qr_generate.html")
+    users[email] = {
+        "student_id": student_id,
+        "password":   generate_password_hash(password),
+        "first_name": first_name,
+        "last_name":  last_name
+    }
+    save_users(users)
+    print(f"[signup] New account created for {email}")
+    return jsonify({"message": "Account created successfully"})
 
-@app.route("/staff-rooms")
-def staff_rooms_page():
-    return render_template("staff_rooms.html")
 
-@app.route("/analytics")
-def analytics_page():
-    return render_template("professor_analytics.html")
+# ── API: Student login ────────────────────────────────────────────────────────
 
-@app.route("/status/<submission_id>")
-def status_page(submission_id):
-    return render_template("room_assigned.html",
-        submission_id = submission_id,
-        student_name  = session.get("student_name", ""))
+@app.route("/api/login", methods=["POST"])
+def login():
+    body       = request.json or {}
+    email      = (body.get("email") or "").strip().lower()
+    student_id = (body.get("studentId") or "").strip()
+    password   = body.get("password", "")
 
-# API endpoints
-@app.route("/api/google-login", methods=["POST"])
-def google_login():
+    users = load_users()
+
+    # Look up by email directly, or search by student_id
+    if email:
+        record = users.get(email)
+    elif student_id:
+        email  = next((k for k, v in users.items() if v.get("student_id") == student_id), None)
+        record = users.get(email) if email else None
+    else:
+        return jsonify({"error": "Email or Student ID required"}), 400
+
+    if not record:
+        return jsonify({"error": "Invalid credentials"}), 404
+
+    if not check_password_hash(record.get("password", ""), password):
+        return jsonify({"error": "Invalid credentials"}), 401
+
+    # Stamp login_email onto matching submission so receipt knows where to send
+    data = load_data()
+    for submission in data:
+        if submission.get("login_email") == email:
+            break
+        if submission.get("studentName", "").lower() == f"{record['first_name']} {record['last_name']}".lower():
+            submission["login_email"] = email
+            save_data(data)
+            print(f"[login] {email} logged in")
+            break
+
+    return jsonify({
+        "email":      email,
+        "first_name": record["first_name"],
+        "last_name":  record["last_name"],
+        "student_id": record["student_id"]
+    })
+
+
+# ── API: Forgot password — Step 1: request code ───────────────────────────────
+
+@app.route("/api/forgot-password/request", methods=["POST"])
+def forgot_request():
+    print("[DEBUG] forgot_request route hit!")   # ← add this
     """
-    Receive the Google ID token from the frontend.
-    Verify it, extract name + email, store in Flask session,
-    return JSON so the frontend can redirect to /selection.
+    Student enters their Davidson email.
+    If it exists in subs_copy.json, send a 6-digit code to that address.
+    Expires in 15 minutes.
     """
     body  = request.json or {}
-    token = body.get("token", "")
+    email = (body.get("email") or "").strip().lower()
 
-    try:
-        info = id_token.verify_oauth2_token(token, grequests.Request(), GOOGLE_CLIENT_ID)
-    except ValueError as e:
-        print(f"[google-login] Token verification failed: {e}")
-        return jsonify({"error": "Invalid Google token"}), 401
-
-    email = info.get("email", "")
-    name  = info.get("name", "")
+    if not email:
+        return jsonify({"error": "Email required"}), 400
 
     if not email.endswith("@davidson.edu"):
-        return jsonify({"error": "Please use your @davidson.edu Google account"}), 403
+        return jsonify({"error": "Must be a @davidson.edu email"}), 400
 
-    # Store in server-side session so /qr_generate can read it
-    session["student_name"]  = name
-    session["student_email"] = email
+    users  = load_users()
+    record = users.get(email)
 
-    print(f"[google-login] {name} <{email}> authenticated")
-    return jsonify({"name": name, "email": email})
+    # Always return success even if email not found — prevents email enumeration
+    if record:
+        code       = "".join(random.choices(string.digits, k=6))
+        expires_at = datetime.now() + timedelta(minutes=15)
+        reset_tokens[email] = {"code": code, "expires_at": expires_at}
 
-# QR code generation and scanning
-@app.route("/qr_generate", methods=["POST"])
-def qr_generate():
-    professor     = request.form.get("facultyName", "")
-    course        = request.form.get("course", "")
-    exam_name     = request.form.get("examName", "")
-    accommodation = request.form.get("accommodation", "")
+        name = f"{record.get('first_name', '')} {record.get('last_name', '')}".strip() or "Student"
+        subject = "Quiz Center — Password Reset Code"
+        plain = f"""\
+Hi {name},
 
-    # Student identity: prefer form hidden fields, fall back to session
-    student_name  = request.form.get("studentName")  or session.get("student_name", "")
-    student_email = request.form.get("studentEmail") or session.get("student_email", "")
+Your password reset code is:
 
-    course_code, course_name = "", course
-    if course and " - " in course:
-        parts       = course.split(" - ", 1)
-        course_code = parts[0].strip()
-        course_name = parts[1].strip()
+    {code}
 
-    new_id = "QS-" + str(random.randint(10000, 99999))
+This code expires in 15 minutes. If you did not request a password reset, ignore this email.
 
-    new_submission = {
-        "id":           new_id,
-        "studentName":  student_name,
-        "login_email":  student_email,
-        "courseCode":   course_code,
-        "courseName":   course_name,
-        "examName":     exam_name,
-        "facultyName":  professor,
-        "notes":        accommodation,
-        "status":       "PENDING",
-        "room":         None,
-        "staffName":    None,
-        "checkInTime":  None,
-        "checkOutTime": None,
-    }
+— Davidson College Quiz Center
+"""
+        html = f"""\
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
+  body {{ margin:0; padding:0; background:#0f1117; font-family:'DM Sans',Arial,sans-serif; color:#e8eaf6; }}
+  .wrapper {{ max-width:480px; margin:40px auto; background:#1a1d27; border:1px solid #2e3350; border-radius:16px; overflow:hidden; }}
+  .header {{ background:linear-gradient(135deg,#4f8ef7 0%,#7c5cfc 100%); padding:32px 40px 24px; }}
+  .header h1 {{ font-family:'Outfit',Arial,sans-serif; font-size:1.4rem; font-weight:800; color:#fff; margin:0; }}
+  .header p {{ margin:6px 0 0; color:rgba(255,255,255,0.8); font-size:0.875rem; }}
+  .body {{ padding:32px 40px; }}
+  .intro {{ color:#b0b8d8; font-size:0.95rem; margin-bottom:28px; line-height:1.5; }}
+  .code-box {{ background:#22263a; border:1px solid #2e3350; border-radius:12px; text-align:center; padding:28px 20px; margin-bottom:24px; }}
+  .code {{ font-family:'Outfit',Arial,monospace; font-size:2.8rem; font-weight:800; letter-spacing:0.2em; color:#4f8ef7; }}
+  .expiry {{ font-size:0.8rem; color:#7b82a8; margin-top:10px; }}
+  .warning {{ font-size:0.8rem; color:#7b82a8; line-height:1.5; }}
+  .footer {{ text-align:center; padding:16px 40px 28px; font-size:0.78rem; color:#4a5070; border-top:1px solid #2e3350; }}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <h1>Password Reset</h1>
+    <p>Davidson College Quiz Center</p>
+  </div>
+  <div class="body">
+    <p class="intro">Hi <strong style="color:#e8eaf6">{name}</strong>, here is your password reset code:</p>
+    <div class="code-box">
+      <div class="code">{code}</div>
+      <div class="expiry">Expires in 15 minutes</div>
+    </div>
+    <p class="warning">If you did not request a password reset, you can safely ignore this email. Your password will not change.</p>
+  </div>
+  <div class="footer">Davidson College — Quiz Center Exam Management System</div>
+</div>
+</body>
+</html>
+"""
+        send_email(email, subject, plain, html)
+        print(f"[reset] Code sent to {email}, expires at {expires_at.strftime('%H:%M:%S')}")
 
-    data = load_data()
-    data.append(new_submission)
-    save_data(data)
+    return jsonify({"message": "If that email exists, a code has been sent."})
 
-    # Generate QR image
-    scan_url = url_for("scan_redirect", submission_id=new_id, _external=True)
-    img = qrcode.make(scan_url)
-    filename = f"qr_{new_id}.png"
-    filepath = os.path.join("static", filename)
-    img.save(filepath)
 
-    qr_url = url_for("static", filename=filename)
-    # Redirect student to the status-waiting page
-    return render_template("qr_generate.html",
-        qr         = qr_url,
-        submission = new_submission,
-        status_url = url_for("status_page", submission_id=new_id))
+# ── API: Forgot password — Step 2: verify code and reset ─────────────────────
 
-@app.route("/scan/<submission_id>")
-def scan_redirect(submission_id):
+@app.route("/api/forgot-password/verify", methods=["POST"])
+def forgot_verify():
     """
-    Called when staff scan the QR code.
-    Marks VERIFIED, assigns room, redirects to dashboard.
+    Student submits the 6-digit code + new password.
+    Code must match and not be expired.
     """
-    data = load_data()
-    for s in data:
-        if s["id"] == submission_id:
-            if s["status"] == "PENDING":   # only process once
-                s["status"]      = "VERIFIED"
-                s["checkInTime"] = datetime.now().isoformat(timespec="seconds")
-                s["room"]        = auto_assign_room(s)
-            break
-    save_data(data)
-    return redirect("/dashboard")
+    body     = request.json or {}
+    email    = (body.get("email") or "").strip().lower()
+    code     = (body.get("code") or "").strip()
+    new_pwd  = body.get("newPassword", "").strip()
 
-# Submissions API
-@app.route("/api/submissions", methods=["POST"])
-def create_submission():
-    body = request.json or {}
-    data = load_data()
+    if not email or not code or not new_pwd:
+        return jsonify({"error": "Missing fields"}), 400
 
-    # Ensure ID is unique
-    if any(s["id"] == body.get("id") for s in data):
-        return jsonify({"error": "Duplicate ID"}), 409
+    token = reset_tokens.get(email)
 
-    body["room"] = auto_assign_room(body)
-    body["status"] = "VERIFIED"
-    body["checkInTime"] = datetime.now().isoformat(timespec="seconds")
+    if not token:
+        return jsonify({"error": "No reset code found. Please request a new one."}), 400
 
-    data.append(body)
-    save_data(data)
-    return jsonify(body), 201
+    if datetime.now() > token["expires_at"]:
+        del reset_tokens[email]
+        return jsonify({"error": "Code has expired. Please request a new one."}), 400
 
+    if token["code"] != code:
+        return jsonify({"error": "Incorrect code. Please try again."}), 400
+
+    # Code is valid — update the password in users.json
+    users = load_users()
+    if email not in users:
+        return jsonify({"error": "Account not found."}), 404
+
+    users[email]["password"] = generate_password_hash(new_pwd)
+    save_users(users)
+
+    # Clean up the used token
+    del reset_tokens[email]
+
+    print(f"[reset] Password updated for {email}")
+    return jsonify({"message": "Password reset successfully."})
+
+
+# ── API: Submissions ──────────────────────────────────────────────────────────
 
 @app.route("/api/submissions", methods=["GET"])
 def get_submissions():
@@ -424,142 +414,87 @@ def get_submissions():
 
 @app.route("/api/submissions/<id>", methods=["GET"])
 def get_submission(id):
-    sub = next((s for s in load_data() if s["id"] == id), None)
-    if not sub:
+    data = load_data()
+    submission = next((s for s in data if s["id"] == id), None)
+    if not submission:
         return jsonify({"error": "Not found"}), 404
-    return jsonify(sub)
+    return jsonify(submission)
 
 @app.route("/api/submissions/<id>", methods=["PATCH"])
 def update_submission(id):
     data = load_data()
-    sub  = next((s for s in data if s["id"] == id), None)
-    if not sub:
+    submission = next((s for s in data if s["id"] == id), None)
+    if not submission:
         return jsonify({"error": "Not found"}), 404
 
-    updates = request.json or {}
-    allowed = ["status", "checkInTime", "checkOutTime", "notes",
-               "room", "studentName", "courseCode", "courseName", "facultyName"]
-    for key in allowed:
+    updates = request.json
+    for key in ["status", "checkOutTime", "notes"]:
         if key in updates:
-            sub[key] = updates[key]
+            submission[key] = updates[key]
 
     save_data(data)
 
-    if sub.get("status") == "COMPLETED":
-        send_completion_email(sub)
+    if submission.get("status") == "COMPLETED":
+        send_completion_email(submission)
+        submission["login_email"] = None
+        save_data(data)
 
-    return jsonify(sub)
-
-# Rooms API
-
-@app.route("/api/rooms", methods=["GET"])
-def get_rooms():
-    rooms = load_rooms()
-    data  = load_data()
-
-    occupant_count = {}
-    for s in data:
-        if s["status"] in ("VERIFIED", "IN_PROGRESS", "LEAVING") and s.get("room"):
-            occupant_count[s["room"]] = occupant_count.get(s["room"], 0) + 1
-
-    for r in rooms:
-        r["occupants"] = occupant_count.get(r["id"], 0)
-        r["available"] = r["occupants"] < r.get("capacity", 1)
-        if "staffed" not in r:
-            r["staffed"] = False
-
-    return jsonify(rooms)
-
-@app.route("/api/rooms/<room_id>", methods=["PATCH"])
-def update_room(room_id):
-    rooms = load_rooms()
-    room  = next((r for r in rooms if r["id"] == room_id), None)
-    if not room:
-        return jsonify({"error": "Room not found"}), 404
-
-    updates = request.json or {}
-    if "staffed" in updates:
-        room["staffed"] = bool(updates["staffed"])
-
-    save_rooms(rooms)
-    return jsonify(room)
+    return jsonify(submission)
 
 
-@app.route("/api/signup", methods=["POST"])
-def signup():
-    data       = request.get_json()
-    email      = (data.get("email") or "").strip().lower()
-    student_id = (data.get("studentId") or "").strip()
-    password   = data.get("password") or ""
-    first_name = (data.get("firstName") or "").strip().capitalize()
-    last_name  = (data.get("lastName") or "").strip().capitalize()
+# ── Test email route (remove before production) ───────────────────────────────
 
-    if not email.endswith("@davidson.edu"):
-        return jsonify({"error": "Must use a @davidson.edu email."}), 400
-    if not re.fullmatch(r'\d{9}', student_id):
-        return jsonify({"error": "Student ID must be exactly 9 digits."}), 400
-    if len(password) < 6:
-        return jsonify({"error": "Password must be at least 6 characters."}), 400
-    if not first_name or not last_name:
-        return jsonify({"error": "First and last name are required."}), 400
-
-    users = load_users()
-    if email in users:
-        return jsonify({"error": "An account with that email already exists."}), 409
-
-    users[email] = {
-        "student_id": student_id,
-        "password":   generate_password_hash(password),
-        "first_name": first_name,
-        "last_name":  last_name,
-    }
-    save_users(users)
-
-    session["student_email"] = email
-    session["student_name"]  = f"{first_name} {last_name}"
-    return jsonify({"first_name": first_name}), 201
-
-
-@app.route("/api/login", methods=["POST"])
-def login():
-    data       = request.get_json()
-    email      = (data.get("email") or "").strip().lower()
-    student_id = (data.get("studentId") or "").strip()
-    password   = data.get("password") or ""
-
-    users = load_users()
-
-    # Find by email or student ID
-    matched_email = None
-    if email:
-        matched_email = email if email in users else None
-    elif student_id:
-        matched_email = next(
-            (k for k, v in users.items() if v.get("student_id") == student_id), None
-        )
-
-    if matched_email is None:
-        return jsonify({"error": "No account found."}), 404
-
-    user = users[matched_email]
-    if not check_password_hash(user["password"], password):
-        return jsonify({"error": "Incorrect password."}), 401
-
-    session["student_email"] = matched_email
-    session["student_name"]  = f"{user['first_name']} {user['last_name']}"
-    return jsonify({"first_name": user["first_name"]}), 200
-
-# Debug endpoint to test email sending without going through the whole flow
-
-@app.route("/api/test-email/<id>")
+@app.route("/api/test-email/<id>", methods=["GET"])
 def test_email(id):
-    sub = next((s for s in load_data() if s["id"] == id), None)
-    if not sub:
+    data = load_data()
+    submission = next((s for s in data if s["id"] == id), None)
+    if not submission:
         return jsonify({"error": "Not found"}), 404
-    send_completion_email(sub)
-    return jsonify({"message": f"Email attempted for {id}"})
+    send_completion_email(submission)
+    return jsonify({"message": f"Email attempted for {id} — check terminal"})
+
+
+# ── Page routes ───────────────────────────────────────────────────────────────
+
+@app.route("/")
+@app.route("/student")
+def student_page():
+    return render_template("student.html")
+
+@app.route("/forgot")
+def forgot_page():
+    return render_template("forgot.html")
+
+@app.route("/selection")
+def selection_page():
+    return render_template("selection.html")
+
+@app.route("/qr")
+def qr_page():
+    return render_template("qr_generate.html")
+
+@app.route("/room_assigned")
+def room_assigned_page():
+    return render_template("room_assigned.html")
+
+@app.route("/dashboard")
+def dashboard_page():
+    return render_template("dashboard.html")
+
+@app.route("/staff_rooms")
+def staff_rooms_page():
+    return render_template("staff_rooms.html")
+
+@app.route("/scan")
+def scan_page():
+    return render_template("scan.html")
+
+@app.route("/analytics")
+def analytics_page():
+    return render_template("professor_analytics.html")
+
 
 if __name__ == "__main__":
-    os.makedirs("data", exist_ok=True)
-    os.makedirs("static", exist_ok=True)
-    app.run(debug=True, host="0.0.0.0", port=5001)
+    # host="0.0.0.0" makes the server reachable from other devices on the same
+    # Wi-Fi network (phones, other laptops).  Access via http://<your-ip>:5001
+    app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False)
