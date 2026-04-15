@@ -114,9 +114,11 @@ function buttonsForProgress(s) {
   const canStart    = status === "VERIFIED";
   const canComplete = status === "IN_PROGRESS";
 
+
   return `
     <button data-action="start"    data-id="${id}" ${!canStart    ? "disabled" : ""}>Start</button>
     <button data-action="complete" data-id="${id}" ${!canComplete ? "disabled" : ""}>Complete</button>
+    <button data-action="edit" data-id="${id}">Edit</button>
   `;
 }
 
@@ -318,6 +320,7 @@ rowsEl.addEventListener("click", async (e) => {
   const id     = btn.dataset.id;
   const action = btn.dataset.action;
 
+
   stopPolling();
   try {
     setMsg(`Updating ${id}...`);
@@ -333,6 +336,11 @@ rowsEl.addEventListener("click", async (e) => {
         .toLocaleString('sv-SE', { timeZone: 'America/New_York' })
         .replace(' ', 'T');
       await patch(id, { status: "COMPLETED", checkOutTime: now });
+    } else if (action === "edit") {
+      const allData = await getAll();
+      const submission = allData.find(s => s.id === id);
+      if (submission) openEdit(id, submission);
+      return;
     }
 
     await refresh();
@@ -345,5 +353,46 @@ rowsEl.addEventListener("click", async (e) => {
 
 document.getElementById("refresh").addEventListener("click", () => refresh());
 filterEl.addEventListener("change", () => refresh());
+
+let editingId = null;
+
+function openEdit(id, submission) {
+  editingId = id;
+  document.getElementById("e-course-code").value = submission.courseCode || "";
+  document.getElementById("e-course-name").value = submission.courseName || "";
+  document.getElementById("e-professor").value = submission.facultyName || "";
+  document.getElementById("e-room").value = submission.room || "";
+  document.getElementById("edit-error").textContent = "";
+  document.getElementById("edit-modal").style.display = "flex";
+}
+
+function closeEdit() {
+  document.getElementById("edit-modal").style.display = "none";
+  editingId = null;
+  document.getElementById("edit-error").textContent = "";
+}
+
+document.getElementById("submit-edit")?.addEventListener("click", async () => {
+  try {
+    const courseCode = document.getElementById("e-course-code").value.trim();
+    const courseName = document.getElementById("e-course-name").value.trim();
+    const facultyName = document.getElementById("e-professor").value.trim();
+    const room = document.getElementById("e-room").value.trim();
+
+    if (!editingId) return;
+
+    setMsg(`Updating ${editingId}...`);
+    await patch(editingId, { courseCode, courseName, facultyName, room });
+    await refresh();
+    closeEdit();
+  } catch (err) {
+    document.getElementById("edit-error").textContent = `Error: ${err.message}`;
+  }
+});
+
+const editModal = document.getElementById("edit-modal");
+editModal?.addEventListener("click", (e) => {
+  if (e.target === editModal) closeEdit();
+});
 
 refresh().then(startPolling);

@@ -18,15 +18,15 @@
     "id": "QS-29114",
     "studentName": "Riana Doctor",
     "login_email": "ridoctor@davidson.edu",
-    "courseCode": "CSC371",
-    "courseName": "Machine Learning",
+    "courseCode": "CSC372",
+    "courseName": "Analysis of Algorithms",
     "examName": "",
-    "facultyName": "Dr. Ramanujan",
+    "facultyName": "Dr. Nemitz",
     "notes": "None",
-    "status": "IN_PROGRESS",
+    "status": "COMPLETED",
     "room": "Watson 147",
     "staffName": null,
     "checkInTime": "2026-04-13T22:27:02",
-    "checkOutTime": null
+    "checkOutTime": "2026-04-14T22:35:12"
   }
 ]

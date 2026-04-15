@@ -173,6 +173,28 @@ button {
   font-size: 0.825rem;
 }
 
+/* ── Edit Entry ── */
+/*
+#edit_entry {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 20px;
+}
+
+#edit_entry:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(124, 92, 252, 0.08);
+  transform: translateY(-1px);
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: 0.825rem;
+}
+*/
+
 /* ── Table ── */
 table {
   width: 100%;
