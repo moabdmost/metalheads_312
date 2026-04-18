@@ -36,12 +36,22 @@
 
       <div class="field">
         <label>Professor</label>
+        <input type="text" id="professor_input" name="facultyName" onkeyup="updateCourses()" 
+        placeholder="Type in Professors Name" required>
+          <ul id="professor-list" class="suggestions">
+            <li onclick="submitSelection(this)"><a>R.Ramanujan</a></li>
+            <li onclick="submitSelection(this)"><a>T.Lim</a></li>
+            <li onclick="submitSelection(this)"><a>A.Duhon</a></li>
+          </ul>
+        <!--
+        Keeping the original search
         <select id="professor" name="facultyName" onchange="updateCourses()" required>
           <option value="">Select professor…</option>
-          <option value="Dr. Ramanujan">Dr. Ramanujan</option>
-          <option value="Dr. Lim">Dr. Lim</option>
-          <option value="Dr. Duhon">Dr. Duhon</option>
+          <option value="R.Ramanujan">R.Ramanujan</option>
+          <option value="T.Lim">T.Lim</option>
+          <option value="A.Duhon">A.Duhon</option>
         </select>
+      -->
       </div>
       <div class="field">
         <label>Course</label>
