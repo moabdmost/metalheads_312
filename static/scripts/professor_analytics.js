@@ -111,6 +111,7 @@ function renderTable() {
             <td><b>${sub.courseCode || '—'}</b> — ${sub.courseName || '—'}<br><span class="muted">${sub.examName || '—'}</span></td>
             <td>${formatTime(sub.checkInTime)}</td>
             <td>${formatTime(sub.checkOutTime)}</td>
+            <td>${calculateTotalTime(sub.checkInTime, sub.checkOutTime)}</td>
             <td>${pill(sub.status)}</td>
             <td>${sub.facultyName || '—'}</td>
         `;
@@ -145,6 +146,29 @@ function formatTime(t) {
     if (!t) return "—";
     return t.replace("T", " ");
 }
+
+/**
+ * Calculates the total time spent based on check-in and check-out timestamps.
+ * @param {string} checkIn - The check-in timestamp.
+ * @param {string} checkOut - The check-out timestamp.
+ * @return {string} The total time in "HH:mm:ss" format or a placeholder if not calculable.
+ */
+function calculateTotalTime(checkIn, checkOut) {
+    const clockIn= new Date(checkIn);
+    const clockOut= new Date(checkOut);
+    if (isNaN(clockIn) || isNaN(clockOut)) return "—";
+    const diffMs = clockOut - clockIn;
+    if (diffMs < 0) return "—";
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+    const string= hours.toString().padStart(2,0) + ":" + minutes.toString().padStart(2,0) + ":" + seconds.toString().padStart(2,0)+ "";
+    return string;
+
+
+}   
+
 
 /**
  * Converts a submission status into a styled pill label.
@@ -200,15 +224,15 @@ function exportPDF() {
     // Table
     doc.autoTable({
         startY: 96,
-        head: [["ID", "Student", "Student ID", "Course", "Check-In", "Check-Out", "Status", "Faculty"]],
+        head: [["ID", "Student", "Student ID", "Course", "Check-In", "Check-Out", "Total Time", "Status", "Faculty"]],
         body: filteredSubmissions.map(s => [
             s.id || "—",
             s.studentName || "—",
             s.studentId || "—",
             `${s.courseCode || ""} ${s.courseName || ""}`.trim() || "—",
-            s.examName || "—",
             formatTime(s.checkInTime),
             formatTime(s.checkOutTime),
+            calculateTotalTime(s.checkInTime, s.checkOutTime),
             (s.status || "—").replace(/_/g, " "),
             s.facultyName || "—"
         ]),
@@ -257,7 +281,7 @@ function exportPDF() {
  */
 function exportCSV() {
     const headers = ["ID", "Student Name", "Student ID", "Course Code", "Course Name",
-                     "Check-In", "Check-Out", "Status", "Faculty", "Notes"];
+                     "Check-In", "Check-Out", "Total Time", "Status", "Faculty", "Notes"];
 
     const rows = filteredSubmissions.map(s => [
         s.id            || "",
@@ -267,6 +291,7 @@ function exportCSV() {
         s.courseName    || "",
         formatTime(s.checkInTime),
         formatTime(s.checkOutTime),
+        calculateTotalTime(s.checkInTime, s.checkOutTime),
         s.status        || "",
         s.facultyName   || "",
     ]);
