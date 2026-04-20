@@ -9,45 +9,51 @@
   <link rel="stylesheet" href="/static/style_sheets/student.css"/>
 </head>
 <body>
-  <!-- Student login page: supports both Davidson Google sign-in and manual credentials. -->
   <div class="card">
     <div class="logo">
       <div class="logo-mark">QC</div>
       <span class="logo-text">Davidson Quiz Center</span>
     </div>
 
-    <h1>Student Login</h1>
-    <p class="subtitle" id="card-subtitle">
-      Sign in with your Davidson Google account, or enter your credentials below.
-    </p>
+    <!-- Tab switcher -->
+    <div class="tab-bar">
+      <button class="tab active" id="tab-login" type="button" onclick="switchTab('login')">Sign In</button>
+      <button class="tab" id="tab-signup" type="button" onclick="switchTab('signup')">Sign Up</button>
+    </div>
 
-    <!-- Google Identity Services button rendered here when supported by the browser. -->
-    <div id="google-btn-wrapper"></div>
-    <div class="divider">or continue manually</div>
+    <!-- ── LOGIN PANEL ── -->
+    <div id="panel-login">
+      <p class="subtitle">Sign in with your Davidson Google account, or enter your credentials below.</p>
 
-    <form id="loginForm" data-mode="login" novalidate>
+      <div id="google-btn-wrapper"></div>
+      <div class="divider">or continue manually</div>
 
-      <!-- Always visible -->
-      <div class="row-fields">
+      <form id="loginForm" novalidate>
         <div class="field">
           <label for="email">Davidson Email</label>
           <input type="email" id="email" placeholder="you@davidson.edu"/>
         </div>
         <div class="field">
-          <label for="studentID">Student ID</label>
-          <input type="text" id="studentID" placeholder="9-digit ID"/>
+          <label for="pwd">Password</label>
+          <input type="password" id="pwd" placeholder="••••••••"/>
         </div>
-      </div>
-      <div class="field">
-        <label for="pwd">Password</label>
-        <input type="password" id="pwd" placeholder="••••••••"/>
-      </div>
 
-      <!-- Hidden until a login attempt determines the student must register with additional details. -->
-      <div id="reg-fields" style="display:none">
-        <div class="reg-banner">
-          👋 Looks like you're new — just a few more details to create your account.
+        <div class="forgot-link-wrap">
+          <button type="button" class="forgot-link" onclick="openForgotModal()">Forgot password?</button>
         </div>
+
+        <button class="btn-primary" type="submit">Sign In</button>
+        <div class="error-msg" id="login-error"></div>
+      </form>
+
+      <p class="note">Only @davidson.edu accounts are accepted.</p>
+    </div>
+
+    <!-- ── SIGN UP PANEL ── -->
+    <div id="panel-signup" style="display:none">
+      <p class="subtitle">Create your Quiz Center account with your Davidson email.</p>
+
+      <form id="signupForm" novalidate>
         <div class="row-fields">
           <div class="field">
             <label for="su-fname">First Name</label>
@@ -58,41 +64,52 @@
             <input type="text" id="su-lname" placeholder="Smith"/>
           </div>
         </div>
-        <div class="row-fields">
-          <div class="field">
-            <label for="su-email">Confirm Email</label>
-            <input type="email" id="su-email" placeholder="you@davidson.edu"/>
-          </div>
-          <div class="field">
-            <label for="su-sid">Confirm Student ID</label>
-            <input type="text" id="su-sid" placeholder="9-digit ID"/>
-          </div>
+        <div class="field">
+          <label for="su-email">Davidson Email</label>
+          <input type="email" id="su-email" placeholder="you@davidson.edu"/>
+        </div>
+        <div class="field">
+          <label for="su-pwd">Password</label>
+          <input type="password" id="su-pwd" placeholder="At least 6 characters"/>
         </div>
         <div class="field">
           <label for="su-pwd2">Confirm Password</label>
           <input type="password" id="su-pwd2" placeholder="••••••••"/>
         </div>
+
+        <button class="btn-primary" type="submit">Create Account</button>
+        <div class="error-msg" id="signup-error"></div>
+      </form>
+
+      <p class="note">Only @davidson.edu accounts are accepted.</p>
+    </div>
+  </div>
+
+  <!-- ── FORGOT PASSWORD MODAL ── -->
+  <div id="forgot-modal" class="modal-overlay" style="display:none" onclick="closeForgotModal(event)">
+    <div class="modal-card">
+      <button class="modal-close" type="button" onclick="closeForgotModal()">&#x2715;</button>
+      <h2 class="modal-title">Reset Password</h2>
+      <p class="modal-desc">Enter your Davidson email and we'll send you a link to reset your password.</p>
+      <div class="field">
+        <label for="forgot-email">Davidson Email</label>
+        <input type="email" id="forgot-email" placeholder="you@davidson.edu"/>
       </div>
-
-      <button class="btn-primary" type="submit">Sign In</button>
-      <div class="error-msg" id="login-error"></div>
-    </form>
-
-    <p class="note">Only @davidson.edu accounts are accepted.</p>
+      <button class="btn-primary" type="button" onclick="handleForgotPassword()">Send Reset Email</button>
+      <div class="error-msg" id="forgot-error"></div>
+      <div class="success-msg" id="forgot-success"></div>
+    </div>
   </div>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script>
-    // ── Google Identity Services ──────────────────────────────────────────────
     window.addEventListener('load', () => {
       if (typeof google === 'undefined') return;
-
       google.accounts.id.initialize({
         client_id: '318874378262-do4uihbnlojtv39fm05ctcncfjkgvb4v.apps.googleusercontent.com',
-        callback:  handleGoogleCredential,
+        callback: handleGoogleCredential,
         auto_select: false,
       });
-
       google.accounts.id.renderButton(
         document.getElementById('google-btn-wrapper'),
         { theme: 'filled_black', size: 'large', width: 352, text: 'signin_with', shape: 'rectangular' }
@@ -107,21 +124,13 @@
           body:    JSON.stringify({ token: response.credential }),
         });
         const data = await res.json();
-        if (!res.ok) { showLoginError(data.error || 'Google sign-in failed.'); return; }
+        if (!res.ok) { showError('login-error', data.error || 'Google sign-in failed.'); return; }
         window.location.href = '/selection';
       } catch {
-        showLoginError('Unable to reach server. Please try again.');
+        showError('login-error', 'Unable to reach server. Please try again.');
       }
     }
-
-    function showLoginError(msg) {
-      const el = document.getElementById('login-error');
-      el.textContent = msg;
-      el.style.display = 'block';
-    }
   </script>
-
-  <!-- Separate file handles manual login validation and the progressive signup flow. -->
   <script src="/static/scripts/student.js"></script>
 </body>
 </html>
