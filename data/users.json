@@ -1,6 +1,6 @@
 {
   "ridoctor@davidson.edu": {
-    "password": "pbkdf2:sha256:1000000$wd1lP3cyJUGNRpHj$f58aaa7df3f6fd6665321c43102f559fc898394b16f37cdd2cda5030c818c3d8",
+    "password": "pbkdf2:sha256:1000000$skpSUs3s8fuVUgke$2259edbf2d147e4c962581676ef6466f917276e4d42337e77982190a06d38635",
     "first_name": "Riana",
     "last_name": "Doctor",
     "reset_token": null

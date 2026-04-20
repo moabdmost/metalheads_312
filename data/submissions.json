@@ -13,5 +13,35 @@
     "staffName": null,
     "checkInTime": "2026-04-19T21:28:30",
     "checkOutTime": "2026-04-19T21:28:47"
+  },
+  {
+    "id": "QS-92983",
+    "studentName": "Riana Doctor",
+    "login_email": "ridoctor@davidson.edu",
+    "courseCode": "CSC312",
+    "courseName": "Software Design",
+    "examName": "",
+    "facultyName": "Dr. Lim",
+    "notes": "None",
+    "status": "COMPLETED",
+    "room": "Watson 140",
+    "staffName": null,
+    "checkInTime": "2026-04-19T21:31:06",
+    "checkOutTime": "2026-04-19T21:31:08"
+  },
+  {
+    "id": "QS-38026",
+    "studentName": "Riana Doctor",
+    "login_email": "ridoctor@davidson.edu",
+    "courseCode": "CSC312",
+    "courseName": "Software Design",
+    "examName": "",
+    "facultyName": "Dr. Lim",
+    "notes": "Reduced Distraction",
+    "status": "COMPLETED",
+    "room": "Watson 261",
+    "staffName": null,
+    "checkInTime": "2026-04-19T21:34:59",
+    "checkOutTime": "2026-04-19T21:34:59"
   }
 ]
