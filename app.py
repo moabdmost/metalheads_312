@@ -484,71 +484,197 @@ def update_room(room_id):
     save_rooms(rooms)
     return jsonify(room)
 
-
+# ── /api/signup
 @app.route("/api/signup", methods=["POST"])
 def signup():
     data       = request.get_json()
     email      = (data.get("email") or "").strip().lower()
-    student_id = (data.get("studentId") or "").strip()
     password   = data.get("password") or ""
     first_name = (data.get("firstName") or "").strip().capitalize()
     last_name  = (data.get("lastName") or "").strip().capitalize()
-
+ 
     if not email.endswith("@davidson.edu"):
         return jsonify({"error": "Must use a @davidson.edu email."}), 400
-    if not re.fullmatch(r'\d{9}', student_id):
-        return jsonify({"error": "Student ID must be exactly 9 digits."}), 400
     if len(password) < 6:
         return jsonify({"error": "Password must be at least 6 characters."}), 400
     if not first_name or not last_name:
         return jsonify({"error": "First and last name are required."}), 400
-
+ 
     users = load_users()
     if email in users:
         return jsonify({"error": "An account with that email already exists."}), 409
-
+ 
     users[email] = {
-        "student_id": student_id,
         "password":   generate_password_hash(password),
         "first_name": first_name,
         "last_name":  last_name,
     }
     save_users(users)
-
+ 
     session["student_email"] = email
     session["student_name"]  = f"{first_name} {last_name}"
     return jsonify({"first_name": first_name}), 201
 
-
+# ── /api/login
 @app.route("/api/login", methods=["POST"])
 def login():
-    data       = request.get_json()
-    email      = (data.get("email") or "").strip().lower()
-    student_id = (data.get("studentId") or "").strip()
-    password   = data.get("password") or ""
-
+    data     = request.get_json()
+    email    = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+ 
     users = load_users()
-
-    # Find by email or student ID
-    matched_email = None
-    if email:
-        matched_email = email if email in users else None
-    elif student_id:
-        matched_email = next(
-            (k for k, v in users.items() if v.get("student_id") == student_id), None
-        )
-
-    if matched_email is None:
+ 
+    if not email or email not in users:
         return jsonify({"error": "No account found."}), 404
-
-    user = users[matched_email]
+ 
+    user = users[email]
     if not check_password_hash(user["password"], password):
         return jsonify({"error": "Incorrect password."}), 401
-
-    session["student_email"] = matched_email
+ 
+    session["student_email"] = email
     session["student_name"]  = f"{user['first_name']} {user['last_name']}"
     return jsonify({"first_name": user["first_name"]}), 200
 
+
+# ── /api/forgot-password
+import secrets as _secrets
+ 
+@app.route("/api/forgot-password", methods=["POST"])
+def forgot_password():
+    data  = request.get_json()
+    email = (data.get("email") or "").strip().lower()
+ 
+    if not email.endswith("@davidson.edu"):
+        return jsonify({"error": "Must use a @davidson.edu email."}), 400
+ 
+    users = load_users()
+ 
+    # Always return success so we don't reveal whether an account exists.
+    if email not in users:
+        return jsonify({"message": "If an account exists, a reset email has been sent."}), 200
+ 
+    # Generate a short-lived token and store it on the user record.
+    token = _secrets.token_urlsafe(32)
+    users[email]["reset_token"] = token
+    save_users(users)
+ 
+    reset_url = f"https://your-domain.com/reset-password?token={token}&email={email}"
+    # ↑ Replace with your real domain, or use url_for with _external=True if you have SERVER_NAME set.
+ 
+    name = users[email].get("first_name", "Student")
+ 
+    subject = "Davidson Quiz Center — Password Reset"
+ 
+    plain = f"""\
+Hi {name},
+ 
+We received a request to reset the password for your Quiz Center account.
+ 
+Click the link below to choose a new password (link expires in 1 hour):
+ 
+{reset_url}
+ 
+If you didn't request this, you can safely ignore this email.
+ 
+— Davidson College Quiz Center
+"""
+ 
+    html = f"""\
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>
+  body {{ margin:0; padding:0; background:#0f1117; font-family:'DM Sans',Arial,sans-serif; color:#e8eaf6; }}
+  .wrapper {{ max-width:520px; margin:40px auto; background:#1a1d27; border:1px solid #2e3350; border-radius:16px; overflow:hidden; }}
+  .header {{ background:linear-gradient(135deg,#4f8ef7 0%,#7c5cfc 100%); padding:32px 40px 24px; }}
+  .header h1 {{ font-size:1.5rem; font-weight:800; color:#fff; margin:0 0 4px; }}
+  .header p {{ margin:0; color:rgba(255,255,255,0.75); font-size:0.875rem; }}
+  .body {{ padding:32px 40px; }}
+  .greeting {{ font-size:0.95rem; color:#b0b8d8; margin-bottom:24px; line-height:1.6; }}
+  .btn {{ display:inline-block; padding:14px 32px; background:linear-gradient(135deg,#4f8ef7,#7c5cfc); color:#fff; text-decoration:none; border-radius:10px; font-weight:600; font-size:0.95rem; }}
+  .btn-wrap {{ text-align:center; margin:24px 0; }}
+  .note {{ font-size:0.8rem; color:#4a5070; line-height:1.6; margin-top:20px; }}
+  .footer {{ text-align:center; padding:16px 40px 28px; font-size:0.78rem; color:#4a5070; border-top:1px solid #2e3350; }}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <h1>Reset Your Password</h1>
+    <p>Davidson College Quiz Center</p>
+  </div>
+  <div class="body">
+    <p class="greeting">Hi <strong style="color:#e8eaf6">{name}</strong>,<br/>
+    We received a request to reset the password on your Quiz Center account. Click the button below to set a new one.</p>
+    <div class="btn-wrap">
+      <a href="{reset_url}" class="btn">Reset My Password</a>
+    </div>
+    <p class="note">
+      If the button doesn't work, copy and paste this link into your browser:<br/>
+      <span style="color:#7c5cfc;word-break:break-all">{reset_url}</span>
+    </p>
+    <p class="note">If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
+  </div>
+  <div class="footer">Davidson College — Quiz Center Exam Management System</div>
+</div>
+</body>
+</html>
+"""
+ 
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"]    = f"Davidson Quiz Center <{SMTP_USER}>"
+    msg["To"]      = email
+    msg.attach(MIMEText(plain, "plain"))
+    msg.attach(MIMEText(html,  "html"))
+ 
+    try:
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+            server.ehlo()
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASSWORD)
+            server.sendmail(SMTP_USER, email, msg.as_string())
+        print(f"[forgot-password] Reset email sent to {email}")
+    except Exception as e:
+        print(f"[forgot-password] SMTP error: {e}")
+        # Still return success — don't expose internal errors to the client.
+ 
+    return jsonify({"message": "If an account exists, a reset email has been sent."}), 200
+
+
+#reset-password endpoint
+
+@app.route("/reset-password", methods=["GET"])
+def reset_password_page():
+    token = request.args.get("token", "")
+    email = request.args.get("email", "")
+    return render_template("reset_password.html", token=token, email=email)
+ 
+ 
+@app.route("/api/reset-password", methods=["POST"])
+def do_reset_password():
+    data     = request.get_json()
+    email    = (data.get("email") or "").strip().lower()
+    token    = (data.get("token") or "").strip()
+    password = data.get("password") or ""
+ 
+    if len(password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters."}), 400
+ 
+    users = load_users()
+    user  = users.get(email)
+ 
+    if not user or user.get("reset_token") != token:
+        return jsonify({"error": "Invalid or expired reset link."}), 400
+ 
+    user["password"]    = generate_password_hash(password)
+    user["reset_token"] = None   # Invalidate after use
+    save_users(users)
+ 
+    return jsonify({"message": "Password updated. You can now sign in."}), 200
+ 
+ 
 # Debug endpoint to test email sending without going through the whole flow
 
 @app.route("/api/test-email/<id>")
