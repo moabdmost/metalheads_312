@@ -1,9 +1,13 @@
 {
   "ridoctor@davidson.edu": {
-    "student_id": "801420479",
     "password": "pbkdf2:sha256:1000000$0cnKx9sIzhvGtCkA$756dd97e369fe7d1cd0227f1d8a8b04febe027d92a01c97fe18c69859638feed",
     "first_name": "Riana",
     "last_name": "Doctor",
-    "reset_token": "oOT3YXoCK9G3AtOVXGSPdtm7ESBQ_IjvwMEPTOKr3gg"
+    "reset_token": "rY1O9Zm_SocY9vi3Gxpb08E1SMpQRan4Yf64uQLauzc"
+  },
+  "avbranch@davidson.edu": {
+    "password": "pbkdf2:sha256:1000000$DD3fWDNUTYPghba7$7b34d7b3e15f6febe2131315185e3dca8bc952d3d1f37f26bc78c7ab6041adf0",
+    "first_name": "Ava",
+    "last_name": "Branch"
   }
 }

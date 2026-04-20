@@ -505,7 +505,7 @@ def signup():
         return jsonify({"error": "An account with that email already exists."}), 409
  
     users[email] = {
-        "password":   generate_password_hash(password),
+        "password":   generate_password_hash(password, method="pbkdf2:sha256"),
         "first_name": first_name,
         "last_name":  last_name,
     }
@@ -668,7 +668,7 @@ def do_reset_password():
     if not user or user.get("reset_token") != token:
         return jsonify({"error": "Invalid or expired reset link."}), 400
  
-    user["password"]    = generate_password_hash(password)
+    user["password"]    = generate_password_hash(password, method="pbkdf2:sha256")
     user["reset_token"] = None   # Invalidate after use
     save_users(users)
  
