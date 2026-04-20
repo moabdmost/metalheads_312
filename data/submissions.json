@@ -1,32 +1,3 @@
 [
-  {
-    "id": "QS-57953",
-    "studentName": "Riana Doctor",
-    "login_email": "ridoctor@davidson.edu",
-    "courseCode": "CSC312",
-    "courseName": "Software Design",
-    "examName": "",
-    "facultyName": "Dr. Lim",
-    "notes": "None",
-    "status": "PENDING",
-    "room": null,
-    "staffName": null,
-    "checkInTime": null,
-    "checkOutTime": null
-  },
-  {
-    "id": "QS-29114",
-    "studentName": "Riana Doctor",
-    "login_email": "ridoctor@davidson.edu",
-    "courseCode": "CSC372",
-    "courseName": "Analysis of Algorithms",
-    "examName": "",
-    "facultyName": "Dr. Nemitz",
-    "notes": "None",
-    "status": "COMPLETED",
-    "room": "Watson 147",
-    "staffName": null,
-    "checkInTime": "2026-04-13T22:27:02",
-    "checkOutTime": "2026-04-14T22:35:12"
-  }
+
 ]
