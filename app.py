@@ -9,7 +9,6 @@ from google.auth.transport import requests as grequests
 from werkzeug.security import generate_password_hash, check_password_hash
 from pathlib import Path
 
-
 # Configuration
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
@@ -17,9 +16,7 @@ SMTP_USER = "noreplyDCQC@gmail.com"
 # Password entered once at startup — never saved to any file.
 # Use a Gmail App Password (not your real password).
 # Get one at: myaccount.google.com/apppasswords
-SMTP_PASSWORD = "adct ymgm qikk kgsr"  # Gmail App Password for noreplyDCQC@gmail.com
-# 
-
+SMTP_PASSWORD = "atau irjm wtqb rrwf"  # Gmail App Password for noreplyDCQC@gmail.com
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET", "dev-secret-change-in-prod")

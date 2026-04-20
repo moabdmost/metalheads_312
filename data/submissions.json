@@ -103,5 +103,35 @@
     "staffName": null,
     "checkInTime": "2026-04-19T20:46:04",
     "checkOutTime": "2026-04-19T20:46:10"
+  },
+  {
+    "id": "QS-75289",
+    "studentName": "Ava Branch",
+    "login_email": "avbranch@davidson.edu",
+    "courseCode": "CSC312",
+    "courseName": "Software Design",
+    "examName": "",
+    "facultyName": "Dr. Lim",
+    "notes": "None",
+    "status": "COMPLETED",
+    "room": "Watson 140",
+    "staffName": null,
+    "checkInTime": "2026-04-19T20:49:31",
+    "checkOutTime": "2026-04-19T20:49:35"
+  },
+  {
+    "id": "QS-81799",
+    "studentName": "Chip Roth",
+    "login_email": "chroth@davidson.edu",
+    "courseCode": "CSC312",
+    "courseName": "Software Design",
+    "examName": "",
+    "facultyName": "Dr. Lim",
+    "notes": "None",
+    "status": "COMPLETED",
+    "room": "Watson 140",
+    "staffName": null,
+    "checkInTime": "2026-04-19T20:56:04",
+    "checkOutTime": "2026-04-19T20:56:06"
   }
 ]

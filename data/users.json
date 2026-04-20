@@ -9,5 +9,10 @@
     "password": "pbkdf2:sha256:1000000$DD3fWDNUTYPghba7$7b34d7b3e15f6febe2131315185e3dca8bc952d3d1f37f26bc78c7ab6041adf0",
     "first_name": "Ava",
     "last_name": "Branch"
+  },
+  "chroth@davidson.edu": {
+    "password": "pbkdf2:sha256:1000000$igk8PwZ4ecYv8T9p$7079912ec5794feaf903084051b6aa783fca72dbc03f7a827c80b3193e263d1e",
+    "first_name": "Chip",
+    "last_name": "Roth"
   }
 }
