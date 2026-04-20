@@ -9,6 +9,7 @@ from google.auth.transport import requests as grequests
 from werkzeug.security import generate_password_hash, check_password_hash
 from pathlib import Path
 
+
 # Configuration
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
@@ -555,8 +556,8 @@ def forgot_password():
     users[email]["reset_token"] = token
     save_users(users)
  
-    reset_url = f"https://your-domain.com/reset-password?token={token}&email={email}"
-    # ↑ Replace with your real domain, or use url_for with _external=True if you have SERVER_NAME set.
+    reset_url = url_for("reset_password_page", token=token, email=email, _external=True)
+
  
     name = users[email].get("first_name", "Student")
  

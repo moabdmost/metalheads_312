@@ -133,5 +133,20 @@
     "staffName": null,
     "checkInTime": "2026-04-19T20:56:04",
     "checkOutTime": "2026-04-19T20:56:06"
+  },
+  {
+    "id": "QS-12964",
+    "studentName": "Riana Doctor",
+    "login_email": "ridoctor@davidson.edu",
+    "courseCode": "CSC312",
+    "courseName": "Software Design",
+    "examName": "",
+    "facultyName": "Dr. Lim",
+    "notes": "None",
+    "status": "PENDING",
+    "room": null,
+    "staffName": null,
+    "checkInTime": null,
+    "checkOutTime": null
   }
 ]
