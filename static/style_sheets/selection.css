@@ -179,3 +179,36 @@
       transition: opacity 0.2s, transform 0.15s;
     }
     .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+
+
+    ul.suggestions {
+      list-style-type: none; /* Remove bullets */
+      padding: 0; /* Remove padding */
+      margin: 0; /* Remove margins */
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      max-height: 120px; /* Limit height for top 2-3 items */
+      overflow-y: auto; /* Scroll if needed */
+      display: none; /* Hidden by default */
+    }
+
+    ul.suggestions li {
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    ul.suggestions li:hover {
+      background: var(--surface);
+    }
+
+    ul.suggestions li a {
+      color: var(--text);
+      text-decoration: none;
+      display: block;
+    }
+
+
+
