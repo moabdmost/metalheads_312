@@ -19,5 +19,10 @@
     "password": "pbkdf2:sha256:1000000$Lqd5nyvMqAOh68lm$0bc93a828e889e5fba5516d78a4ad29acaa6078853015cea325fa30fff22bd95",
     "first_name": "Amira",
     "last_name": "Amira"
+  },
+  "brchung@davidson.edu": {
+    "password": "pbkdf2:sha256:1000000$1yfJpcc6hLzYqWLI$a47bff2f222608958c7384f08cb16aac407bd452ec2c68308d239906549779a9",
+    "first_name": "Brian",
+    "last_name": "Chung"
   }
 }

@@ -8,16 +8,18 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as grequests
 from werkzeug.security import generate_password_hash, check_password_hash
 from pathlib import Path
+from dotenv import load_dotenv
 
+# Load environment variables from .env (never committed to GitHub)
+load_dotenv()
 
 # Configuration
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
 SMTP_USER = "noreplyDCQC@gmail.com"
-# Password entered once at startup — never saved to any file.
-# Use a Gmail App Password (not your real password).
-# Get one at: myaccount.google.com/apppasswords
-SMTP_PASSWORD = "atau irjm wtqb rrwf"  # Gmail App Password for noreplyDCQC@gmail.com
+# Loaded from .env file -- never hardcoded here.
+# See .env.example for the required variable name.
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET", "dev-secret-change-in-prod")
