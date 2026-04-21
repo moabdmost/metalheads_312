@@ -9,6 +9,7 @@ let pollTimer = null;
 /**
  * Sets the page status message displayed above the dashboard table.
  * @param {string} text - The text to show in the status area.
+ * @returns {void}
  */
 function setMsg(text) { msgEl.textContent = text || ""; }
 
@@ -26,6 +27,7 @@ async function getAll() {
 
 /**
  * Retrieves the list of rooms from the backend API.
+ * @param {void}
  * @returns {Promise<Array>} The room list, or an empty array when unavailable.
  */
 async function getRooms() {
@@ -70,9 +72,7 @@ async function patchRoom(roomId, patchObj) {
  * Formats a timestamp string for display, converting from 
  * ISO format to a more readable form.
  * @param {string} t - The timestamp string to format.
- * @param {string} t - An ISO timestamp string (e.g., "2024-06-01T14:30:00").
- * @param {string} t - A timestamp string in ISO format (YYYY-MM-DDTHH:MM:SS).
- * @returns A formatted timestamp string, or "—" if input is falsy.
+ * @returns {string} A formatted timestamp string, or "—" if input is falsy.
  */
 function fmtTime(t) {
   if (!t) return "—";
@@ -84,7 +84,7 @@ const sessionProgress = {};
 /**
  * Gets the current progress status of a submission by its ID.
  * @param {string} id - The ID of the submission to check progress for.
- * @returns  The current progress status of the submission with the given ID, or "idle" if not found.
+ * @returns {string} The current progress status of the submission with the given ID, or "idle" if not found.
  */
 function getProgress(id) {
   return sessionProgress[id] || "idle";
@@ -157,6 +157,7 @@ function roomBadge(room) {
 /**
  * Renders the dashboard table based on the current filter selection.
  * @param {Array<Object>} submissions - The list of submission records to display.
+ * @returns {void}
  */
 function render(submissions) {
   rowsEl.innerHTML = "";
@@ -170,7 +171,7 @@ function render(submissions) {
     rowsEl.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:32px;">No submissions match this filter.</td></tr>`;
     return;
   }
-
+  // Render each submission as a table row with appropriate data and action buttons.
   for (const s of filtered) {
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -199,6 +200,8 @@ function render(submissions) {
 /**
  * Loads room metadata and renders the room status panel.
  * This function is invoked when the room panel is expanded and when room state changes.
+ * @param {void}
+ * @returns {void}
  */
 async function renderRoomPanel() {
   const panel = document.getElementById("room-panel");
@@ -220,6 +223,9 @@ async function renderRoomPanel() {
   panel.innerHTML = rooms.map(r => {
     const staffed   = r.staffed   ? "staffed"   : "unstaffed";
     const available = r.available ? "available" : "occupied";
+    // Each room card displays the room name, 
+    // capacity, status badges for availability and staffing, 
+    // and a button to toggle staffing status.
     return `
       <div class="room-card" data-room-id="${r.id}">
         <div class="room-card-top">
@@ -279,6 +285,7 @@ document.getElementById("room-panel")?.addEventListener("click", async (e) => {
 /**
  * Refreshes dashboard data from the API and updates the rendered table.
  * @param {boolean} [silent=false] - When true, suppresses the loading message.
+ * @returns {Promise<void>} - A promise that resolves when the refresh is complete.
  */
 async function refresh(silent = false) {
   try {
@@ -292,11 +299,11 @@ async function refresh(silent = false) {
   }
 }
 
+
 /**
  * Starts background polling to refresh dashboard data at a fixed interval.
- */
-/**
- * Starts background polling to refresh dashboard data at a fixed interval.
+ * @param {void}
+ * @returns {void}
  */
 function startPolling() {
   stopPolling();
@@ -305,6 +312,8 @@ function startPolling() {
 
 /**
  * Stops the active polling interval used to refresh the dashboard.
+ * @param {void}
+ * @returns {void}
  */
 function stopPolling() {
   if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
@@ -322,6 +331,8 @@ rowsEl.addEventListener("click", async (e) => {
 
 
   stopPolling();
+  // Handle the action based on the button's data attributes, 
+  // sending appropriate API requests.
   try {
     setMsg(`Updating ${id}...`);
 
@@ -342,7 +353,7 @@ rowsEl.addEventListener("click", async (e) => {
       if (submission) openEdit(id, submission);
       return;
     }
-
+    // After performing the action, refresh the data to reflect changes.
     await refresh();
   } catch (err) {
     setMsg(`Error: ${err.message}`);
@@ -356,6 +367,13 @@ filterEl.addEventListener("change", () => refresh());
 
 let editingId = null;
 
+/**
+ * Opens the edit modal for a specific submission, populating the fields with existing data.
+ * @param {*} id 
+ * @param {*} submission 
+ * @returns {void} - This function does not return a value. 
+ * It updates the DOM to show the edit modal.
+ */
 function openEdit(id, submission) {
   editingId = id;
   document.getElementById("e-course-code").value = submission.courseCode || "";
@@ -366,6 +384,12 @@ function openEdit(id, submission) {
   document.getElementById("edit-modal").style.display = "flex";
 }
 
+/**
+ * Closes the edit modal and resets the editing state.
+ * @param {void}
+ * @returns {void} - This function does not return a value. 
+ * It updates the DOM to hide the edit modal and reset related variables.
+ */
 function closeEdit() {
   document.getElementById("edit-modal").style.display = "none";
   editingId = null;
@@ -373,6 +397,8 @@ function closeEdit() {
 }
 
 document.getElementById("submit-edit")?.addEventListener("click", async () => {
+  // Handles the submission of edits to a submission record, 
+  // sending a PATCH request with updated data.
   try {
     const courseCode = document.getElementById("e-course-code").value.trim();
     const courseName = document.getElementById("e-course-name").value.trim();
@@ -380,7 +406,7 @@ document.getElementById("submit-edit")?.addEventListener("click", async () => {
     const room = document.getElementById("e-room").value.trim();
 
     if (!editingId) return;
-
+    // Validate required fields before sending the update request.
     setMsg(`Updating ${editingId}...`);
     await patch(editingId, { courseCode, courseName, facultyName, room });
     await refresh();

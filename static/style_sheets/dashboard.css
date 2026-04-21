@@ -106,7 +106,7 @@ nav a:active {
   color: var(--text-muted);
   white-space: nowrap;
 }
-
+/* ── Custom Select Styling ── */
 select {
   font-family: 'DM Sans', sans-serif;
   font-size: 0.875rem;
@@ -130,6 +130,7 @@ select:focus {
   box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.15);
 }
 
+/* Remove default spinner from number inputs */
 button {
   font-family: 'DM Sans', sans-serif;
   font-size: 0.875rem;
@@ -455,6 +456,7 @@ td button:hover {
   margin-bottom: 6px;
 }
 
+/* Shared styles for inputs and selects within the modal */
 .modal .field input,
 .modal .field select {
   width: 100%;
@@ -495,6 +497,7 @@ td button:hover {
   font-size: 0.85rem;
 }
 
+/* ── Submit Button for Manual Entry ── */
 #submit-manual {
   width: 100%;
   padding: 12px;
@@ -552,7 +555,7 @@ td button:hover {
   border-radius: var(--radius-sm);
   padding: 8px 12px;
 }
-
+/* Remove default spinner from number inputs */
 .export-buttons {
   display: flex;
   gap: 12px;
@@ -593,7 +596,7 @@ td button:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 18px rgba(62, 207, 142, 0.4);
 }
-
+/* ── Statistics Cards ── */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

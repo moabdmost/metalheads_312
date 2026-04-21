@@ -4,8 +4,14 @@ let allRooms = [];
     /**
      * Loads the full room dataset from the API and refreshes the staff room dashboard.
      * If the request fails, the UI is updated with an error state.
+     * @param : None
+     * @returns : None. Loads the full room dataset from the API and 
+     * refreshes the staff room dashboard.
+      * If the request fails, the UI is updated with an error state.
      */
     async function loadRooms() {
+      // trys to fetch the room data. On success, it renders the rooms and 
+      // updates the stats. On failure, it shows an error message in each grid.
       try {
         const res   = await fetch('/api/rooms');
         if (!res.ok) throw new Error('Failed');
@@ -26,6 +32,7 @@ let allRooms = [];
     /**
      * Renders the room cards into their respective category grids.
      * @param {Array<Object>} rooms - The list of room objects to display.
+     * @returns (void) Renders the room cards into their respective category grids.
      */
     function renderRooms(rooms) {
       const sections = { general: [], reduced: [], individual: [] };
@@ -79,7 +86,8 @@ let allRooms = [];
         individual: 'Individual',
         aadr:       'AADR',
       }[typeName] || typeName;
-
+      // Returns the HTML markup for a single room card, 
+      // including its staffed state, occupancy, and type badge.
       return `
         <div class="room-card ${staffed ? 'is-staffed' : ''}" data-room-id="${r.id}">
           <div class="room-card-top">
@@ -118,6 +126,7 @@ let allRooms = [];
      * Handles the staffed-state toggle for a room.
      * It updates the UI optimistically, persists the change to the server, then reconciles the local state.
      * @param {HTMLInputElement} checkbox - The toggle input element that was changed.
+     * @returns {void}
      */
     async function handleToggle(checkbox) {
       const roomId  = checkbox.dataset.roomId;
@@ -130,7 +139,10 @@ let allRooms = [];
         const label = card.querySelector('.toggle-label');
         if (label) label.textContent = staffed ? '✓ Staffed' : 'Unstaffed';
       }
-
+      // Attempt to persist the change to the server
+      // Tries to persist the staffed state change to the server. 
+      // On success, it shows a confirmation toast and updates local state. 
+      // On failure, it reverts the UI toggle and shows an error toast.
       try {
         const res = await fetch(`/api/rooms/${encodeURIComponent(roomId)}`, {
           method:  'PATCH',
@@ -161,6 +173,7 @@ let allRooms = [];
     /**
      * Updates the numeric summary counts for staffed, unstaffed, and occupied rooms.
      * @param {Array<Object>} rooms - The collection of rooms to calculate the stats from.
+     * @returns {void}
      */
     function updateStats(rooms) {
       const staffed   = rooms.filter(r => r.staffed).length;
@@ -177,6 +190,7 @@ let allRooms = [];
      * Shows a transient toast message at the bottom of the page.
      * @param {string} msg - The text message to display.
      * @param {boolean} [isError=false] - Whether the message is an error variant.
+     * @returns (void) Shows a transient toast message at the bottom of the page.
      */
     function showToast(msg, isError = false) {
       const el = document.getElementById('toast');

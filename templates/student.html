@@ -1,3 +1,9 @@
+<!--
+Login and registration page for students accessing the Davidson Quiz Center.
+Includes a tabbed interface for switching between sign-in and sign-up forms,
+as well as a modal for password reset requests. 
+Supports Google SSO and manual credential entry.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -76,7 +82,7 @@
           <label for="su-pwd2">Confirm Password</label>
           <input type="password" id="su-pwd2" placeholder="••••••••"/>
         </div>
-
+        <!--Can create account button-->
         <button class="btn-primary" type="submit">Create Account</button>
         <div class="error-msg" id="signup-error"></div>
       </form>
@@ -103,6 +109,7 @@
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script>
+    // Initializes Google Sign-In button and callback on page load.
     window.addEventListener('load', () => {
       if (typeof google === 'undefined') return;
       google.accounts.id.initialize({
@@ -115,7 +122,13 @@
         { theme: 'filled_black', size: 'large', width: 352, text: 'signin_with', shape: 'rectangular' }
       );
     });
-
+    /*
+    Handles the Google Sign-In response by sending the credential token to the backend 
+    for verification.
+    @param {Object} response - The response object from Google Sign-In, 
+    containing the credential token.
+    @returns {Promise<void>} - A promise that resolves when the login process is complete.
+    */
     async function handleGoogleCredential(response) {
       try {
         const res  = await fetch('/api/google-login', {
@@ -124,6 +137,8 @@
           body:    JSON.stringify({ token: response.credential }),
         });
         const data = await res.json();
+        // If the response is not OK, display an error message. 
+        // Otherwise, redirect to the selection page.
         if (!res.ok) { showError('login-error', data.error || 'Google sign-in failed.'); return; }
         window.location.href = '/selection';
       } catch {
