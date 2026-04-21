@@ -1,3 +1,5 @@
+/* Student login and registration page styling for the Davidson quiz center interface. */
+/* Importing Google Fonts for use in the student login and registration pages. */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
 
 /* Student login and registration page styling for the Davidson quiz center interface. */
@@ -182,7 +184,7 @@ input::placeholder {
   margin-top: 1rem;
 }
 
-
+/* ── Details section ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {

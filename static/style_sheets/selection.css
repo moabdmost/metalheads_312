@@ -10,7 +10,7 @@
       --text:    #e8eaf6;
       --muted:   #5a6080;
     }
-
+    /* Base styles for the selection page, including background, font, and layout. */
     body {
       min-height: 100vh;
       background: var(--bg);
@@ -22,7 +22,7 @@
       padding: 32px 24px;
     }
 
-
+    /* Card container for the selection form, with background, border, and shadow. */
     .card {
       position: relative;
       background: var(--surface);
@@ -34,6 +34,7 @@
       box-shadow: 0 24px 80px rgba(0,0,0,0.5);
     }
 
+    /* Logo section at the top of the card, with a gradient mark and text. */
     .logo {
       display: flex;
       align-items: center;
@@ -84,7 +85,7 @@
       text-transform: uppercase;
       margin-bottom: 8px;
     }
-
+    /* Styled select dropdowns and text inputs with custom appearance and focus states. */
     select, input[type="text"] {
       width: 100%;
       background: var(--bg);
@@ -111,6 +112,7 @@
 
     select:disabled { opacity: 0.4; cursor: not-allowed; }
 
+    /* Accommodation options styled as pills with a light background and border. */
     .accom-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -164,6 +166,7 @@
       background: var(--accent);
     }
 
+    /* Logo section at the top of the card, with a gradient mark and text. */
     .btn-primary {
       width: 100%;
       margin-top: 8px;
@@ -181,7 +184,7 @@
     .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
 
 
-
+    /* Suggestions dropdown for the course selection, styled as a card with hover effects. */
     ul.suggestions {
       list-style-type: none; /* Remove bullets */
       padding: 0; /* Remove padding */

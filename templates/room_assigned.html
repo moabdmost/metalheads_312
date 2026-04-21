@@ -1,3 +1,5 @@
+<!--Page which assigns room to test takers
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,7 +35,10 @@
         <h1>You're checked in, <span id="student-first-name">{{ student_name.split()[0] if student_name else 'Student' }}</span>!</h1>
         <p>Head to your assigned room and wait for instructions.</p>
       </div>
-
+      <!--
+      Room details: dynamically populated from backend data once assigned,
+      including room number, course, professor, and any accommodations.
+      -->
       <div class="room-hero">
         <div class="room-label">Your Room</div>
         <div class="room-number" id="room-number">—</div>

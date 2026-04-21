@@ -2,6 +2,14 @@ function $(id) { return document.getElementById(id); }
 
 let qr = null;
 
+/**
+ * renders a QR code based on the provided text input. 
+ * @param {*} text 
+ * @returns (void) Renders a QR code based on the provided text input. 
+ * It creates a new QRCode instance and appends a label showing the QR 
+ * contents below the generated code.
+ */
+
 function renderQRCode(text) {
   const container = $("qrcode");
   if (!container) return;
@@ -20,6 +28,12 @@ function renderQRCode(text) {
   label.textContent = `QR contents: ${text}`;
   container.appendChild(label);
 }
+/**
+ * Synchronizes the input field with the selected preset value and 
+ * renders the QR code based on the current input.
+ * @param : None
+ * @returns : None
+ */
 
 function syncInputFromPreset() {
   const sid = $("sid");
@@ -29,6 +43,9 @@ function syncInputFromPreset() {
   sid.value = preset.value;
 }
 
+// Professor search and course selection logic for the staff interface. This includes
+// a live search dropdown for professors and dynamic course loading based on the 
+// selected professor.
 window.addEventListener("DOMContentLoaded", () => {
   const preset = $("preset");
   const make = $("make");

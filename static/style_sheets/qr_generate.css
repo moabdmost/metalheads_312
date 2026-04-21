@@ -19,6 +19,7 @@
       justify-content: center;
       padding: 32px 24px;
     }
+    /* Card container for the QR preview and details. */
     .card {
       position: relative;
       background: var(--surface);
@@ -44,6 +45,7 @@
     }
     .logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; }
 
+    /* Heading and subtitle for the QR code details. */
     h1 {
       font-family: 'Syne', sans-serif;
       font-size: 1.5rem; font-weight: 800;

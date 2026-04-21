@@ -1,4 +1,10 @@
 // ── Helpers ───────────────────────────────────────────────────────────────────
+/**
+ * shows the error message 
+ * @param {*} id 
+ * @param {*} msg 
+ * @returns: None
+ */
 function showError(id, msg) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -8,6 +14,12 @@ function showError(id, msg) {
   if (sib) sib.style.display = 'none';
 }
 
+/**
+ * shows the success message in the specified element and hides any sibling error message.
+ * @param {*} id the element id
+ * @param {*} msg the message shown in the block
+ * @returns none
+ */
 function showSuccess(id, msg) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -17,6 +29,12 @@ function showSuccess(id, msg) {
   if (sib) sib.style.display = 'none';
 }
 
+/**
+ * clears the message
+ * @param {*} id 
+ * @returns  none
+ */
+
 function clearMsg(id) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -25,6 +43,11 @@ function clearMsg(id) {
 }
 
 // ── Tab switching ─────────────────────────────────────────────────────────────
+/**
+ * Switches between the login and sign-up panels based on the selected tab.
+ * @param {*} tab tab which can be switched
+ * @returns none. Switches between the login and sign-up panels based on the selected tab.
+ */
 function switchTab(tab) {
   const isLogin = tab === 'login';
   document.getElementById('panel-login').style.display  = isLogin ? '' : 'none';
@@ -36,6 +59,13 @@ function switchTab(tab) {
 }
 
 // ── Forgot Password Modal ─────────────────────────────────────────────────────
+/**
+ * Opens the forgot password modal, pre-fills the email field if possible, 
+ * and clears any existing messages.
+ * @param: None 
+ * @returns: None. Opens the forgot password modal, 
+ * pre-fills the email field if possible,
+ */
 function openForgotModal() {
   document.getElementById('forgot-modal').style.display = 'flex';
   document.getElementById('forgot-email').value = document.getElementById('email').value || '';
@@ -43,12 +73,25 @@ function openForgotModal() {
   clearMsg('forgot-success');
 }
 
+/**
+ * closes the forgot password modal when clicking outside the 
+ * content area or on the close button.
+ * @param {*} event 
+ * @returns: None. Closes the forgot password modal when clicking 
+ * outside the content area or on the close button.
+ */
 function closeForgotModal(event) {
   if (!event || event.target === document.getElementById('forgot-modal') || event.currentTarget === document.querySelector('.modal-close')) {
     document.getElementById('forgot-modal').style.display = 'none';
   }
 }
 
+/**
+ * Handles the forgot password form submission by validating the 
+ * email input and sending a reset request to the server.
+ * @param: None 
+ * @returns None
+ */
 async function handleForgotPassword() {
   const email = (document.getElementById('forgot-email').value || '').trim().toLowerCase();
   clearMsg('forgot-error');
@@ -57,6 +100,8 @@ async function handleForgotPassword() {
   if (!email) return showError('forgot-error', 'Please enter your email.');
   if (!email.endsWith('@davidson.edu')) return showError('forgot-error', 'Use your @davidson.edu email.');
 
+  // Tries to send a forgot password request to the server. 
+  // On success, it shows a confirmation message. On failure, it shows an error message.
   try {
     const res  = await fetch('/api/forgot-password', {
       method:  'POST',
@@ -82,7 +127,8 @@ document.getElementById('loginForm').onsubmit = async (e) => {
   if (!email)                              return showError('login-error', 'Enter your Davidson email.');
   if (!email.endsWith('@davidson.edu'))    return showError('login-error', 'Use your @davidson.edu email.');
   if (!password)                           return showError('login-error', 'Password is required.');
-
+  // Tries to send a login request to the server. On success, it redirects 
+  // to the selection page.
   try {
     const res  = await fetch('/api/login', {
       method:  'POST',
@@ -101,12 +147,17 @@ document.getElementById('loginForm').onsubmit = async (e) => {
     if (!res.ok) return showError('login-error', data.error || 'Invalid credentials.');
 
     window.location.href = '/selection';
+    // On success, it redirects to the selection page. On failure, it shows an error message.
   } catch {
     showError('login-error', 'Unable to reach server.');
   }
 };
 
 // ── Sign Up ───────────────────────────────────────────────────────────────────
+/*
+ * Handles the sign-up form submission by validating the input fields and 
+ * sending a registration request to the server.
+ */
 document.getElementById('signupForm').onsubmit = async (e) => {
   e.preventDefault();
   clearMsg('signup-error');
@@ -121,7 +172,8 @@ document.getElementById('signupForm').onsubmit = async (e) => {
   if (!email.endsWith('@davidson.edu')) return showError('signup-error', 'Use your @davidson.edu email.');
   if (password.length < 6)             return showError('signup-error', 'Password must be at least 6 characters.');
   if (password !== password2)           return showError('signup-error', 'Passwords do not match.');
-
+  // Tries to send a sign-up request to the server. 
+  // On success, it redirects to the selection page.
   try {
     const res  = await fetch('/api/signup', {
       method:  'POST',

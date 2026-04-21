@@ -1,3 +1,7 @@
+<!--
+Exam selection page for students to choose professor, course, and 
+accommodations before QR code generation.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,7 +37,10 @@
       <input type="hidden" name="studentName"  value="{{ student_name }}"/>
       <input type="hidden" name="studentEmail" value="{{ student_email }}"/>
       <!-- Hidden fields preserve authenticated student identity while submitting the exam selection form. -->
-
+      <!--
+      Professor and course selection: dynamically linked so that choosing a professor 
+      filters the available courses.
+      -->
       <div class="field">
         <label>Professor</label>
         <input type="text" id="professor_input" name="facultyName" onkeyup="updateCourses()" 
