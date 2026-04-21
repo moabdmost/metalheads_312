@@ -74,13 +74,17 @@ Install dependencies with:
 pip3 install -r requirements.txt
 ```
 
-### Step 3 — Find Your IP Address
+### Step 3 — Find Your IP Address and Securitization
 
 Before running the app, you need your local IP address. Run the following command in your terminal:
 
 ```bash
 ipconfig getifaddr en0
 ```
+Then create a `.env` file in the project root (same folder as `app.py`) with the following:
+SMTP_PASSWORD=our-16-char-gmail-app-password
+FLASK_SECRET=any-long-random-string
+Never share or commit this file — it's already covered by `.gitignore`.
 
 ### Step 4 — Run the App
 Then run the app:
