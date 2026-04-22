@@ -1,23 +1,7 @@
 {
   "ridoctor@davidson.edu": {
-    "password": "pbkdf2:sha256:1000000$skpSUs3s8fuVUgke$2259edbf2d147e4c962581676ef6466f917276e4d42337e77982190a06d38635",
+    "password": "pbkdf2:sha256:1000000$CmNSBGX9YUOCePih$2d3395ed0dd0bae7ad9e509743a4e9cac2144641d74a40017737b7aaf7189987",
     "first_name": "Riana",
-    "last_name": "Doctor",
-    "reset_token": null
-  },
-  "avbranch@davidson.edu": {
-    "password": "pbkdf2:sha256:1000000$DD3fWDNUTYPghba7$7b34d7b3e15f6febe2131315185e3dca8bc952d3d1f37f26bc78c7ab6041adf0",
-    "first_name": "Ava",
-    "last_name": "Branch"
-  },
-  "ammccormick@davidson.edu": {
-    "password": "pbkdf2:sha256:1000000$Lqd5nyvMqAOh68lm$0bc93a828e889e5fba5516d78a4ad29acaa6078853015cea325fa30fff22bd95",
-    "first_name": "Amira",
-    "last_name": "Amira"
-  },
-  "chroth@davidson.edu": {
-    "password": "pbkdf2:sha256:1000000$aHOtnYVGwdzBLzQG$ae2bc37d17f9f919ce591b43ad56294e1408fee2a6b0a71c4dfdc58533ee9025",
-    "first_name": "Chip",
-    "last_name": "Roth"
+    "last_name": "Doctor"
   }
 }
