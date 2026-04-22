@@ -1,16 +1,16 @@
     const COURSES = {
-      "Dr. Ramanujan": [
+      "Ramanujan": [
         "CSC371 - Machine Learning",
         "CSC324 - Theory of Computation",
         "CSC250 - Computer Organization",
       ],
-      "Dr. Lim": [
+      "Lim": [
         "CSC221 - Data Structures",
         "CSC312 - Software Design",
         "CSC355 - Compiler Design",
         "CSC356 - Computer Security",
       ],
-      "Dr. Duhon": [
+      "Duhon": [
         "MATH150 - Calculus I",
         "MATH250 - Linear Algebra",
         "MATH310 - Probability",
