@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,12 +38,13 @@
 
       <div class="field">
         <label>Professor</label>
-        <select id="professor" name="facultyName" onchange="updateCourses()" required>
-          <option value="">Select professor…</option>
-          <option value="Ramanujan">Ramanujan</option>
-          <option value="Lim">Lim</option>
-          <option value="Duhon">Duhon</option>
-        </select>
+        <input type="text" id="professor_input" name="facultyName" onkeyup="updateCourses()" 
+        placeholder="Type in Professors Name" required>
+          <ul id="professor-list" class="suggestions">
+            <li onclick="submitSelection(this)"><a>R.Ramanujan</a></li>
+            <li onclick="submitSelection(this)"><a>T.Lim</a></li>
+            <li onclick="submitSelection(this)"><a>A.Duhon</a></li>
+          </ul>
       </div>
       <div class="field">
         <label>Course</label>
@@ -77,3 +80,8 @@
   <script src="/static/scripts/selection.js"></script>
 </body>
 </html>
+
+
+
+
+

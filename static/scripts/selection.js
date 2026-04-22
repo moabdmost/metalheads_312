@@ -17,6 +17,11 @@
       ],
     };
 
+    /**
+     * Updates the course dropdown based on the selected professor.
+     * The available course list is defined by the COURSES map above.
+     */
+    function updateCourses() {
       var input, filter, ul, li, a, i, txtValue, matches;
       input = document.getElementById('professor_input');
       filter = input.value.toUpperCase();
@@ -53,6 +58,7 @@
           setProfessor(selectedProfessor);
         };
       });
+    }
 
     function fillCourses(prof) {
       const sel = document.getElementById('course');
