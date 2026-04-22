@@ -1,10 +1,14 @@
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env (never committed to GitHub)
+load_dotenv()
 
 # ── SMTP ──────────────────────────────────────────────────────────────────────
 SMTP_HOST     = "smtp.gmail.com"
 SMTP_PORT     = 587
 SMTP_USER     = "noreplyDCQC@gmail.com"
-SMTP_PASSWORD = "adct ymgm qikk kgsr"   # Gmail App Password
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")   # Gmail App Password
 
 # ── Data file paths ───────────────────────────────────────────────────────────
 DATA_FILE  = os.path.join("data", "submissions.json")
@@ -14,3 +18,4 @@ USERS_FILE = os.path.join("data", "users.json")
 # ── Flask ─────────────────────────────────────────────────────────────────────
 FLASK_SECRET   = os.environ.get("FLASK_SECRET", "dev-secret-change-in-prod")
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
+
