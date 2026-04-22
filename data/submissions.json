@@ -88,5 +88,35 @@
     "staffName": null,
     "checkInTime": "2026-04-20T21:44:32",
     "checkOutTime": "2026-04-20T21:44:34"
+  },
+  {
+    "id": "QS-15040",
+    "studentName": "Riana Doctor",
+    "login_email": "ridoctor@davidson.edu",
+    "courseCode": "CSC371",
+    "courseName": "Machine Learning",
+    "examName": "",
+    "facultyName": "R.Ramanujan",
+    "notes": "None",
+    "status": "COMPLETED",
+    "room": "Watson 140",
+    "staffName": null,
+    "checkInTime": "2026-04-21T23:34:00",
+    "checkOutTime": "2026-04-21T23:34:08"
+  },
+  {
+    "id": "QS-62292",
+    "studentName": "Riana Doctor",
+    "login_email": "ridoctor@davidson.edu",
+    "courseCode": "CSC312",
+    "courseName": "Software Design",
+    "examName": "",
+    "facultyName": "T.Lim",
+    "notes": "None",
+    "status": "COMPLETED",
+    "room": "Watson 157",
+    "staffName": null,
+    "checkInTime": "2026-04-21T23:38:10",
+    "checkOutTime": "2026-04-21T23:38:13"
   }
 ]
