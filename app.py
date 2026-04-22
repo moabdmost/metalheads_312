@@ -660,7 +660,7 @@ def signup():
     Returns: JSON response with first_name if successful, or error message if failed"""
     data       = request.get_json()
     email      = (data.get("email") or "").strip().lower()
-    student_id = (data.get("studentId") or "").strip()
+    #student_id = (data.get("studentId") or "").strip()
     password   = data.get("password") or ""
     first_name = (data.get("firstName") or "").strip().capitalize()
     last_name  = (data.get("lastName") or "").strip().capitalize()
@@ -671,8 +671,8 @@ def signup():
     """
     if not email.endswith("@davidson.edu"):
         return jsonify({"error": "Must use a @davidson.edu email."}), 400
-    if not re.fullmatch(r'\d{9}', student_id):
-        return jsonify({"error": "Student ID must be exactly 9 digits."}), 400
+    #if not re.fullmatch(r'\d{9}', student_id):
+        #return jsonify({"error": "Student ID must be exactly 9 digits."}), 400
     if len(password) < 6:
         return jsonify({"error": "Password must be at least 6 characters."}), 400
     if not first_name or not last_name:
@@ -683,8 +683,8 @@ def signup():
         return jsonify({"error": "An account with that email already exists."}), 409
 
     users[email] = {
-        "student_id": student_id,
-        "password":   generate_password_hash(password),
+        #"student_id": student_id,
+        "password":   generate_password_hash(password, method="pbkdf2:sha256"),
         "first_name": first_name,
         "last_name":  last_name,
     }
@@ -708,7 +708,7 @@ def login():
     Returns: JSON response with first_name if successful, or error message if failed"""
     data       = request.get_json()
     email      = (data.get("email") or "").strip().lower()
-    student_id = (data.get("studentId") or "").strip()
+    #student_id = (data.get("studentId") or "").strip()
     password   = data.get("password") or ""
 
     users = load_users()
@@ -717,10 +717,10 @@ def login():
     matched_email = None
     if email:
         matched_email = email if email in users else None
-    elif student_id:
-        matched_email = next(
-            (k for k, v in users.items() if v.get("student_id") == student_id), None
-        )
+    #elif student_id:
+        #matched_email = next(
+            #(k for k, v in users.items() if v.get("student_id") == student_id), None
+        #)
 
     if matched_email is None:
         return jsonify({"error": "No account found."}), 404

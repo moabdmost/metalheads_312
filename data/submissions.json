@@ -103,5 +103,20 @@
     "staffName": null,
     "checkInTime": null,
     "checkOutTime": null
+  },
+  {
+    "id": "QS-38797",
+    "studentName": "Chip Roth",
+    "login_email": "chroth@davidson.edu",
+    "courseCode": "CSC312",
+    "courseName": "Software Design",
+    "examName": "",
+    "facultyName": "Lim",
+    "notes": "None",
+    "status": "PENDING",
+    "room": null,
+    "staffName": null,
+    "checkInTime": null,
+    "checkOutTime": null
   }
 ]
