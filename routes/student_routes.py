@@ -3,7 +3,6 @@ from datetime import datetime
 from flask import Blueprint, request, session, render_template, redirect, url_for, jsonify
 from google.oauth2 import id_token
 from google.auth.transport import requests as grequests
-
 from config import GOOGLE_CLIENT_ID
 from data import load_data, save_data, auto_assign_room
 
