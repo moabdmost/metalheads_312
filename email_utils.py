@@ -7,7 +7,12 @@ from data import load_data, fmt_time
 
 
 def send_completion_email(submission):
-    """Send a receipt email to the student when their session is marked COMPLETED."""
+    """
+    Send a receipt email to the student when their session is marked COMPLETED.
+    Parameters: submission (dict containing keys like studentName, studentEmail, 
+    examName, courseCode, facultyName, checkInTime, checkOutTime, staffName)
+    Returns: None
+    """
     student_email = submission.get("login_email")
 
     if not student_email:
@@ -27,10 +32,14 @@ def send_completion_email(submission):
 
     subject = f"Quiz Center Receipt — {submission['examName']} ({submission['courseCode']})"
 
+    # below is the format of the email that will be sent to the student after their session is 
+    # marked completed. It includes the exam details, session times, and a reference ID.
+    
     plain = f"""\
 Hi {name},
 
 Your exam session at the Davidson Quiz Center has been marked COMPLETED.
+
 
 EXAM RECEIPT
 ------------
@@ -128,6 +137,11 @@ Questions? Contact the Quiz Center.
     msg["To"]      = student_email
     msg.attach(MIMEText(plain, "plain"))
     msg.attach(MIMEText(html,  "html"))
+
+    # trying to send the email using Gmail's SMTP server with TLS encryption. 
+    # It logs in using the provided SMTP_USER and SMTP_PASSWORD, then sends the email 
+    # to the student's email address. If there's an error during this process, 
+    # it catches the exception and prints an error message.
 
     try:
         with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:

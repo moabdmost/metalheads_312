@@ -14,11 +14,22 @@ student_bp = Blueprint("student", __name__)
 @student_bp.route("/")
 @student_bp.route("/student")
 def student_page():
+    """
+     Renders the student-facing page where they can log in with Google and fill 
+     out the exam details form.
+     Parameters: None
+     Returns: Rendered HTML page for student login and exam selection
+    """
     return render_template("student.html")
 
 
 @student_bp.route("/selection")
 def selection_page():
+    """
+    Renders the page where students select their professor, course, exam, and accommodations.
+    Parameters: None (relies on session data for student info)
+    Returns: Rendered HTML page for exam selection form
+    """
     return render_template("selection.html",
         student_name  = session.get("student_name", ""),
         student_email = session.get("student_email", ""))
@@ -26,11 +37,25 @@ def selection_page():
 
 @student_bp.route("/qr")
 def qr_page():
+    """
+    Renders the page that shows the generated QR code and session status 
+    after a student submits their exam details.
+    Parameters: None (relies on session data and query parameters for submission info)
+    Returns: Rendered HTML page for QR code display and session status
+    """
     return render_template("qr_generate.html")
 
 
 @student_bp.route("/status/<submission_id>")
 def status_page(submission_id):
+    """
+    Renders a status page for the student after they submit their exam details, 
+    showing their current status and assigned room (if any).
+    Parameters: submission_id (string) - the unique ID of the quiz session submission to 
+    look up
+    Returns: Rendered HTML page showing the status and room assignment for the given 
+    submission ID
+    """
     return render_template("room_assigned.html",
         submission_id = submission_id,
         student_name  = session.get("student_name", ""))
@@ -40,6 +65,11 @@ def status_page(submission_id):
 
 @student_bp.route("/api/google-login", methods=["POST"])
 def google_login():
+    """
+    Handles the Google login process for students.
+    Parameters: None (relies on JSON body for token)
+    Returns: JSON response with student info or error message
+    """
     body  = request.json or {}
     token = body.get("token", "")
 
@@ -65,6 +95,13 @@ def google_login():
 
 @student_bp.route("/qr_generate", methods=["POST"])
 def qr_generate():
+    """ Called when student submits the exam details form. Creates a new submission record with PENDING status,
+    generates a QR code that encodes a URL with the submission ID, and renders a p
+    age showing the QR code and status.
+    Parameters: Form data containing facultyName, course, examName, 
+    accommodation, and optionally studentName and studentEmail (if not in session)
+    Returns: Rendered HTML page showing the generated QR code and session status
+    """
     professor     = request.form.get("facultyName", "")
     course        = request.form.get("course", "")
     exam_name     = request.form.get("examName", "")
@@ -112,6 +149,11 @@ def qr_generate():
 
 @student_bp.route("/scan/<submission_id>")
 def scan_redirect(submission_id):
+    """
+    Called when staff scan the QR code. Updates the submission status to VERIFIED, assigns a room, and redirects to dashboard.
+    Parameters: submission_id (string) - the unique ID of the quiz session submission to update
+    Returns: Redirect to staff dashboard after updating submission status and room assignment
+    """
     data = load_data()
     for s in data:
         if s["id"] == submission_id:

@@ -12,6 +12,12 @@ api_bp = Blueprint("api", __name__, url_prefix="/api")
 
 @api_bp.route("/signup", methods=["POST"])
 def signup():
+    """
+    API endpoint for student signup. Expects a JSON body with email, 
+    studentId, password, firstName, and lastName.
+    Parameters: None (expects JSON body with email, studentId, password, firstName, lastName)
+    Returns: JSON response with first_name if successful, or error message if failed
+    """
     data       = request.get_json()
     email      = (data.get("email") or "").strip().lower()
     password   = data.get("password") or ""
@@ -43,6 +49,12 @@ def signup():
 
 @api_bp.route("/login", methods=["POST"])
 def login():
+    """
+    API endpoint for student login. Expects a JSON body with email or 
+    studentId, and password.
+    Parameters: None (expects JSON body with email or studentId, and password)
+    Returns: JSON response with first_name if successful, or error message if failed
+    """
     data     = request.get_json()
     email    = (data.get("email") or "").strip().lower()
     password = data.get("password") or ""
