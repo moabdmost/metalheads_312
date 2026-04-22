@@ -198,7 +198,8 @@
       background: var(--surface-2);
       white-space: nowrap;
     }
-
+    /* Color variants for different room types, using the accent colors with 
+    light backgrounds and borders. */
     .room-type-badge.general  { color: var(--accent);  border-color: rgba(79,142,247,0.3);  background: rgba(79,142,247,0.08); }
     .room-type-badge.reduced  { color: var(--warning); border-color: rgba(247,201,72,0.3);  background: rgba(247,201,72,0.08); }
     .room-type-badge.individual { color: var(--accent2); border-color: rgba(124,92,252,0.3); background: rgba(124,92,252,0.08); }
@@ -465,6 +466,7 @@
       background-position: right 14px center;
     }
 
+    /* Remove the dropdown arrow for text inputs. */
     input[type="text"] {
       background-image: none;
     }

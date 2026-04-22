@@ -1,3 +1,7 @@
+<!--
+Dashboard for professors to view and analyze student check-in data, 
+filter by course/status/date, and export reports.
+-->
 <!-- jsPDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -78,7 +82,10 @@
                 <div class="stat-value" id="pendingCount">0</div>
             </div>
         </div>
-
+        <!--
+        Table of analytics results: dynamically populated based on applied filters, 
+        showing detailed submission records for review and reporting.
+        -->
         <table>
             <thead>
                 <tr>

@@ -20,6 +20,8 @@ window.addEventListener('DOMContentLoaded', () => {
 /**
  * Loads all submission records from the server and refreshes the analytics UI.
  * This includes populating the course filter, rendering the table, and updating summary counts.
+ * @param {void}
+ * @returns {void}
  */
 async function loadSubmissions() {
     try {
@@ -37,6 +39,8 @@ async function loadSubmissions() {
 
 /**
  * Builds the course dropdown filter options from loaded submissions.
+ * @param {void}
+ * @returns {void}
  */
 function populateCourseFilter() {
     const courseFilter = document.getElementById('courseFilter');
@@ -62,6 +66,8 @@ function populateCourseFilter() {
 /**
  * Applies the current course, status, and date filters to the submissions.
  * Updates the table and summary statistics after filtering.
+ * @param: None. Reads filter values from the UI, applies them to the submissions,
+ * @returns {Boolean}   Updates the table and summary statistics after filtering.
  */
 function applyFilters() {
     const courseFilter = document.getElementById('courseFilter').value;
@@ -93,6 +99,8 @@ function applyFilters() {
 
 /**
  * Renders the analytics table rows for the currently filtered submissions.
+ * @param: None. Renders the analytics table rows for the currently filtered submissions.
+ * @returns: None. Renders the analytics table rows for the currently filtered submissions.
  */
 function renderTable() {
     const tbody = document.getElementById('analyticsRows');
@@ -121,6 +129,8 @@ function renderTable() {
 
 /**
  * Updates the summary statistics shown in the analytics dashboard.
+ * @param: None. Updates the summary statistics shown in the analytics dashboard.
+ * @returns: None. Updates the summary statistics shown in the analytics dashboard.
  */
 function updateStats() {
     const total      = filteredSubmissions.length;
@@ -189,6 +199,8 @@ function pill(status) {
 /**
  * Exports the currently filtered analytics data to a PDF document.
  * This client-side function requires jsPDF and autotable to be loaded.
+ * @param {void}
+ * @returns {void}
  */
 function exportPDF() {
     if (typeof window.jspdf === 'undefined') {
@@ -278,6 +290,8 @@ function exportPDF() {
 /**
  * Exports the currently filtered analytics data to a CSV file.
  * The CSV is generated client-side and downloaded without server interaction.
+ * @param {void}
+ * @returns {void}
  */
 function exportCSV() {
     const headers = ["ID", "Student Name", "Student ID", "Course Code", "Course Name",

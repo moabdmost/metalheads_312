@@ -15,7 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
 /**
    * Polls the submission endpoint until a room has been assigned.
    * This runs on a timer and switches to the assigned view once room data is available.
-   */
+   * @param {void}
+   * @returns {void}
+  */
   async function poll() {
     try {
       const res = await fetch(`/api/submissions/${submissionId}`);
@@ -32,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /**
    * Displays the assigned room details and transitions the page from waiting to assigned state.
    * @param {Object} sub - The submission object containing room and course assignment details.
+   * @returns {void}
    */
   function showAssigned(sub) {
     clearInterval(poller);
