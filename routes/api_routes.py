@@ -78,11 +78,22 @@ def login():
 
 @api_bp.route("/submissions", methods=["GET"])
 def get_submissions():
+    """
+    API endpoint to retrieve all quiz session submissions. Returns a JSON list of submission records.
+    Parameters: None
+    Returns: JSON list of submission records, where each record is a dict containing keys like id
+    """
     return jsonify(load_data())
 
 
 @api_bp.route("/submissions/<id>", methods=["GET"])
 def get_submission(id):
+    """
+    API endpoint to retrieve a specific quiz session submission by its unique ID. 
+    Returns a JSON object with the submission details if found, or an error message if not found.
+    Parameters: id (string) - the unique ID of the quiz session submission to look up
+    Returns: JSON object with submission details if found, or error message if not found
+    """
     sub = next((s for s in load_data() if s["id"] == id), None)
     if not sub:
         return jsonify({"error": "Not found"}), 404
@@ -91,6 +102,13 @@ def get_submission(id):
 
 @api_bp.route("/submissions", methods=["POST"])
 def create_submission():
+    """
+    API endpoint to create a new quiz session submission. 
+    Expects a JSON body with details like studentName, courseCode, examName, facultyName, 
+    and studentEmail. Automatically assigns a room, sets status to VERIFIED, and records check-in time.
+    Parameters: None (expects JSON body with studentName, courseCode, examName, facultyName, and optionally studentEmail)
+    Returns: JSON object with the created submission record, including assigned room and status
+    """
     body = request.json or {}
     data = load_data()
 
@@ -108,6 +126,13 @@ def create_submission():
 
 @api_bp.route("/submissions/<id>", methods=["PATCH"])
 def update_submission(id):
+    """
+    API endpoint to update an existing quiz session submission by its unique ID.
+    Expects a JSON body with any updatable fields such as status, checkInTime, checkOutTime, notes, room, etc.
+    If the submission is updated to COMPLETED, triggers an email notification to the student.
+    Parameters: id (string) - the unique ID of the quiz session submission to update; None (expects JSON body with updatable fields)
+    Returns: JSON object with the updated submission record if found and updated, or an error message if not found.
+    """
     data = load_data()
     sub  = next((s for s in data if s["id"] == id), None)
     if not sub:
@@ -132,6 +157,11 @@ def update_submission(id):
 
 @api_bp.route("/rooms", methods=["GET"])
 def get_rooms():
+    """
+    API endpoint to retrieve all available rooms. Returns a JSON list of room records.
+    Parameters: None
+    Returns: JSON list of room records, where each record is a dict containing keys like id, capacity, staffed, etc.
+    """
     rooms = load_rooms()
     data  = load_data()
 
@@ -150,6 +180,11 @@ def get_rooms():
 
 @api_bp.route("/rooms/<room_id>", methods=["PATCH"])
 def update_room(room_id):
+    """
+    API endpoint to update room information, such as staffing status. Expects a JSON body with updatable fields like staffed.
+    Parameters: room_id (string) - the unique ID of the room to update; None
+    Returns: JSON object with the updated room record if found and updated, or an error message
+    """
     rooms = load_rooms()
     room  = next((r for r in rooms if r["id"] == room_id), None)
     if not room:
@@ -167,6 +202,11 @@ def update_room(room_id):
 
 @api_bp.route("/test-email/<id>")
 def test_email(id):
+    """
+    API endpoint to test sending a completion email for a specific submission ID.
+    Parameters: id (string) - the unique ID of the quiz session submission to look up
+    Returns: JSON response indicating whether the email was attempted or if the submission was not found
+    """
     sub = next((s for s in load_data() if s["id"] == id), None)
     if not sub:
         return jsonify({"error": "Not found"}), 404
