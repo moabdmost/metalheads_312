@@ -192,9 +192,6 @@ function pill(status) {
 
 
 // ── PDF Export (client-side via jsPDF) ────────────────────────────────────────
-// Requires in your HTML <head>:
-//   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-//   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
 /**
  * Exports the currently filtered analytics data to a PDF document.
@@ -213,17 +210,17 @@ function exportPDF() {
 
     // Header
     doc.setFontSize(18);
-    doc.setTextColor(79, 142, 247);
+    doc.setTextColor(200, 16, 46);
     doc.text("Davidson College Quiz Center", 40, 40);
 
     doc.setFontSize(11);
-    doc.setTextColor(180, 180, 200);
+    doc.setTextColor(80, 80, 80);
     doc.text("Professor Analytics Report", 40, 58);
 
     // Timestamp
     const now = new Date().toLocaleString();
     doc.setFontSize(9);
-    doc.setTextColor(120, 120, 150);
+    doc.setTextColor(120, 120, 120);
     doc.text(`Generated: ${now}`, 40, 72);
 
     // Filter summary
@@ -251,19 +248,19 @@ function exportPDF() {
         styles: {
             fontSize: 8,
             cellPadding: 5,
-            textColor: [232, 234, 246],
-            fillColor: [34, 38, 58]
+            textColor: [17, 17, 17],
+            fillColor: [255, 255, 255]
         },
         headStyles: {
-            fillColor: [79, 142, 247],
+            fillColor: [200, 16, 46],
             textColor: [255, 255, 255],
             fontStyle: "bold",
             fontSize: 8
         },
         alternateRowStyles: {
-            fillColor: [26, 29, 39]
+            fillColor: [245, 245, 245]
         },
-        tableLineColor: [46, 51, 80],
+        tableLineColor: [220, 220, 220],
         tableLineWidth: 0.5,
     });
 
@@ -272,7 +269,7 @@ function exportPDF() {
     for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
         doc.setFontSize(8);
-        doc.setTextColor(100, 100, 130);
+        doc.setTextColor(120, 120, 120);
         doc.text(
             `Davidson College Quiz Center  —  Page ${i} of ${pageCount}`,
             doc.internal.pageSize.getWidth() / 2,

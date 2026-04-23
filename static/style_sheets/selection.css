@@ -1,217 +1,208 @@
-    /* Selection page styling for the student exam/course selection workflow. */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* Selection page styling — white, red, black theme */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --bg:      #0c0e14;
-      --surface: #13161f;
-      --border:  #1e2333;
-      --accent:  #4f8ef7;
-      --accent2: #7c5cfc;
-      --text:    #e8eaf6;
-      --muted:   #5a6080;
-    }
-    /* Base styles for the selection page, including background, font, and layout. */
-    body {
-      min-height: 100vh;
-      background: var(--bg);
-      font-family: 'DM Sans', sans-serif;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 32px 24px;
-    }
+:root {
+  --bg:      #f5f5f5;
+  --surface: #ffffff;
+  --border:  #e0e0e0;
+  --accent:  #c8102e;
+  --accent2: #8b0000;
+  --text:    #111111;
+  --muted:   #666666;
+}
 
-    /* Card container for the selection form, with background, border, and shadow. */
-    .card {
-      position: relative;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 48px 44px;
-      width: 100%;
-      max-width: 480px;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
-    }
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+}
 
-    /* Logo section at the top of the card, with a gradient mark and text. */
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 28px;
-    }
-    .logo-mark {
-      width: 32px; height: 32px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800; font-size: 12px; color: #fff;
-    }
-    .logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; }
+.card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 48px 44px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+}
 
-    /* Student greeting badge */
-    .student-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(62,207,142,0.1);
-      border: 1px solid rgba(62,207,142,0.25);
-      border-radius: 999px;
-      padding: 6px 14px;
-      margin-bottom: 20px;
-      font-size: 0.82rem;
-      color: #3ecf8e;
-    }
-    .student-badge::before { content: '✓'; font-weight: 700; }
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800; font-size: 12px; color: #fff;
+}
+.logo-text { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem; color: var(--text); }
 
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.6rem;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-    .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 28px; }
+/* Student greeting badge */
+.student-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(42,122,75,0.08);
+  border: 1px solid rgba(42,122,75,0.25);
+  border-radius: 999px;
+  padding: 6px 14px;
+  margin-bottom: 20px;
+  font-size: 0.82rem;
+  color: #2a7a4b;
+}
+.student-badge::before { content: '✓'; font-weight: 700; }
 
-    .field { margin-bottom: 18px; }
+h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 28px; }
 
-    label {
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--muted);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-    /* Styled select dropdowns and text inputs with custom appearance and focus states. */
-    select, input[type="text"] {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 16px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s;
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6080' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-    }
+.field { margin-bottom: 18px; }
 
-    input[type="text"] {
-      background-image: none;
-    }
+label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
 
-    select:focus, input:focus { border-color: var(--accent); }
+select, input[type="text"] {
+  width: 100%;
+  background: #fafafa;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
 
-    select:disabled { opacity: 0.4; cursor: not-allowed; }
+input[type="text"] { background-image: none; }
 
-    /* Accommodation options styled as pills with a light background and border. */
-    .accom-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
+select:focus, input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.1);
+}
 
-    .accom-option {
-      position: relative;
-    }
+select:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    .accom-option input[type="radio"] {
-      position: absolute;
-      opacity: 0;
-      width: 0; height: 0;
-    }
+/* Accommodation pills */
+.accom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
 
-    .accom-option label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 14px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 400;
-      color: var(--text);
-      text-transform: none;
-      letter-spacing: 0;
-      transition: border-color 0.2s, background 0.2s;
-    }
+.accom-option { position: relative; }
 
-    .accom-option input:checked + label {
-      border-color: var(--accent);
-      background: rgba(79,142,247,0.08);
-      color: var(--accent);
-    }
+.accom-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0; height: 0;
+}
 
-    .accom-option label::before {
-      content: '';
-      width: 14px; height: 14px;
-      border-radius: 50%;
-      border: 1.5px solid var(--border);
-      flex-shrink: 0;
-      transition: border-color 0.2s, background 0.2s;
-    }
+.accom-option label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  background: #fafafa;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text);
+  text-transform: none;
+  letter-spacing: 0;
+  transition: border-color 0.2s, background 0.2s;
+}
 
-    .accom-option input:checked + label::before {
-      border-color: var(--accent);
-      background: var(--accent);
-    }
+.accom-option input:checked + label {
+  border-color: var(--accent);
+  background: rgba(200,16,46,0.06);
+  color: var(--accent);
+}
 
-    /* Logo section at the top of the card, with a gradient mark and text. */
-    .btn-primary {
-      width: 100%;
-      margin-top: 8px;
-      padding: 15px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.15s;
-    }
-    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+.accom-option label::before {
+  content: '';
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s;
+}
 
+.accom-option input:checked + label::before {
+  border-color: var(--accent);
+  background: var(--accent);
+}
 
-    /* Suggestions dropdown for the course selection, styled as a card with hover effects. */
-    ul.suggestions {
-      list-style-type: none; /* Remove bullets */
-      padding: 0; /* Remove padding */
-      margin: 0; /* Remove margins */
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: var(--bg);
-      max-height: 120px; /* Limit height for top 2-3 items */
-      overflow-y: auto; /* Scroll if needed */
-      display: none; /* Hidden by default */
-    }
+.btn-primary {
+  width: 100%;
+  margin-top: 8px;
+  padding: 15px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
 
-    ul.suggestions li {
-      padding: 8px 16px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+/* Suggestions dropdown */
+ul.suggestions {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  max-height: 120px;
+  overflow-y: auto;
+  display: none;
+}
 
-    ul.suggestions li:hover {
-      background: var(--surface);
-    }
+ul.suggestions li {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
 
-    ul.suggestions li a {
-      color: var(--text);
-      text-decoration: none;
-      display: block;
-    }
+ul.suggestions li:hover { background: #fafafa; }
 
-
-
+ul.suggestions li a {
+  color: var(--text);
+  text-decoration: none;
+  display: block;
+}

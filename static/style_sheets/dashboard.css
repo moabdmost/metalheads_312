@@ -1,20 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
 
-/* Dashboard page styling for the instructor console and room status overview. */
+/* Dashboard page styling — white, red, black theme */
 
 :root {
-  --bg: #0f1117;
-  --surface: #1a1d27;
-  --surface-2: #22263a;
-  --border: #2e3350;
-  --accent: #4f8ef7;
-  --accent-soft: rgba(79, 142, 247, 0.12);
-  --accent-2: #7c5cfc;
-  --text: #e8eaf6;
-  --text-muted: #7b82a8;
-  --success: #3ecf8e;
-  --warning: #f7c948;
-  --danger: #f76f72;
+  --bg: #f5f5f5;
+  --surface: #ffffff;
+  --surface-2: #f0f0f0;
+  --border: #e0e0e0;
+  --accent: #c8102e;
+  --accent-soft: rgba(200, 16, 46, 0.08);
+  --accent-2: #8b0000;
+  --text: #111111;
+  --text-muted: #666666;
+  --success: #2a7a4b;
+  --warning: #b07d00;
+  --danger: #c8102e;
   --radius: 14px;
   --radius-sm: 8px;
 }
@@ -28,12 +28,9 @@ body {
   color: var(--text);
   min-height: 100vh;
   padding: 0 0 60px;
-  background-image:
-    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(79,142,247,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 110%, rgba(124,92,252,0.07) 0%, transparent 60%);
 }
 
-/* ── Page Wrapper — vertical stack with padding ── */
+/* ── Page Wrapper ── */
 .page-wrapper {
   max-width: 1300px;
   margin: 0 auto;
@@ -49,10 +46,7 @@ body {
   font-size: 2.5rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--text) 40%, var(--accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text);
 }
 
 /* ── Navigation ── */
@@ -81,12 +75,10 @@ nav a:hover {
   border-color: var(--accent);
   background: var(--accent-soft);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(79, 142, 247, 0.15);
+  box-shadow: 0 4px 16px rgba(200, 16, 46, 0.12);
 }
 
-nav a:active {
-  transform: translateY(0);
-}
+nav a:active { transform: translateY(0); }
 
 /* ── Filter / Controls Row ── */
 .row {
@@ -106,7 +98,8 @@ nav a:active {
   color: var(--text-muted);
   white-space: nowrap;
 }
-/* ── Custom Select Styling ── */
+
+/* ── Custom Select ── */
 select {
   font-family: 'DM Sans', sans-serif;
   font-size: 0.875rem;
@@ -117,7 +110,7 @@ select {
   padding: 8px 36px 8px 12px;
   appearance: none;
   -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237b82a8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   cursor: pointer;
@@ -127,10 +120,9 @@ select {
 select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.15);
+  box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.12);
 }
 
-/* Remove default spinner from number inputs */
 button {
   font-family: 'DM Sans', sans-serif;
   font-size: 0.875rem;
@@ -145,13 +137,13 @@ button {
 #refresh {
   background: var(--accent);
   color: #fff;
-  box-shadow: 0 2px 12px rgba(79, 142, 247, 0.3);
+  box-shadow: 0 2px 12px rgba(200, 16, 46, 0.25);
 }
 
 #refresh:hover {
-  background: #6aa0ff;
+  background: var(--accent-2);
   transform: translateY(-1px);
-  box-shadow: 0 4px 18px rgba(79, 142, 247, 0.4);
+  box-shadow: 0 4px 18px rgba(200, 16, 46, 0.35);
 }
 
 /* ── Manual Entry Button ── */
@@ -165,7 +157,7 @@ button {
 #open-manual:hover {
   border-color: var(--accent-2);
   color: var(--accent-2);
-  background: rgba(124, 92, 252, 0.08);
+  background: rgba(139, 0, 0, 0.06);
   transform: translateY(-1px);
 }
 
@@ -173,28 +165,6 @@ button {
   color: var(--text-muted);
   font-size: 0.825rem;
 }
-
-/* ── Edit Entry ── */
-/*
-#edit_entry {
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--border);
-  padding: 8px 20px;
-}
-
-#edit_entry:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: rgba(124, 92, 252, 0.08);
-  transform: translateY(-1px);
-}
-
-.muted {
-  color: var(--text-muted);
-  font-size: 0.825rem;
-}
-*/
 
 /* ── Table ── */
 table {
@@ -207,9 +177,7 @@ table {
   overflow: hidden;
 }
 
-thead {
-  background: var(--surface-2);
-}
+thead { background: var(--surface-2); }
 
 th {
   font-family: 'Outfit', sans-serif;
@@ -231,17 +199,11 @@ td {
   color: var(--text);
 }
 
-tbody tr:last-child td {
-  border-bottom: none;
-}
+tbody tr:last-child td { border-bottom: none; }
 
-tbody tr {
-  transition: background 0.15s ease;
-}
+tbody tr { transition: background 0.15s ease; }
 
-tbody tr:hover {
-  background: rgba(79, 142, 247, 0.05);
-}
+tbody tr:hover { background: rgba(200, 16, 46, 0.03); }
 
 /* ── Status Pills ── */
 .pill {
@@ -256,10 +218,10 @@ tbody tr:hover {
   color: var(--text-muted);
 }
 
-.pill[data-status="PENDING"]     { color: var(--warning);  border-color: rgba(247,201,72,0.3);  background: rgba(247,201,72,0.08); }
-.pill[data-status="IN_PROGRESS"] { color: var(--accent);   border-color: rgba(79,142,247,0.3);  background: rgba(79,142,247,0.08); }
-.pill[data-status="COMPLETED"]   { color: var(--success);  border-color: rgba(62,207,142,0.3);  background: rgba(62,207,142,0.08); }
-.pill[data-status="VERIFIED"]    { color: var(--accent-2); border-color: rgba(124,92,252,0.3);  background: rgba(124,92,252,0.08); }
+.pill[data-status="PENDING"]     { color: var(--warning);  border-color: rgba(176,125,0,0.3);   background: rgba(176,125,0,0.08); }
+.pill[data-status="IN_PROGRESS"] { color: var(--accent);   border-color: rgba(200,16,46,0.3);   background: rgba(200,16,46,0.08); }
+.pill[data-status="COMPLETED"]   { color: var(--success);  border-color: rgba(42,122,75,0.3);   background: rgba(42,122,75,0.08); }
+.pill[data-status="VERIFIED"]    { color: var(--accent-2); border-color: rgba(139,0,0,0.3);     background: rgba(139,0,0,0.08); }
 
 /* ── Action Buttons inside table ── */
 td button {
@@ -295,8 +257,8 @@ td button:hover {
 
 .room-badge.assigned {
   color: var(--accent);
-  border: 1px solid rgba(79, 142, 247, 0.3);
-  background: rgba(79, 142, 247, 0.08);
+  border: 1px solid rgba(200, 16, 46, 0.3);
+  background: rgba(200, 16, 46, 0.08);
 }
 
 .room-badge.unassigned {
@@ -317,9 +279,7 @@ td button:hover {
   transition: border-color 0.2s;
 }
 
-.room-card:hover {
-  border-color: var(--accent);
-}
+.room-card:hover { border-color: var(--accent); }
 
 .room-card-top {
   display: flex;
@@ -339,13 +299,7 @@ td button:hover {
   color: var(--text-muted);
 }
 
-.room-card-badges {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.room-features {
+.room-card-badges, .room-features {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
@@ -355,9 +309,9 @@ td button:hover {
   font-size: 0.7rem;
   padding: 2px 8px;
   border-radius: 999px;
-  background: rgba(124, 92, 252, 0.1);
+  background: rgba(139, 0, 0, 0.08);
   color: var(--accent-2);
-  border: 1px solid rgba(124, 92, 252, 0.25);
+  border: 1px solid rgba(139, 0, 0, 0.2);
   text-transform: capitalize;
 }
 
@@ -377,7 +331,7 @@ td button:hover {
 .staff-toggle-btn:hover {
   border-color: var(--success);
   color: var(--success);
-  background: rgba(62, 207, 142, 0.08);
+  background: rgba(42, 122, 75, 0.06);
 }
 
 .staff-toggle-btn:disabled {
@@ -390,16 +344,14 @@ td button:hover {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(4px);
   z-index: 100;
   align-items: center;
   justify-content: center;
 }
 
-.modal-overlay.open {
-  display: flex;
-}
+.modal-overlay.open { display: flex; }
 
 .modal {
   background: var(--surface);
@@ -409,7 +361,7 @@ td button:hover {
   width: 100%;
   max-width: 460px;
   position: relative;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2);
 }
 
 .modal h2 {
@@ -417,10 +369,7 @@ td button:hover {
   font-size: 1.4rem;
   font-weight: 800;
   margin-bottom: 24px;
-  background: linear-gradient(135deg, var(--text) 40%, var(--accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text);
 }
 
 .modal-close {
@@ -442,9 +391,7 @@ td button:hover {
   background: var(--surface-2);
 }
 
-.modal .field {
-  margin-bottom: 16px;
-}
+.modal .field { margin-bottom: 16px; }
 
 .modal .field label {
   display: block;
@@ -456,7 +403,6 @@ td button:hover {
   margin-bottom: 6px;
 }
 
-/* Shared styles for inputs and selects within the modal */
 .modal .field input,
 .modal .field select {
   width: 100%;
@@ -476,11 +422,11 @@ td button:hover {
 .modal .field input:focus,
 .modal .field select:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.12);
+  box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.1);
 }
 
 .modal .field select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237b82a8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 36px;
@@ -490,37 +436,35 @@ td button:hover {
   display: none;
   margin-bottom: 14px;
   padding: 10px 14px;
-  background: rgba(247, 111, 114, 0.1);
-  border: 1px solid rgba(247, 111, 114, 0.3);
+  background: rgba(200, 16, 46, 0.08);
+  border: 1px solid rgba(200, 16, 46, 0.3);
   border-radius: var(--radius-sm);
   color: var(--danger);
   font-size: 0.85rem;
 }
 
-/* ── Submit Button for Manual Entry ── */
+/* ── Submit Button ── */
 #submit-manual {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  background: var(--accent);
   color: #fff;
   border: none;
   border-radius: var(--radius-sm);
   font-size: 0.95rem;
   font-weight: 500;
   margin-top: 4px;
-  box-shadow: 0 2px 16px rgba(79, 142, 247, 0.3);
+  box-shadow: 0 2px 16px rgba(200, 16, 46, 0.25);
 }
 
 #submit-manual:hover {
-  opacity: 0.9;
+  background: var(--accent-2);
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(79, 142, 247, 0.4);
+  box-shadow: 0 4px 20px rgba(200, 16, 46, 0.35);
 }
 
 /* ── Analytics ── */
-.analytics-header {
-  margin-bottom: 24px;
-}
+.analytics-header { margin-bottom: 24px; }
 
 .filters {
   display: flex;
@@ -555,7 +499,7 @@ td button:hover {
   border-radius: var(--radius-sm);
   padding: 8px 12px;
 }
-/* Remove default spinner from number inputs */
+
 .export-buttons {
   display: flex;
   gap: 12px;
@@ -574,28 +518,29 @@ td button:hover {
 }
 
 .export-btn.pdf {
-  background: var(--danger);
+  background: var(--accent);
   color: #fff;
-  box-shadow: 0 2px 12px rgba(248, 113, 113, 0.3);
+  box-shadow: 0 2px 12px rgba(200, 16, 46, 0.25);
 }
 
 .export-btn.pdf:hover {
-  background: #ff8a8a;
+  background: var(--accent-2);
   transform: translateY(-1px);
-  box-shadow: 0 4px 18px rgba(248, 113, 113, 0.4);
+  box-shadow: 0 4px 18px rgba(200, 16, 46, 0.35);
 }
 
 .export-btn.csv {
   background: var(--success);
   color: #fff;
-  box-shadow: 0 2px 12px rgba(62, 207, 142, 0.3);
+  box-shadow: 0 2px 12px rgba(42, 122, 75, 0.25);
 }
 
 .export-btn.csv:hover {
-  background: #50e3a5;
+  background: #1e5c38;
   transform: translateY(-1px);
-  box-shadow: 0 4px 18px rgba(62, 207, 142, 0.4);
+  box-shadow: 0 4px 18px rgba(42, 122, 75, 0.35);
 }
+
 /* ── Statistics Cards ── */
 .stats-grid {
   display: grid;
