@@ -164,3 +164,4 @@ def scan_redirect(submission_id):
             break
     save_data(data)
     return redirect("/dashboard")
+

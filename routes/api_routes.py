@@ -197,6 +197,19 @@ def update_room(room_id):
     save_rooms(rooms)
     return jsonify(room)
 
+@api_bp.route("/forgot-password", methods=["POST"])
+def forgot_password():
+    data = request.get_json() or {}
+    email = (data.get("email") or "").strip().lower()
+
+    users = load_users()
+
+    # Avoid leaking whether account exists (best practice)
+    if email not in users:
+        return jsonify({"message": "If that email exists, a reset link was sent."}), 200
+
+    # Placeholder: implement email token system later
+    return jsonify({"message": "Password reset link sent."}), 200
 
 # ── Debug ─────────────────────────────────────────────────────────────────────
 
