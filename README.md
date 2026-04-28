@@ -13,6 +13,9 @@
 ```
 project/
 │
+├── config/
+│   ├── config.py                # SMTP settings, file paths, secrets
+│
 ├── data/                        # JSON data files
 │   ├── users.json               # Stored user credentials (add new users here)
 │   ├── room-assignment.json     # Tracks room occupancy and room type (Accommodations / General)
@@ -26,13 +29,6 @@ project/
 ├── services/
 │   ├── email_utils.py           # Completion email logic
 │   ├── data.py                  # JSON load/save helpers + room assignment logic
-│
-│
-│
-│
-│
-├── config/
-│   ├── config.py                # SMTP settings, file paths, secrets
 │
 ├── static/
 │   ├── scripts/                 # JavaScript files (.js)
@@ -48,10 +44,11 @@ project/
 │   ├── staff_rooms.html
 │   └── student.html
 │
+├── .gitignore                   # Git ignore rules
 ├── app.py                       # Flask app init + blueprint registration
-├── config.py                    # SMTP settings, file paths, secrets
-├── requirements.txt             # Python dependencies
-└── .gitignore                   # Git ignore rules
+├── README.md                    # Project Overview
+└── app.py                       # Flask app init + blueprint registration
+└── requirements.txt             # Python dependencies
 ```
 
 ---
