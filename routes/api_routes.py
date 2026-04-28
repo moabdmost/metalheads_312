@@ -264,17 +264,26 @@ If you didn't request this, you can safely ignore this email.
 <head>
 <meta charset="utf-8"/>
 <style>
-  body {{ margin:0; padding:0; background:#0f1117; font-family:'DM Sans',Arial,sans-serif; color:#e8eaf6; }}
-  .wrapper {{ max-width:520px; margin:40px auto; background:#1a1d27; border:1px solid #2e3350; border-radius:16px; overflow:hidden; }}
-  .header {{ background:linear-gradient(135deg,#4f8ef7 0%,#7c5cfc 100%); padding:32px 40px 24px; }}
-  .header h1 {{ font-size:1.5rem; font-weight:800; color:#fff; margin:0 0 4px; }}
-  .header p {{ margin:0; color:rgba(255,255,255,0.75); font-size:0.875rem; }}
+  body {{ margin:0; padding:0; background:#FFFFFF; font-family:'DM Sans',Arial,sans-serif; color:#ffffff; }}
+  .wrapper {{ max-width:520px; margin:40px auto; background:#0d0d0d; border:1px solid #1f1f1f; border-radius:16px; overflow:hidden; }}
+  
+  .header {{ background:#b30000; padding:32px 40px 24px; }}
+  .header h1 {{ font-size:1.5rem; font-weight:800; color:#ffffff; margin:0 0 4px; }}
+  .header p {{ margin:0; color:#f2f2f2; font-size:0.875rem; }}
+  
   .body {{ padding:32px 40px; }}
-  .greeting {{ font-size:0.95rem; color:#b0b8d8; margin-bottom:24px; line-height:1.6; }}
-  .btn {{ display:inline-block; padding:14px 32px; background:linear-gradient(135deg,#4f8ef7,#7c5cfc); color:#fff; text-decoration:none; border-radius:10px; font-weight:600; font-size:0.95rem; }}
+  .greeting {{ font-size:0.95rem; color:#d9d9d9; margin-bottom:24px; line-height:1.6; }}
+  
+  .btn {{ display:inline-block; padding:14px 32px; background:#e60000; color:#ffffff; text-decoration:none; border-radius:10px; font-weight:600; font-size:0.95rem; }}
+  .btn:hover {{ background:#cc0000; }}
+  
   .btn-wrap {{ text-align:center; margin:24px 0; }}
-  .note {{ font-size:0.8rem; color:#4a5070; line-height:1.6; margin-top:20px; }}
-  .footer {{ text-align:center; padding:16px 40px 28px; font-size:0.78rem; color:#4a5070; border-top:1px solid #2e3350; }}
+  
+  .note {{ font-size:0.8rem; color:#a6a6a6; line-height:1.6; margin-top:20px; }}
+  
+  .link {{ color:#ff4d4d; word-break:break-all; }}
+ 
+  .footer {{ text-align:center; padding:16px 40px 28px; font-size:0.78rem; color:#808080; border-top:1px solid #1f1f1f; }}
 </style>
 </head>
 <body>

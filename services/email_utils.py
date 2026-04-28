@@ -65,67 +65,117 @@ Questions? Contact the Quiz Center.
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
-  body {{ margin:0; padding:0; background:#0f1117; font-family:'DM Sans',Arial,sans-serif; color:#e8eaf6; }}
-  .wrapper {{ max-width:560px; margin:40px auto; background:#1a1d27; border:1px solid #2e3350; border-radius:16px; overflow:hidden; }}
-  .header {{ background:linear-gradient(135deg,#4f8ef7 0%,#7c5cfc 100%); padding:36px 40px 28px; }}
-  .badge {{ display:inline-block; background:rgba(255,255,255,0.2); color:#fff; font-size:0.75rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:4px 12px; border-radius:999px; margin-bottom:12px; }}
-  .header h1 {{ font-family:'Outfit',Arial,sans-serif; font-size:1.6rem; font-weight:800; color:#fff; margin:0 0 6px; letter-spacing:-0.02em; }}
-  .header p {{ margin:0; color:rgba(255,255,255,0.8); font-size:0.9rem; }}
-  .body {{ padding:32px 40px 36px; }}
-  .greeting {{ font-size:1rem; color:#b0b8d8; margin-bottom:24px; line-height:1.5; }}
-  .card {{ background:#22263a; border:1px solid #2e3350; border-radius:12px; overflow:hidden; margin-bottom:16px; }}
-  .card-title {{ font-family:'Outfit',Arial,sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#7b82a8; padding:12px 20px 8px; border-bottom:1px solid #2e3350; }}
-  .detail-row {{ display:flex; padding:12px 20px; border-bottom:1px solid #2e3350; align-items:flex-start; }}
+  body {{ margin:0; padding:0; background:#111111; font-family:'DM Sans',Arial,sans-serif; color:#1a1a1a; }}
+  .wrapper {{ max-width:560px; margin:40px auto; background:#ffffff; border:1px solid #e0e0e0; border-radius:16px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.25); }}
+ 
+  /* ── Header ── */
+  .header {{ background:linear-gradient(135deg,#c0392b 0%,#8B0000 100%); padding:36px 40px 28px; }}
+  .header-top {{ display:flex; align-items:center; gap:12px; margin-bottom:16px; }}
+  .logo-mark {{ width:38px; height:38px; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3); border-radius:10px; display:inline-flex; align-items:center; justify-content:center; font-family:'Outfit',Arial,sans-serif; font-weight:800; font-size:13px; color:#fff; letter-spacing:-0.5px; }}
+  .logo-text {{ font-family:'Outfit',Arial,sans-serif; font-weight:700; font-size:0.9rem; color:rgba(255,255,255,0.85); letter-spacing:0.02em; }}
+  .badge {{ display:inline-block; background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.35); color:#fff; font-size:0.72rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:4px 14px; border-radius:999px; margin-bottom:12px; }}
+  .header h1 {{ font-family:'Outfit',Arial,sans-serif; font-size:1.65rem; font-weight:800; color:#fff; margin:0 0 5px; letter-spacing:-0.02em; }}
+  .header p {{ margin:0; color:rgba(255,255,255,0.72); font-size:0.875rem; }}
+ 
+  /* ── Body ── */
+  .body {{ padding:32px 40px 36px; background:#ffffff; }}
+  .greeting {{ font-size:0.95rem; color:#444444; margin-bottom:24px; line-height:1.65; }}
+ 
+  /* ── Cards ── */
+  .card {{ background:#fafafa; border:1px solid #ebebeb; border-radius:12px; overflow:hidden; margin-bottom:14px; }}
+  .card-title {{ font-family:'Outfit',Arial,sans-serif; font-size:0.68rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#c0392b; padding:11px 20px 9px; border-bottom:1px solid #ebebeb; background:#fff5f5; }}
+  .detail-row {{ display:flex; padding:11px 20px; border-bottom:1px solid #f2f2f2; align-items:flex-start; }}
   .detail-row:last-child {{ border-bottom:none; }}
-  .label {{ width:120px; flex-shrink:0; font-size:0.8rem; color:#7b82a8; padding-top:1px; }}
-  .value {{ font-size:0.875rem; color:#e8eaf6; font-weight:500; flex:1; }}
+  .label {{ width:125px; flex-shrink:0; font-size:0.78rem; color:#999999; padding-top:1px; font-weight:500; }}
+  .value {{ font-size:0.875rem; color:#1a1a1a; font-weight:600; flex:1; }}
+ 
+  /* ── Times grid ── */
   .times-grid {{ display:grid; grid-template-columns:1fr 1fr; }}
-  .time-cell {{ padding:16px 20px; border-right:1px solid #2e3350; }}
+  .time-cell {{ padding:16px 20px; border-right:1px solid #f2f2f2; }}
   .time-cell:last-child {{ border-right:none; }}
-  .time-label {{ font-size:0.72rem; color:#7b82a8; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px; }}
-  .time-value {{ font-family:'Outfit',Arial,sans-serif; font-size:0.95rem; font-weight:700; color:#4f8ef7; }}
-  .footer {{ text-align:center; padding:20px 40px 32px; font-size:0.8rem; color:#4a5070; border-top:1px solid #2e3350; line-height:1.6; }}
+  .time-label {{ font-size:0.7rem; color:#999999; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; font-weight:500; }}
+  .time-value {{ font-family:'Outfit',Arial,sans-serif; font-size:0.95rem; font-weight:700; color:#c0392b; }}
+ 
+  /* ── Footer ── */
+  .footer {{ text-align:center; padding:20px 40px 28px; font-size:0.78rem; color:#aaaaaa; border-top:1px solid #eeeeee; line-height:1.7; background:#fafafa; }}
+  .footer strong {{ color:#c0392b; font-weight:600; }}
 </style>
 </head>
 <body>
 <div class="wrapper">
+ 
+  <!-- Header -->
   <div class="header">
-    <div class="badge">&#10003; Completed</div>
+    <div class="header-top">
+      <div class="logo-mark">QC</div>
+      <span class="logo-text">Davidson Quiz Center</span>
+    </div>
+    <div class="badge">&#10003;&nbsp; Session Completed</div>
     <h1>Exam Session Receipt</h1>
     <p>Davidson College Quiz Center</p>
   </div>
+ 
+  <!-- Body -->
   <div class="body">
     <p class="greeting">
-      Hi <strong style="color:#e8eaf6">{name}</strong>,
-      your exam session has been marked <strong style="color:#3ecf8e">COMPLETED</strong>.
-      Here is your official receipt.
+      Hi <strong style="color:#111111">{name}</strong>,<br/>
+      your exam session has been marked <strong style="color:#c0392b">COMPLETED</strong>.
+      Here is your official receipt — please keep it for your records.
     </p>
+ 
+    <!-- Exam Details -->
     <div class="card">
       <div class="card-title">Exam Details</div>
-      <div class="detail-row"><span class="label">Exam</span><span class="value">{submission['examName']}</span></div>
-      <div class="detail-row"><span class="label">Course</span><span class="value"><strong>{submission['courseCode']}</strong> — {submission['courseName']}</span></div>
-      <div class="detail-row"><span class="label">Professor</span><span class="value">{submission['facultyName']}</span></div>
-      <div class="detail-row"><span class="label">Proctored by</span><span class="value">{submission['staffName']}</span></div>
+      <div class="detail-row">
+        <span class="label">Exam</span>
+        <span class="value">{submission['examName']}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Course</span>
+        <span class="value"><strong>{submission['courseCode']}</strong> &mdash; {submission['courseName']}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Professor</span>
+        <span class="value">{submission['facultyName']}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Proctored by</span>
+        <span class="value">{submission['staffName']}</span>
+      </div>
     </div>
+ 
+    <!-- Session Times -->
     <div class="card">
       <div class="card-title">Session Times</div>
       <div class="times-grid">
-        <div class="time-cell"><div class="time-label">Start Time</div><div class="time-value">{start}</div></div>
-        <div class="time-cell"><div class="time-label">End Time</div><div class="time-value">{end}</div></div>
+        <div class="time-cell">
+          <div class="time-label">Start Time</div>
+          <div class="time-value">{start}</div>
+        </div>
+        <div class="time-cell">
+          <div class="time-label">End Time</div>
+          <div class="time-value">{end}</div>
+        </div>
       </div>
     </div>
+ 
+    <!-- Reference -->
     <div class="card">
       <div class="card-title">Reference</div>
       <div class="detail-row">
         <span class="label">Submission ID</span>
-        <span class="value" style="font-family:monospace;color:#7c5cfc">{sub_id}</span>
+        <span class="value" style="font-family:monospace;color:#c0392b;font-size:0.85rem">{sub_id}</span>
       </div>
     </div>
+ 
   </div>
+ 
+  <!-- Footer -->
   <div class="footer">
     Questions? Contact the Quiz Center.<br/>
-    Davidson College — Quiz Center Exam Management System
+    <strong>Davidson College</strong> &mdash; Quiz Center Exam Management System
   </div>
+ 
 </div>
 </body>
 </html>
