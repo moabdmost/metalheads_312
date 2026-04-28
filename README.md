@@ -87,13 +87,29 @@ Before running the app, you need your local IP address:
 ipconfig getifaddr en0
 ```
 
-### Step 4 — Run the App
+
+### Step 4 — Create a Separate Environment File for Sensitive Credentials
+
+In the project root directory (the same folder as app.py), create an additional .env file to 
+securely store your email and application secrets:
+
+```bash
+SMTP_PASSWORD=our-16-char-gmail-app-password 
+FLASK_SECRET=any-long-random-string 
+```
+
+This file is used to keep sensitive information out of your source code.
+Never share or commit this file — it's already covered by .gitignore.
+
+
+
+### Step 5 — Run the App
 
 ```bash
 python3 app.py
 ```
 
-### Step 5 — Access the App
+### Step 6 — Access the App
 
 Once the server is running, open a browser and navigate to:
 
@@ -152,6 +168,7 @@ Handles everything a student interacts with:
 - `/scan/<id>` — scanned by staff; marks the session **VERIFIED** and assigns a room
 - `/status/<id>` — status waiting page shown after QR generation
 - `/api/google-login` — verifies a Google ID token and stores the student's name/email in the session
+- `/reset-password ` - resets the student's password
 
 ---
 
@@ -177,7 +194,7 @@ All `/api/*` endpoints consumed by the frontend JavaScript:
 | `PATCH` | `/api/submissions/<id>` | Update a submission (triggers email on COMPLETED) |
 | `GET` | `/api/rooms` | List all rooms with current occupancy |
 | `PATCH` | `/api/rooms/<id>` | Toggle a room's staffed status |
-| `GET` | `/api/test-email/<id>` | Debug: manually trigger a receipt email |
+| `POST` | `/forgot-password` | Send reset email |
 
 ---
 
