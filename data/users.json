@@ -1,8 +1,3 @@
 {
-  "ridoctor@davidson.edu": {
-    "password": "pbkdf2:sha256:1000000$CmNSBGX9YUOCePih$2d3395ed0dd0bae7ad9e509743a4e9cac2144641d74a40017737b7aaf7189987",
-    "first_name": "Riana",
-    "last_name": "Doctor",
-    "reset_token": "Wj34EfSZGN3EZI_Pcg5HoBnAI3YOVVWrfy4vuOp6upM"
-  }
+
 }
