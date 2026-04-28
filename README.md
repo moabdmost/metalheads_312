@@ -19,10 +19,20 @@ project/
 │   └── submissions.json         # Logs all student sign-in entries
 │
 ├── routes/                      # Flask Blueprints (split from app.py)
-│   ├── __init__.py
 │   ├── student_routes.py        # Student-facing pages and QR flow
 │   ├── staff_routes.py          # Staff-facing pages (dashboard, rooms, analytics)
 │   └── api_routes.py            # All /api/* endpoints
+│
+├── services/
+│   ├── email_utils.py           # Completion email logic
+│   ├── data.py                  # JSON load/save helpers + room assignment logic
+│
+│
+│
+│
+│
+├── config/
+│   ├── config.py                # SMTP settings, file paths, secrets
 │
 ├── static/
 │   ├── scripts/                 # JavaScript files (.js)
@@ -32,6 +42,7 @@ project/
 │   ├── dashboard.html
 │   ├── professor_analytics.html
 │   ├── qr_generate.html
+│   ├── reset_password.html
 │   ├── room_assigned.html
 │   ├── selection.html
 │   ├── staff_rooms.html
@@ -39,8 +50,6 @@ project/
 │
 ├── app.py                       # Flask app init + blueprint registration
 ├── config.py                    # SMTP settings, file paths, secrets
-├── email_utils.py               # Completion email logic
-├── data.py                    # JSON load/save helpers + room assignment logic
 ├── requirements.txt             # Python dependencies
 └── .gitignore                   # Git ignore rules
 ```

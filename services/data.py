@@ -1,6 +1,6 @@
 import json, os, random
 from datetime import datetime
-from config import DATA_FILE, ROOMS_FILE, USERS_FILE
+from config.config import DATA_FILE, ROOMS_FILE, USERS_FILE
 
 
 # ── User accounts ─────────────────────────────────────────────────────────────

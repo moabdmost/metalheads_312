@@ -2,8 +2,8 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from config import SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD
-from data import load_data, fmt_time
+from config.config import SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD
+from services.data import load_data, fmt_time
 
 
 def send_completion_email(submission):

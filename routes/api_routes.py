@@ -1,13 +1,13 @@
 from datetime import datetime
 from flask import Blueprint, request, jsonify, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
-from data import load_data, save_data, load_rooms, save_rooms, load_users, save_users, auto_assign_room
-from email_utils import send_completion_email
+from services.data import load_data, save_data, load_rooms, save_rooms, load_users, save_users, auto_assign_room
+from services.email_utils import send_completion_email
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from config import SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD
-from data import load_data
+from config.config import SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD
+from services.data import load_data
 import secrets as _secrets
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")

@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flask_cors import CORS
-from config import FLASK_SECRET
+from config.config import FLASK_SECRET
 from routes.student_routes import student_bp
 from routes.staff_routes import staff_bp
 from routes.api_routes import api_bp
