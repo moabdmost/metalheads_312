@@ -1,9 +1,14 @@
 from datetime import datetime
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify, session, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from data import load_data, save_data, load_rooms, save_rooms, load_users, save_users, auto_assign_room
 from email_utils import send_completion_email
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from config import SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD
+from data import load_data
+import secrets as _secrets
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 
@@ -18,6 +23,7 @@ def signup():
     Parameters: None (expects JSON body with email, studentId, password, firstName, lastName)
     Returns: JSON response with first_name if successful, or error message if failed
     """
+    # Validate and sanitize input
     data       = request.get_json()
     email      = (data.get("email") or "").strip().lower()
     password   = data.get("password") or ""
@@ -35,6 +41,7 @@ def signup():
     if email in users:
         return jsonify({"error": "An account with that email already exists."}), 409
 
+    # Hash the password and save the new user
     users[email] = {
         "password":   generate_password_hash(password, method="pbkdf2:sha256"),
         "first_name": first_name,
@@ -42,6 +49,7 @@ def signup():
     }
     save_users(users)
 
+    # Log the user in by setting session variables
     session["student_email"] = email
     session["student_name"]  = f"{first_name} {last_name}"
     return jsonify({"first_name": first_name}), 201
@@ -69,6 +77,7 @@ def login():
     if not check_password_hash(user["password"], password):
         return jsonify({"error": "Incorrect password."}), 401
 
+    # Log the user in by setting session variables
     session["student_email"] = matched_email
     session["student_name"]  = f"{user['first_name']} {user['last_name']}"
     return jsonify({"first_name": user["first_name"]}), 200
@@ -94,6 +103,7 @@ def get_submission(id):
     Parameters: id (string) - the unique ID of the quiz session submission to look up
     Returns: JSON object with submission details if found, or error message if not found
     """
+    # Look up the submission by ID and return it, or return a 404 error if not found.
     sub = next((s for s in load_data() if s["id"] == id), None)
     if not sub:
         return jsonify({"error": "Not found"}), 404
@@ -111,14 +121,14 @@ def create_submission():
     """
     body = request.json or {}
     data = load_data()
-
+    # Ensure the provided ID is unique if it's included in the request body.
     if any(s["id"] == body.get("id") for s in data):
         return jsonify({"error": "Duplicate ID"}), 409
 
     body["room"]        = auto_assign_room(body)
     body["status"]      = "VERIFIED"
     body["checkInTime"] = datetime.now().isoformat(timespec="seconds")
-
+    # Generate a unique ID for the submission if not provided.
     data.append(body)
     save_data(data)
     return jsonify(body), 201
@@ -137,10 +147,11 @@ def update_submission(id):
     sub  = next((s for s in data if s["id"] == id), None)
     if not sub:
         return jsonify({"error": "Not found"}), 404
-
+    # Update only allowed fields from the request body to prevent unintended changes.
     updates = request.json or {}
     allowed = ["status", "checkInTime", "checkOutTime", "notes",
                "room", "studentName", "courseCode", "courseName", "facultyName"]
+    # Only update fields that are in the allowed list and present in the request body.
     for key in allowed:
         if key in updates:
             sub[key] = updates[key]
@@ -164,12 +175,12 @@ def get_rooms():
     """
     rooms = load_rooms()
     data  = load_data()
-
     occupant_count = {}
+    # Iterate through all submissions and count how many are currently occupying each room.
     for s in data:
         if s["status"] in ("VERIFIED", "IN_PROGRESS", "LEAVING") and s.get("room"):
             occupant_count[s["room"]] = occupant_count.get(s["room"], 0) + 1
-
+    # Add occupant count and availability status to each room record before returning.
     for r in rooms:
         r["occupants"] = occupant_count.get(r["id"], 0)
         r["available"] = r["occupants"] < r.get("capacity", 1)
@@ -183,13 +194,14 @@ def update_room(room_id):
     """
     API endpoint to update room information, such as staffing status. Expects a JSON body with updatable fields like staffed.
     Parameters: room_id (string) - the unique ID of the room to update; None
-    Returns: JSON object with the updated room record if found and updated, or an error message
+    Returns: JSON object with the updated room record if found and updated, or an error message.
     """
     rooms = load_rooms()
+    # Find the room by ID and return a 404 error if not found.
     room  = next((r for r in rooms if r["id"] == room_id), None)
     if not room:
         return jsonify({"error": "Room not found"}), 404
-
+    # Update only allowed fields from the request body to prevent unintended changes.
     updates = request.json or {}
     if "staffed" in updates:
         room["staffed"] = bool(updates["staffed"])
@@ -197,31 +209,116 @@ def update_room(room_id):
     save_rooms(rooms)
     return jsonify(room)
 
+# ── Password Reset ─────────────────────────────────────────────────────────
+
 @api_bp.route("/forgot-password", methods=["POST"])
 def forgot_password():
-    data = request.get_json() or {}
+    """
+    API endpoint to handle forgot password requests. Expects a JSON body with the user's email.
+    If the email exists in the system, generates a reset token, saves it to the user record, 
+    and sends a password reset email with a link containing the token.
+    Parameters: None (expects JSON body with email)
+    Returns: JSON response indicating that if an account exists, a reset email has been sent 
+    (always returns 200 to avoid revealing account existence).
+    """
+    data  = request.get_json()
     email = (data.get("email") or "").strip().lower()
-
+ 
+    if not email.endswith("@davidson.edu"):
+        return jsonify({"error": "Must use a @davidson.edu email."}), 400
+ 
     users = load_users()
-
-    # Avoid leaking whether account exists (best practice)
+ 
+    # Always return success so we don't reveal whether an account exists.
     if email not in users:
-        return jsonify({"message": "If that email exists, a reset link was sent."}), 200
-
-    # Placeholder: implement email token system later
-    return jsonify({"message": "Password reset link sent."}), 200
-
-# ── Debug ─────────────────────────────────────────────────────────────────────
-
-@api_bp.route("/test-email/<id>")
-def test_email(id):
-    """
-    API endpoint to test sending a completion email for a specific submission ID.
-    Parameters: id (string) - the unique ID of the quiz session submission to look up
-    Returns: JSON response indicating whether the email was attempted or if the submission was not found
-    """
-    sub = next((s for s in load_data() if s["id"] == id), None)
-    if not sub:
-        return jsonify({"error": "Not found"}), 404
-    send_completion_email(sub)
-    return jsonify({"message": f"Email attempted for {id}"})
+        return jsonify({"message": "If an account exists, a reset email has been sent."}), 200
+ 
+    # Generate a short-lived token and store it on the user record.
+    token = _secrets.token_urlsafe(32)
+    users[email]["reset_token"] = token
+    save_users(users)
+ 
+    reset_url = url_for("student.do_reset_password", token=token, email=email, _external=True)
+ 
+    name = users[email].get("first_name", "Student")
+ 
+    subject = "Davidson Quiz Center — Password Reset"
+    # Create both plain text and HTML versions of the email content.
+    plain = f"""\
+Hi {name},
+ 
+We received a request to reset the password for your Quiz Center account.
+ 
+Click the link below to choose a new password (link expires in 1 hour):
+ 
+{reset_url}
+ 
+If you didn't request this, you can safely ignore this email.
+ 
+— Davidson College Quiz Center
+"""
+ 
+    html = f"""\
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<style>
+  body {{ margin:0; padding:0; background:#0f1117; font-family:'DM Sans',Arial,sans-serif; color:#e8eaf6; }}
+  .wrapper {{ max-width:520px; margin:40px auto; background:#1a1d27; border:1px solid #2e3350; border-radius:16px; overflow:hidden; }}
+  .header {{ background:linear-gradient(135deg,#4f8ef7 0%,#7c5cfc 100%); padding:32px 40px 24px; }}
+  .header h1 {{ font-size:1.5rem; font-weight:800; color:#fff; margin:0 0 4px; }}
+  .header p {{ margin:0; color:rgba(255,255,255,0.75); font-size:0.875rem; }}
+  .body {{ padding:32px 40px; }}
+  .greeting {{ font-size:0.95rem; color:#b0b8d8; margin-bottom:24px; line-height:1.6; }}
+  .btn {{ display:inline-block; padding:14px 32px; background:linear-gradient(135deg,#4f8ef7,#7c5cfc); color:#fff; text-decoration:none; border-radius:10px; font-weight:600; font-size:0.95rem; }}
+  .btn-wrap {{ text-align:center; margin:24px 0; }}
+  .note {{ font-size:0.8rem; color:#4a5070; line-height:1.6; margin-top:20px; }}
+  .footer {{ text-align:center; padding:16px 40px 28px; font-size:0.78rem; color:#4a5070; border-top:1px solid #2e3350; }}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <h1>Reset Your Password</h1>
+    <p>Davidson College Quiz Center</p>
+  </div>
+  <div class="body">
+    <p class="greeting">Hi <strong style="color:#e8eaf6">{name}</strong>,<br/>
+    We received a request to reset the password on your Quiz Center account. Click the button below to set a new one.</p>
+    <div class="btn-wrap">
+      <a href="{reset_url}" class="btn">Reset My Password</a>
+    </div>
+    <p class="note">
+      If the button doesn't work, copy and paste this link into your browser:<br/>
+      <span style="color:#7c5cfc;word-break:break-all">{reset_url}</span>
+    </p>
+    <p class="note">If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
+  </div>
+  <div class="footer">Davidson College — Quiz Center Exam Management System</div>
+</div>
+</body>
+</html>
+"""
+ 
+    # Construct the email message with both plain text and HTML parts.
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"]    = f"Davidson Quiz Center <{SMTP_USER}>"
+    msg["To"]      = email
+    msg.attach(MIMEText(plain, "plain"))
+    msg.attach(MIMEText(html,  "html"))
+ 
+    # Send the email using SMTP. Log any exceptions but still return success to avoid exposing internal errors to the client.
+    try:
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+            server.ehlo()
+            server.starttls()
+            server.login(SMTP_USER, SMTP_PASSWORD)
+            server.sendmail(SMTP_USER, email, msg.as_string())
+        print(f"[forgot-password] Reset email sent to {email}")
+    except Exception as e:
+        print(f"[forgot-password] SMTP error: {e}")
+        # Still return success — don't expose internal errors to the client.
+ 
+    return jsonify({"message": "If an account exists, a reset email has been sent."}), 200

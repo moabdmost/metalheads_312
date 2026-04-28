@@ -4,7 +4,10 @@ from flask import Blueprint, request, session, render_template, redirect, url_fo
 from google.oauth2 import id_token
 from google.auth.transport import requests as grequests
 from config import GOOGLE_CLIENT_ID
-from data import load_data, save_data, auto_assign_room
+from data import load_data, save_data, auto_assign_room, load_users, save_users
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
 
 student_bp = Blueprint("student", __name__)
 
@@ -72,7 +75,7 @@ def google_login():
     """
     body  = request.json or {}
     token = body.get("token", "")
-
+    # Verify the token and extract user info using Google's OAuth2 API
     try:
         info = id_token.verify_oauth2_token(token, grequests.Request(), GOOGLE_CLIENT_ID)
     except ValueError as e:
@@ -81,10 +84,10 @@ def google_login():
 
     email = info.get("email", "")
     name  = info.get("name", "")
-
+    # Ensure the email is a Davidson account
     if not email.endswith("@davidson.edu"):
         return jsonify({"error": "Please use your @davidson.edu Google account"}), 403
-
+    # Store the student's name and email in the session for later use
     session["student_name"]  = name
     session["student_email"] = email
     print(f"[google-login] {name} <{email}> authenticated")
@@ -135,12 +138,13 @@ def qr_generate():
     data = load_data()
     data.append(new_submission)
     save_data(data)
-
+    # Generate a QR code that encodes a URL with the submission ID, which staff can scan to verify and assign a room.
     scan_url = url_for("student.scan_redirect", submission_id=new_id, _external=True)
     img      = qrcode.make(scan_url)
     filename = f"qr_{new_id}.png"
     img.save(os.path.join("static", filename))
-
+    # Render a page showing the generated QR code and session status, passing the QR 
+    # code URL and submission info to the template.
     return render_template("qr_generate.html",
         qr         = url_for("static", filename=filename),
         submission = new_submission,
@@ -155,6 +159,7 @@ def scan_redirect(submission_id):
     Returns: Redirect to staff dashboard after updating submission status and room assignment
     """
     data = load_data()
+    # Find the submission with the given ID and update its status to VERIFIED, set the check-in time, and assign a room.
     for s in data:
         if s["id"] == submission_id:
             if s["status"] == "PENDING":
@@ -164,4 +169,47 @@ def scan_redirect(submission_id):
             break
     save_data(data)
     return redirect("/dashboard")
+
+#  ── Reset password routes ───────────────────────────────────────────────────────────────
+
+@student_bp.route("/reset-password", methods=["GET"])
+def reset_password_page():
+    """
+    Renders the password reset page where students can enter a new password after clicking the reset link in their email.
+    Parameters: None (relies on query parameters for token and email)
+    Returns: Rendered HTML page for password reset form
+    """
+    token = request.args.get("token", "")
+    email = request.args.get("email", "")
+    return render_template("reset_password.html", token=token, email=email)
+
+@student_bp.route("/reset-password", methods=["POST"])
+def do_reset_password():
+    """
+    Handles the password reset form submission. Validates the token and email, updates the 
+    user's password, and invalidates the reset token.
+    Parameters: JSON body containing email, token, and new password
+    Returns: JSON response indicating success or error message
+    """
+    # Extract and validate input data from the request body
+    data     = request.get_json()
+    email    = (data.get("email") or "").strip().lower()
+    token    = (data.get("token") or "").strip()
+    password = data.get("password") or ""
+ 
+    if len(password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters."}), 400
+ 
+    users = load_users()
+    user  = users.get(email)
+ 
+    if not user or user.get("reset_token") != token:
+        return jsonify({"error": "Invalid or expired reset link."}), 400
+ 
+    # Update the user's password and invalidate the reset token
+    user["password"]    = generate_password_hash(password, method="pbkdf2:sha256")
+    user["reset_token"] = None   # Invalidate after use
+    save_users(users)
+ 
+    return jsonify({"message": "Password updated. You can now sign in."}), 200
 

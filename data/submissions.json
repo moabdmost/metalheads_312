@@ -253,5 +253,20 @@
     "staffName": null,
     "checkInTime": "2026-04-22T20:14:58",
     "checkOutTime": null
+  },
+  {
+    "id": "QS-85569",
+    "studentName": "Riana Doctor",
+    "login_email": "ridoctor@davidson.edu",
+    "courseCode": "CSC324",
+    "courseName": "Theory of Computation",
+    "examName": "",
+    "facultyName": "R.Ramanujan",
+    "notes": "None",
+    "status": "COMPLETED",
+    "room": "Watson 140",
+    "staffName": null,
+    "checkInTime": "2026-04-27T14:06:38",
+    "checkOutTime": "2026-04-27T14:06:39"
   }
 ]
