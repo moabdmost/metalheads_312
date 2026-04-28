@@ -54,7 +54,6 @@ def signup():
     session["student_name"]  = f"{first_name} {last_name}"
     return jsonify({"first_name": first_name}), 201
 
-
 @api_bp.route("/login", methods=["POST"])
 def login():
     """
@@ -257,7 +256,6 @@ If you didn't request this, you can safely ignore this email.
  
 — Davidson College Quiz Center
 """
- 
     html = f"""\
 <!DOCTYPE html>
 <html lang="en">
@@ -266,23 +264,16 @@ If you didn't request this, you can safely ignore this email.
 <style>
   body {{ margin:0; padding:0; background:#FFFFFF; font-family:'DM Sans',Arial,sans-serif; color:#ffffff; }}
   .wrapper {{ max-width:520px; margin:40px auto; background:#0d0d0d; border:1px solid #1f1f1f; border-radius:16px; overflow:hidden; }}
-  
   .header {{ background:#b30000; padding:32px 40px 24px; }}
   .header h1 {{ font-size:1.5rem; font-weight:800; color:#ffffff; margin:0 0 4px; }}
   .header p {{ margin:0; color:#f2f2f2; font-size:0.875rem; }}
-  
   .body {{ padding:32px 40px; }}
   .greeting {{ font-size:0.95rem; color:#d9d9d9; margin-bottom:24px; line-height:1.6; }}
-  
   .btn {{ display:inline-block; padding:14px 32px; background:#e60000; color:#ffffff; text-decoration:none; border-radius:10px; font-weight:600; font-size:0.95rem; }}
   .btn:hover {{ background:#cc0000; }}
-  
   .btn-wrap {{ text-align:center; margin:24px 0; }}
-  
   .note {{ font-size:0.8rem; color:#a6a6a6; line-height:1.6; margin-top:20px; }}
-  
   .link {{ color:#ff4d4d; word-break:break-all; }}
- 
   .footer {{ text-align:center; padding:16px 40px 28px; font-size:0.78rem; color:#808080; border-top:1px solid #1f1f1f; }}
 </style>
 </head>
