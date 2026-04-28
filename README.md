@@ -194,7 +194,7 @@ All `/api/*` endpoints consumed by the frontend JavaScript:
 | `PATCH` | `/api/submissions/<id>` | Update a submission (triggers email on COMPLETED) |
 | `GET` | `/api/rooms` | List all rooms with current occupancy |
 | `PATCH` | `/api/rooms/<id>` | Toggle a room's staffed status |
-| `POST` | `/forgot-password` | Send reset email |
+| `POST` | `/forgot-password` | Send reset password email |
 
 ---
 
@@ -226,6 +226,12 @@ Once a student completes the selection page, a unique QR code is generated and t
 - Is unique per student per session
 - Can be scanned by staff to verify the student and assign a room
 - Serves as the student's digital check-in confirmation
+
+---
+
+### `reset_password.html` — Reset Password 
+Allows students to securely create a new password after initiating the password reset process. 
+This page is typically accessed via a unique, time-limited link sent to the student’s email.
 
 ---
 
