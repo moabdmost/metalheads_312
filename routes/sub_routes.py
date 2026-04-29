@@ -1,18 +1,13 @@
 from datetime import datetime
-from flask import Blueprint, request, jsonify, session, url_for
-from werkzeug.security import generate_password_hash, check_password_hash
-from services.data import load_data, save_data, load_rooms, save_rooms, load_users, save_users, auto_assign_room
+from flask import Blueprint, request, jsonify
+from services.data import load_data, save_data, auto_assign_room
 from services.email_utils import send_completion_email
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from config.config import SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD
-from services.data import load_data
-import secrets as _secrets
 
+
+# ── Submissions API routes ───────────────────────────────────────────────────────────────
+# This blueprint handles API routes related to quiz session submissions, 
+# including retrieving all submissions,
 submissions_bp = Blueprint("submissions", __name__, url_prefix="/api")
-
-# ── Submissions ───────────────────────────────────────────────────────────────
 
 @submissions_bp.route("/submissions", methods=["GET"])
 def get_submissions():

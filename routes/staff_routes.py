@@ -1,5 +1,8 @@
 from flask import Blueprint, render_template
 
+# ── Staff page routes ───────────────────────────────────────────────────────────────
+# This blueprint handles all routes related to the staff-facing pages, 
+# including the main dashboard and room management pages.
 staff_bp = Blueprint("staff", __name__)
 
 

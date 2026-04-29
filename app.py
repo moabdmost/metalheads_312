@@ -8,7 +8,10 @@ from routes.resetpass_routes import resetpass_bp
 from routes.authorization import auth_bp
 from routes.professor_routes import faculty_bp
 from routes.room_routes import rooms_bp
-from routes.submissions import submissions_bp
+from routes.sub_routes import submissions_bp
+from routes.google_login import google_bp
+from routes.qr_generation import qr_bp
+
 
 # Main application setup
 app = Flask(__name__)
@@ -23,6 +26,9 @@ app.register_blueprint(faculty_bp)
 app.register_blueprint(rooms_bp)
 app.register_blueprint(resetpass_bp)
 app.register_blueprint(submissions_bp)
+app.register_blueprint(google_bp)
+app.register_blueprint(qr_bp)
+
 
 if __name__ == "__main__":
     os.makedirs("data", exist_ok=True)

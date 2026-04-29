@@ -4,7 +4,10 @@ from services.data import load_data, load_rooms, save_rooms
 
 # ── Rooms ─────────────────────────────────────────────────────────────────────
 
-# Blueprint for room-related routes, with URL prefix /rooms
+# This blueprint handles API routes related to room management, 
+# such as retrieving the list of rooms with their current occupancy 
+# and availability status, and updating room information like staffing status. 
+# These routes are used by staff members to manage the rooms where students take their exams.
 rooms_bp = Blueprint("rooms", __name__, url_prefix="/api")
 
 @rooms_bp.route("/rooms", methods=["GET"])

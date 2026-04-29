@@ -22,10 +22,15 @@ project/
 │   └── submissions.json         # Logs all student sign-in entries
 │
 ├── routes/                      # Flask Blueprints (split from app.py)
-│   ├── student_routes.py        # Student-facing pages and QR flow
-│   ├── professor_routes.py      # Professor-facing pages (dashboard, analytics)
-│   ├── staff_routes.py          # Staff-facing pages (dashboard, rooms)
-│   └── api_routes.py            # All /api/* endpoints
+│   ├── authorization.py         # Authentication routes (login, signup)
+│   ├── google_login.py          # Google OAuth login and token verification
+│   ├── professor_routes.py      # Professor-facing views (exam oversight, analytics)
+│   ├── qr_generation.py         # QR code generation and scan handling for submissions
+│   ├── resetpass_routes.py      # Password reset API (forgot/reset password via email tokens)
+│   ├── room_routes.py           # Room management and assignment logic (staff-facing)
+│   ├── staff_routes.py          # Staff dashboard and check-in workflows
+│   └── student_routes.py        # Student-facing pages (login, selection, QR display, status, forget password)
+│   └── sub_routes.py            # Submission API endpoints (create, fetch, update submissions)
 │
 ├── services/
 │   ├── email_utils.py           # Completion email logic

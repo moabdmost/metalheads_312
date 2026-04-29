@@ -1,6 +1,10 @@
 # routes/faculty_routes.py
 from flask import Blueprint, render_template
 
+# ── Faculty/Professor page routes ───────────────────────────────────────────────────────────────
+
+# This blueprint handles the route for the professor analytics page, 
+# where professors can view data visualizations and insights about quiz sessions,
 faculty_bp = Blueprint("faculty", __name__)
 
 @faculty_bp.route("/analytics")

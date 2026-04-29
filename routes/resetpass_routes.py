@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, url_for
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 from services.data import load_users, save_users
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -7,7 +7,44 @@ from email.mime.text import MIMEText
 from config.config import SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD
 import secrets as _secrets
 
+
+# ── Password Reset ─────────────────────────────────────────────────────────
+
+# This blueprint handles API routes related to password reset functionality, 
+# including requesting a password reset email and submitting a new password using a reset token.
 resetpass_bp = Blueprint("resetpass", __name__, url_prefix="/api")
+
+
+@resetpass_bp.route("/reset-password", methods=["POST"])
+def do_reset_password():
+    """
+    Handles the password reset form submission. Validates the token and email, updates the 
+    user's password, and invalidates the reset token.
+    Parameters: JSON body containing email, token, and new password
+    Returns: JSON response indicating success or error message
+    """
+    # Extract and validate input data from the request body
+    data     = request.get_json()
+    email    = (data.get("email") or "").strip().lower()
+    token    = (data.get("token") or "").strip()
+    password = data.get("password") or ""
+ 
+    if len(password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters."}), 400
+ 
+    users = load_users()
+    user  = users.get(email)
+ 
+    if not user or user.get("reset_token") != token:
+        return jsonify({"error": "Invalid or expired reset link."}), 400
+ 
+    # Update the user's password and invalidate the reset token
+    user["password"]    = generate_password_hash(password, method="pbkdf2:sha256")
+    user["reset_token"] = None   # Invalidate after use
+    save_users(users)
+ 
+    return jsonify({"message": "Password updated. You can now sign in."}), 200
+
 
 
 # ── Password Reset ─────────────────────────────────────────────────────────
@@ -39,7 +76,7 @@ def forgot_password():
     users[email]["reset_token"] = token
     save_users(users)
  
-    reset_url = url_for("student.do_reset_password", token=token, email=email, _external=True)
+    reset_url = url_for("student.reset_password_page", token=token, email=email, _external=True)
  
     name = users[email].get("first_name", "Student")
  

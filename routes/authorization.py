@@ -8,6 +8,9 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/api")
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
 
+# This blueprint handles API routes related to student authentication,
+# including signup and login. It validates input, manages user records,
+# and sets session variables to keep students logged in across requests.
 @auth_bp.route("/signup", methods=["POST"])
 def signup():
     """
