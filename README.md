@@ -23,7 +23,8 @@ project/
 │
 ├── routes/                      # Flask Blueprints (split from app.py)
 │   ├── student_routes.py        # Student-facing pages and QR flow
-│   ├── staff_routes.py          # Staff-facing pages (dashboard, rooms, analytics)
+│   ├── professor_routes.py      # Professor-facing pages (dashboard, analytics)
+│   ├── staff_routes.py          # Staff-facing pages (dashboard, rooms)
 │   └── api_routes.py            # All /api/* endpoints
 │
 ├── services/
@@ -183,6 +184,12 @@ Renders the three staff pages:
 
 - `/dashboard` — live view of all current sessions
 - `/staff-rooms` — room staffing management
+- `/analytics` — historical data and export tools
+
+---
+
+### `routes/proffesor_routes.py` — Professor-Facing Routes
+Renders the professor page:
 - `/analytics` — historical data and export tools
 
 ---

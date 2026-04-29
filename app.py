@@ -5,6 +5,7 @@ from config.config import FLASK_SECRET
 from routes.student_routes import student_bp
 from routes.staff_routes import staff_bp
 from routes.api_routes import api_bp
+from routes.professor_routes import faculty_bp
 
 # Main application setup
 app = Flask(__name__)
@@ -15,6 +16,7 @@ CORS(app)
 app.register_blueprint(student_bp)
 app.register_blueprint(staff_bp)
 app.register_blueprint(api_bp)
+app.register_blueprint(faculty_bp)
 
 if __name__ == "__main__":
     os.makedirs("data", exist_ok=True)

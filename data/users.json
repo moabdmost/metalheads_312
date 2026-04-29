@@ -4,5 +4,15 @@
     "first_name": "Riana",
     "last_name": "Doctor",
     "reset_token": "mpbPwkwyHiQssLrPMfFoDnnfFAjGpw4kOrwNSZOmjeQ"
+  },
+  "laoehler@davidson.edu": {
+    "password": "pbkdf2:sha256:1000000$e7ibXBDssiKy9F2u$fd90e06c359ff81460eff80eacc4a88f3b7e1de4e3c19a9ed9abf8a416c5e19c",
+    "first_name": "Lars",
+    "last_name": "O"
+  },
+  "tamakoni@davidson.edu": {
+    "password": "pbkdf2:sha256:1000000$GVQh1yDQ1jD6aFw3$5f03f414878561a2829ddac9ec5ffe64f3d6ea775cfd5f4d3d6aebb6137387eb",
+    "first_name": "Tanka",
+    "last_name": "M"
   }
 }

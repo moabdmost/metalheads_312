@@ -23,14 +23,3 @@ def staff_rooms_page():
     """
 
     return render_template("staff_rooms.html")
-
-
-@staff_bp.route("/analytics")
-def analytics_page():
-    """
-    Renders the analytics page where staff can view data visualizations and insights about quiz sessions,
-    such as session durations, room usage, and completion rates.
-    Parameters: None
-    Returns: Rendered HTML page for staff analytics and data visualization
-    """
-    return render_template("professor_analytics.html")
