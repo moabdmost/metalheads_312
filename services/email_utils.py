@@ -202,3 +202,6 @@ Questions? Contact the Quiz Center.
         print(f"[email] Receipt sent to {student_email} for {submission['id']}")
     except Exception as e:
         print(f"[email] Gmail SMTP error: {e}")
+
+
+
