@@ -19,5 +19,40 @@
     "password": "pbkdf2:sha256:1000000$mj6BYt2cD7MslN7j$b3337a76e28208dd9be779d8046a2f286c193e266484e09033f280bf3e4b0a2f",
     "first_name": "Chip",
     "last_name": "Roth"
+  },
+  "mashi@davidson.edu": {
+    "password": "pbkdf2:sha256:1000000$oW6QRVGb6KlsgjOX$fc75cdb20253f2027547755448f947ec3c309ad7fd44eeb5bec9b8b73079e2e3",
+    "first_name": "Madeline",
+    "last_name": "Shi"
+  },
+  "sataylormoore@davidson.edu": {
+    "password": "pbkdf2:sha256:1000000$kSUE1AT7dMzuzaJo$3582f51240e30e0ffd751e7f9b19d233d7213a26a44d2b5a5f3fbe45b701f442",
+    "first_name": "Samantha",
+    "last_name": "Taylormoore"
+  },
+  "malpearson@davidson.edu": {
+    "password": "pbkdf2:sha256:1000000$D19WmvdiNQpN0hdd$b28686750e70f945bbb1524a6ff7db0106217667f41462483162dbf06386f446",
+    "first_name": "Matthew",
+    "last_name": "Pearson"
+  },
+  "nialeksii1@davidson.edu": {
+    "password": "pbkdf2:sha256:1000000$2uGQpGp9B5c783qV$f2881cb2b3ac9e233959cf27d027b6e7466f55073b80a584777bd5ecf3715d71",
+    "first_name": "Nikita",
+    "last_name": "Aleksii"
+  },
+  "nialeksii@davidson.edu": {
+    "password": "pbkdf2:sha256:1000000$MUIQxDV70uOOoYzb$779428071f3d0bf483c072ccad6890ffae88d27267a587558f9266d4dc30bffb",
+    "first_name": "Nikita",
+    "last_name": "Aleksii"
+  },
+  "brclemenent@davidson.edu": {
+    "password": "pbkdf2:sha256:1000000$pFnr15qxWj3su7O3$a50a2f891b91f675b728f83a4114d8dfe5f2bc94e8322e502f17ecc1b5054d67",
+    "first_name": "Bryce",
+    "last_name": "Clement"
+  },
+  "keatas@davidson.edu": {
+    "password": "pbkdf2:sha256:1000000$aZeT5nbEB5YTC9u9$8838d8ae28341646958a2fba97c128e17029903fb8ad03b7219ccc8fff627021",
+    "first_name": "Kerem",
+    "last_name": "Atas"
   }
 }
