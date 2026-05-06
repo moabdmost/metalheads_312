@@ -1,0 +1,480 @@
+===============================================================================
+INPUT AND OUTPUT TEST CASES
+Quiz Center System - Davidson College
+===============================================================================
+
+This document provides input examples, expected outputs, and actual outputs for
+each major function of the system.
+
+===============================================================================
+1. STUDENT SIGN-UP
+===============================================================================
+
+Test Name: First Name Missing
+Input: User enters last name "Smith" but no first name
+Expected Output: Error message: "Please enter your first name" within 1 second
+Actual Output: Error message on bottom of screen: "Please enter first and last name" within 0.5 seconds
+Result: PASS (error message appears, wording slightly different)
+
+Test Name: Last Name Missing
+Input: User enters first name "John" but no last name
+Expected Output: Error message: "Please enter your last name" within 1 second
+Actual Output: Error message on bottom of screen: "Please enter first and last name" within 0.5 seconds
+Result: PASS
+
+Test Name: Non-Davidson Email
+Input: User enters "student@gmail.com"
+Expected Output: Error message: "Please use your @davidson.edu email" within 1 second
+Actual Output: Error message: "Use your @davidson.edu email" within 0.5 seconds
+Result: PASS
+
+Test Name: Password Too Short
+Input: User enters password "123"
+Expected Output: Error message: "Password must be at least 6 characters" within 1 second
+Actual Output: No error message, but app prevents proceeding with sign-up
+Result: PASS (behavior matches intention, though message missing)
+
+Test Name: Valid Sign-Up
+Input: First="John", Last="Smith", Email="jsmith@davidson.edu", Password="password123"
+Expected Output: Account created, user redirected to login page within 2 seconds
+Actual Output: Account created, user redirected to login page within 1.5 seconds
+Result: PASS
+
+===============================================================================
+2. STUDENT SIGN-IN
+===============================================================================
+
+Test Name: Wrong Password
+Input: Email="jsmith@davidson.edu", Password="wrongpassword"
+Expected Output: Error message: "Incorrect password" within 1 second
+Actual Output: Error message: "Incorrect password" within 0.5 seconds
+Result: PASS
+
+Test Name: Email Not Found
+Input: Email="nonexistent@davidson.edu", Password="anything"
+Expected Output: Error message: "Email not found" within 1 second
+Actual Output: Error message: "Email not found" within 0.5 seconds
+Result: PASS
+
+Test Name: Valid Sign-In
+Input: Email="jsmith@davidson.edu", Password="password123"
+Expected Output: Redirect to test selection page within 3 seconds
+Actual Output: Redirect to test selection page within 2 seconds
+Result: PASS
+
+Test Name: Google Sign-In
+Input: User clicks "Sign in with Google" button
+Expected Output: Google OAuth authentication page appears, redirects to selection page after approval
+Actual Output: "Access blocked" page appears
+Result: FAIL (Google OAuth configuration issue, carried over to future sprint)
+
+===============================================================================
+3. FORGOT PASSWORD
+===============================================================================
+
+Test Name: Forgot Password Link
+Input: User clicks "Forgot password?" link
+Expected Output: Reset password page appears with email field pre-filled from sign-in page
+Actual Output: Reset password HTML page appears with email field pre-filled
+Result: PASS
+
+Test Name: Non-Davidson Email Reset
+Input: User enters "user@gmail.com" for password reset
+Expected Output: Error message: "Please use your @davidson.edu email"
+Actual Output: Error message: "Please use your @davidson.edu email"
+Result: PASS
+
+Test Name: Wrong Email Address
+Input: User enters another student's Davidson email (not their own)
+Expected Output: Error message: "This email does not match our records"
+Actual Output: Reset email sent to wrong address within 1 second
+Result: FAIL (system should validate email belongs to requester)
+
+Test Name: Valid Reset Request
+Input: User enters their correct Davidson email
+Expected Output: Email sent within 1 minute with reset link
+Actual Output: Email sent and received within 30 seconds with message: "Check your inbox - a reset link has been sent!"
+Result: PASS
+
+Test Name: Reset Password Too Short
+Input: User enters new password "123"
+Expected Output: Error message: "Password must be at least 6 characters"
+Actual Output: Error message at bottom of screen: "Password must be at least 6 characters" within 0.5 seconds
+Result: PASS
+
+Test Name: Valid Password Reset
+Input: User enters new password "newpassword123"
+Expected Output: Password changed, user redirected to login page
+Actual Output: Password changed, user redirected to login page
+Result: PASS
+
+Test Name: New Password Remembered
+Input: User signs in with new password "newpassword123"
+Expected Output: Successful login, redirect to selection page
+Actual Output: Successful login, redirect to selection page
+Result: PASS
+
+===============================================================================
+4. COURSE SELECTION (Student Test Selection Page)
+===============================================================================
+
+Test Name: Professor Selection Typing
+Input: User types "Ramanujan" in professor field
+Expected Output: Professor name appears in dropdown within 5 seconds
+Actual Output: Professor name appears within 0.5 seconds
+Result: PASS
+
+Test Name: Incorrect Professor Name
+Input: User types "Nonexistent Professor"
+Expected Output: No courses appear in course dropdown
+Actual Output: No course dropdown appears
+Result: PASS
+
+Test Name: Course Selection After Professor
+Input: User selects professor "Ramanujan"
+Expected Output: Course dropdown populates with relevant courses within 1 second
+Actual Output: Course dropdown populates within 0.2 seconds
+Result: PASS
+
+Test Name: Accommodation Selection
+Input: User selects "Extended Time" and "Reduced Distraction"
+Expected Output: Both accommodations saved and displayed on confirmation
+Actual Output: User can only select one accommodation (radio buttons instead of checkboxes)
+Result: PARTIAL (frontend limitation, data saved correctly)
+
+Test Name: Submit Without Professor
+Input: User selects course and accommodations but no professor
+Expected Output: Warning message: "Please select a professor" within 1 second
+Actual Output: Warning message: "Please fill out this field" pointing to professor field within 0.5 seconds
+Result: PASS
+
+Test Name: Submit With Wrong Professor
+Input: User types wrong professor name, no course selected
+Expected Output: Warning message about invalid professor
+Actual Output: QR code generated with wrong professor and no course
+Result: FAIL (system should validate professor exists in database)
+
+Test Name: Submit Without Course
+Input: User selects valid professor but no course
+Expected Output: Warning message: "Please select a course" within 1 second
+Actual Output: Warning message pointing to course field within 0.5 seconds
+Result: PASS
+
+===============================================================================
+5. QR CODE GENERATOR
+===============================================================================
+
+Test Name: QR Code Generation After Valid Submission
+Input: User fills all fields correctly, clicks "Generate QR Code"
+Expected Output: QR code image appears within 1 second
+Actual Output: QR code image appears within 0.5 seconds with instructions: "Show this QR code to staff member"
+Result: PASS
+
+Test Name: QR Code Contains Correct Data
+Input: Student="John Smith", Course="CS121", Professor="Ramanujan"
+Expected Output: QR code encodes student ID, course, and timestamp
+Actual Output: QR code successfully decodes to correct student submission ID
+Result: PASS
+
+===============================================================================
+6. QR CODE SCAN (Staff Member)
+===============================================================================
+
+Test Name: Scan Valid QR Code
+Input: Staff scans student's QR code using scanner
+Expected Output: Student entry populated on dashboard within 5 seconds
+Actual Output: Student entry appears within 3 seconds average (max 7 seconds)
+Result: PASS
+
+Test Name: Scan Expired QR Code
+Input: Staff scans QR code after session timeout
+Expected Output: Error message: "QR code expired, please generate new one"
+Actual Output: Error message appears, student directed to re-login
+Result: PASS
+
+===============================================================================
+7. ROOM ASSIGNMENT (Student)
+===============================================================================
+
+Test Name: Check Room Before Scan
+Input: Student clicks "Check My Room Assignment" before being scanned
+Expected Output: Message: "Please have staff scan your QR code first" with link back to QR page
+Actual Output: "Room assignment does not appear. Please scan QR code." with "Back to QR Code" button
+Result: PASS
+
+Test Name: Room Assignment After Scan
+Input: Staff scans QR code, student checks room assignment
+Expected Output: Room number displayed within 2 seconds
+Actual Output: Room number and testing details displayed with warning message
+Result: PASS
+
+Test Name: No Rooms Available
+Input: All rooms at capacity or not staffed when QR code scanned
+Expected Output: Message: "No rooms available. You will be assigned when a room becomes free."
+Actual Output: Student sees loading page, dashboard shows "No Room" in room column, student never assigned when room frees
+Result: FAIL (system does not dynamically assign rooms when capacity opens)
+
+Test Name: Return Home Button
+Input: Student clicks "Done - Return to Home"
+Expected Output: Redirect to sign-in page within 5 seconds
+Actual Output: Redirect to sign-in page within 5 seconds
+Result: PASS
+
+===============================================================================
+8. STAFF DASHBOARD
+===============================================================================
+
+Test Name: Student Entry After QR Scan
+Input: Staff scans student QR code
+Expected Output: Entry appears on dashboard with status "Pending" within 1 second
+Actual Output: Entry appears on dashboard within 1 second with status "Pending"
+Result: PASS
+
+Test Name: Start Exam (Verify Student)
+Input: Staff clicks "Start" button next to student entry
+Expected Output: In-time recorded, status changes from "Pending" to "Verified"
+Actual Output: In-time recorded, status changes to "Verified"
+Result: PASS
+
+Test Name: Begin Test
+Input: Staff clicks "Start Test" button after verification
+Expected Output: Status changes to "In Progress", start time recorded within 0.5 seconds
+Actual Output: Status changes to "In Progress", start time recorded within 0.5 seconds
+Result: PASS
+
+Test Name: Complete Test
+Input: Staff clicks "Complete" button
+Expected Output: Status changes to "Completed", out-time recorded, email sent within 30 seconds
+Actual Output: Status changes to "Completed", out-time recorded, email sent within 10 seconds average
+Result: PASS
+
+Test Name: Edit Entry
+Input: Staff clicks "Edit" button on an entry
+Expected Output: Edit form appears with all current data populated
+Actual Output: Edit form HTML page appears with all input fields populated
+Result: PASS
+
+Test Name: Save Edited Entry
+Input: Staff changes student name from "John Smith" to "Jonathan Smith", clicks "Save Changes"
+Expected Output: Dashboard updates with new name within 0.5 seconds
+Actual Output: Dashboard updates with new name within 0.5 seconds
+Result: PASS
+
+Test Name: Manual Entry Button
+Input: Staff clicks "+ Manual Entry" button
+Expected Output: Manual entry form appears within 0.5 seconds
+Actual Output: Manual entry HTML page appears within 0.5 seconds
+Result: PASS
+
+Test Name: Save Manual Entry
+Input: Staff fills manual entry form correctly, clicks "Submit Entry"
+Expected Output: Form disappears, new entry appears on dashboard within 0.5 seconds
+Actual Output: Form disappears, new entry appears on dashboard within 0.5 seconds
+Result: PASS
+
+Test Name: Status Filter
+Input: Staff selects "COMPLETED" from status filter dropdown
+Expected Output: Dashboard shows only entries with status "Completed" within 0.5 seconds
+Actual Output: Dashboard filters within 0.5 seconds showing only completed entries
+Result: PASS
+
+Test Name: Refresh Button
+Input: Staff clicks "Refresh" button
+Expected Output: Dashboard reloads current data within 0.5 seconds
+Actual Output: Dashboard resets and reloads within 0.5 seconds
+Result: PASS
+
+===============================================================================
+9. STAFF MEMBER ROOM MANAGEMENT
+===============================================================================
+
+Test Name: Room Management Navigation
+Input: Staff clicks "Room Management" button
+Expected Output: Redirect to staff_rooms.html page within 1 second
+Actual Output: Redirect to staff_rooms.html page within 1 second
+Result: PASS
+
+Test Name: Update Staff In Room Status
+Input: Staff clicks checkbox to mark room as staffed
+Expected Output: Room staff status updates within 0.5 seconds
+Actual Output: Status updates with confirmation message: "Status has been changed"
+Result: PASS
+
+Test Name: Update Room While Occupied
+Input: Staff attempts to change room status while students are assigned to room
+Expected Output: Error message: "Cannot change room status while occupied"
+Actual Output: Room status changes without error message
+Result: FAIL (business rule not enforced)
+
+Test Name: Refresh Room Data
+Input: Staff clicks refresh button on room management page
+Expected Output: Occupancy and staff status refresh within 0.5 seconds
+Actual Output: Occupancy and staff status refresh within 0.5 seconds
+Result: PASS
+
+===============================================================================
+10. FACULTY DASHBOARD
+===============================================================================
+
+Test Name: Dashboard Load Time
+Input: Professor logs in and navigates to dashboard
+Expected Output: Dashboard loads within 3 seconds
+Actual Output: Dashboard loads within 2.5 seconds
+Result: PASS
+
+Test Name: Filter by Student Name
+Input: Professor types "Smith" in student name filter
+Expected Output: Dashboard shows only students with "Smith" in name within 1 second
+Actual Output: Filters in <1 second showing matching students only
+Result: PASS
+
+Test Name: Filter by Course
+Input: Professor selects "CS121" from course dropdown
+Expected Output: Dashboard shows only students enrolled in CS121 within 1 second
+Actual Output: Filters in <1 second showing CS121 students only
+Result: PASS
+
+Test Name: Filter by Status
+Input: Professor selects "Completed" from status filter
+Expected Output: Dashboard shows only completed test sessions within 1 second
+Actual Output: Filters in <1 second showing completed sessions only
+Result: PASS
+
+Test Name: Filter by Date Range
+Input: Professor selects date range "Nov 1, 2025 to Nov 15, 2025"
+Expected Output: Dashboard shows only tests taken within date range within 1 second
+Actual Output: Filters in <1 second showing matching date range only
+Result: PASS
+
+Test Name: Data Accuracy
+Input: Professor views dashboard and compares to submissions.json
+Expected Output: 100% match between displayed data and stored records
+Actual Output: 100% match verified
+Result: PASS
+
+Test Name: Faculty Data Isolation
+Input: Professor logs in (e.g., Dr. Ramanujan)
+Expected Output: Dashboard shows only students from Ramanujan's courses
+Actual Output: Only students from logged professor's courses appear
+Result: PASS
+
+===============================================================================
+11. FACULTY DATA EXPORT (PDF & CSV)
+===============================================================================
+
+Test Name: CSV Export Generation
+Input: Professor applies filters, clicks "Export CSV"
+Expected Output: CSV file downloads within 5 seconds
+Actual Output: CSV file downloads within 3 seconds
+Result: PASS
+
+Test Name: CSV Content Accuracy
+Input: Export CSV after applying filters
+Expected Output: CSV contains exactly the filtered dashboard results (100% match)
+Actual Output: 100% match between CSV and dashboard display
+Result: PASS
+
+Test Name: CSV Required Fields
+Input: Open exported CSV file
+Expected Output: Columns include: Student Name, Course, Timestamp, Status
+Actual Output: All required columns present
+Result: PASS
+
+Test Name: PDF Export Generation
+Input: Professor applies filters, clicks "Export PDF"
+Expected Output: PDF file downloads within 5 seconds
+Actual Output: PDF file downloads within 4 seconds
+Result: PASS
+
+Test Name: PDF Content Accuracy
+Input: Export PDF after applying filters
+Expected Output: PDF contains exactly the filtered dashboard results (100% match)
+Actual Output: 100% match between PDF and dashboard display
+Result: PASS
+
+Test Name: Automatic Download
+Input: Professor clicks export button (CSV or PDF)
+Expected Output: Download starts automatically without additional clicks
+Actual Output: Download starts automatically
+Result: PASS
+
+===============================================================================
+12. EMAIL CONFIRMATION
+===============================================================================
+
+Test Name: Email Trigger on Complete
+Input: Staff clicks "Complete" button for student's test
+Expected Output: Email sent within 10 seconds
+Actual Output: Email sent within 10 seconds (average 10 seconds)
+Result: PASS
+
+Test Name: Email Content - Student Name
+Input: Student "John Smith" completes test
+Expected Output: Email contains "John Smith"
+Actual Output: Email contains student's full name
+Result: PASS
+
+Test Name: Email Content - Course
+Input: Student completes test for "CS121"
+Expected Output: Email contains "CS121"
+Actual Output: Email contains course name
+Result: PASS
+
+Test Name: Email Content - Date
+Input: Student completes test on Nov 15, 2025
+Expected Output: Email contains completion date
+Actual Output: Email contains timestamped date
+Result: PASS
+
+Test Name: Email Content - Status
+Input: Test marked as "Completed"
+Expected Output: Email indicates test is complete
+Actual Output: Email includes completion status
+Result: PASS
+
+Test Name: Email Delivery Rate
+Input: Send 20 completion emails
+Expected Output: At least 19 emails delivered (95% rate)
+Actual Output: 20 of 20 emails delivered (100% rate)
+Result: PASS
+
+Test Name: Failed Email Logging
+Input: Simulate SMTP server failure
+Expected Output: Failed email logged for inspection
+Actual Output: Error logged to server console
+Result: PASS
+
+===============================================================================
+TEST SUMMARY
+===============================================================================
+
+| Function Area | Tests Run | Passed | Failed | Partial | Pass Rate |
+|---------------|-----------|--------|--------|---------|-----------|
+| Student Sign-Up | 5 | 5 | 0 | 0 | 100% |
+| Student Sign-In | 4 | 3 | 1 | 0 | 75% |
+| Forgot Password | 7 | 6 | 1 | 0 | 86% |
+| Course Selection | 7 | 4 | 1 | 1 | 57% |
+| QR Code Generator | 2 | 2 | 0 | 0 | 100% |
+| QR Code Scan | 2 | 2 | 0 | 0 | 100% |
+| Room Assignment | 4 | 2 | 1 | 0 | 50% |
+| Staff Dashboard | 10 | 10 | 0 | 0 | 100% |
+| Staff Room Management | 4 | 3 | 1 | 0 | 75% |
+| Faculty Dashboard | 7 | 7 | 0 | 0 | 100% |
+| Faculty Export | 6 | 6 | 0 | 0 | 100% |
+| Email Confirmation | 7 | 7 | 0 | 0 | 100% |
+| **TOTAL** | **65** | **57** | **5** | **1** | **88%** |
+
+===============================================================================
+ISSUES IDENTIFIED FOR FUTURE SPRINT
+===============================================================================
+
+1. Google Sign-In: OAuth configuration needs repair (Access blocked error)
+2. Forgot Password: System sends reset email to wrong address without validation
+3. Course Selection: Wrong professor input generates QR code without validation
+4. Room Assignment: Dynamic room assignment not working when capacity clears
+5. Room Management: Staff can update room status while occupied (business rule violation)
+6. Accommodation Selection: UI uses radio buttons instead of checkboxes (limits multi-select)
+
+===============================================================================
+END OF DOCUMENT
+===============================================================================

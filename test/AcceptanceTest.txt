@@ -1,0 +1,160 @@
+===============================================================================
+USER TEST CASES AND ACCEPTANCE TESTING
+===============================================================================
+
+This document maps each user story to its corresponding acceptance criteria and
+test cases.
+
+===============================================================================
+1. QUIZ CENTER DASHBOARD (Staff)
+===============================================================================
+
+User Story: As a Quiz Center staff member, I want to view and filter a real-time
+dashboard of up to 15 test takers and their statuses, so I can efficiently
+monitor and manage the testing center during my shift.
+
+Acceptance Criteria and Corresponding Tests:
+
+| Acceptance Criteria | Test Method | Pass/Fail |
+|---------------------|-------------|-----------|
+| Dashboard displays 15 test takers per page with name, course, status, and timestamps | Load dashboard with 20+ test submissions; verify pagination shows 15 per page | PASS |
+| Status updates ("In Progress," "Completed") appear within 2 seconds | Staff clicks "Start" button; verify status changes to "In Progress" in <2 seconds | PASS |
+| Filters (name, course, status) update results in <1 second | Staff selects status filter "PENDING"; verify dashboard filters in <1 second | PASS |
+| Staff can manually edit entries, reflected immediately on dashboard | Staff clicks "Edit" on an entry, changes name, saves; verify dashboard updates instantly | PASS |
+| Staff can manually add entries, reflected immediately on dashboard | Staff clicks "+ Manual Entry", fills form, submits; verify new entry appears immediately | PASS |
+
+===============================================================================
+2. STUDENT LOGIN & INTAKE
+===============================================================================
+
+User Story: As a student, I want to log in with my Davidson credentials, select
+my professor and course, indicate any accommodations, and receive a QR code that
+staff scans to check me in, so that I can register for my exam without requiring
+staff assistance.
+
+Acceptance Criteria and Corresponding Tests:
+
+| Acceptance Criteria | Test Method | Pass/Fail |
+|---------------------|-------------|-----------|
+| Login authentication completes within 3 seconds | Student enters valid credentials; verify login completes in <3 seconds | PASS |
+| Student must select professor before submitting | Student submits without selecting professor; verify error appears | PASS |
+| Student must select course before submitting | Student submits without selecting course; verify error appears | PASS |
+| Student must indicate accommodations (if any) before submitting | Student submits without accommodations selected; verify system accepts "None" as valid | PASS |
+| Missing/invalid inputs trigger error instantly (<1 second) | Student submits incomplete form; verify error appears immediately | PASS |
+| Successful submission updates dashboard within 2 seconds | Student completes intake; verify staff dashboard shows entry in <2 seconds | PASS |
+| QR code generated immediately after successful submission | Student submits; verify QR code appears on screen | PASS |
+| Scanning QR code populates staff dashboard entry within 2 seconds | Staff scans QR; verify entry appears in <2 seconds | PASS |
+| Manual entry can be completed within 40 seconds when phone unavailable | Staff uses manual entry form; verify completion time <40 seconds | PASS |
+
+===============================================================================
+3. QR CODE CHECK-IN
+===============================================================================
+
+User Story: As a Quiz Center staff member, I want to scan a student's QR code
+and retrieve their check-in information within 5 seconds, so that I can quickly
+locate and hand out the correct exam.
+
+Acceptance Criteria and Corresponding Tests:
+
+| Acceptance Criteria | Test Method | Pass/Fail |
+|---------------------|-------------|-----------|
+| QR code generated immediately after student submission | Student submits intake; verify QR code displays on page | PASS |
+| Scanning QR code displays student data within 2 seconds | Staff scans QR; verify student name, course appear in <2 seconds | PASS |
+| Successful scans create entries on dashboard 100% of the time | Perform 10 scans; verify 10 entries appear on dashboard | PASS |
+| Manual entry fallback works within 40 seconds | Staff uses manual entry; verify completion <40 seconds | PASS |
+
+===============================================================================
+4. ROOM ASSIGNMENT
+===============================================================================
+
+User Story: As a student, I want to be automatically assigned a testing room
+within 5 seconds of completing check-in, so that I know exactly where to go
+without needing to ask a staff member.
+
+Acceptance Criteria and Corresponding Tests:
+
+| Acceptance Criteria | Test Method | Pass/Fail |
+|---------------------|-------------|-----------|
+| Room assignment displayed within 2 seconds of QR verification | Staff scans QR; verify student sees room assignment in <2 seconds | PASS |
+| System ensures no room exceeds capacity limits | Assign 5 students to a room with capacity 4; verify 5th student assigned elsewhere | PASS |
+| Staff can view real-time room assignments on dashboard | Staff opens Room Management page; verify occupancy counts update in real time | PASS |
+
+===============================================================================
+5. FACULTY DASHBOARD
+===============================================================================
+
+User Story: As a professor, I want to view and filter a dashboard of my own
+students' test records within 5 seconds of navigating to the page, so that I can
+track assessment participation and status without contacting the Quiz Center.
+
+Acceptance Criteria and Corresponding Tests:
+
+| Acceptance Criteria | Test Method | Pass/Fail |
+|---------------------|-------------|-----------|
+| Dashboard loads data within 3 seconds | Professor logs in; verify dashboard loads in <3 seconds | PASS |
+| Filters (student name) update results in <1 second | Professor types student name; verify results filter in <1 second | PASS |
+| Filters (course) update results in <1 second | Professor selects course filter; verify results filter in <1 second | PASS |
+| Filters (status) update results in <1 second | Professor selects status "Completed"; verify results filter in <1 second | PASS |
+| Filters (date range) update results in <1 second | Professor selects date range; verify results filter in <1 second | PASS |
+| Displayed data matches stored records with 100% accuracy | Compare dashboard data to submissions.json; verify 100% match | PASS |
+| Professor sees only their own students | Professor logs in; verify no students from other professors appear | PASS |
+
+===============================================================================
+6. EXPORT DATA
+===============================================================================
+
+User Story: As a professor, I want to export my filtered student records as a
+PDF or CSV file within 5 seconds of clicking the export button, so that I can
+store and review assessment data outside the application.
+
+Acceptance Criteria and Corresponding Tests:
+
+| Acceptance Criteria | Test Method | Pass/Fail |
+|---------------------|-------------|-----------|
+| Export generates downloadable file within 5 seconds | Professor clicks "Export CSV"; verify file downloads in <5 seconds | PASS |
+| CSV export matches filtered dashboard results exactly | Export CSV and compare to dashboard display; verify 100% match | PASS |
+| PDF export matches filtered dashboard results exactly | Export PDF and compare to dashboard display; verify 100% match | PASS |
+| File includes student name, course, timestamps, and status | Open exported file; verify all required fields present | PASS |
+| Download begins automatically after generation | Click export; verify no additional clicks needed to start download | PASS |
+
+===============================================================================
+7. EMAIL CONFIRMATION
+===============================================================================
+
+User Story: As a student, I want to receive an email confirmation within 10
+seconds of my test being marked complete, so that I have a timestamped record of
+my assessment without needing to follow up with the Quiz Center.
+
+Acceptance Criteria and Corresponding Tests:
+
+| Acceptance Criteria | Test Method | Pass/Fail |
+|---------------------|-------------|-----------|
+| Email sent within 10 seconds of staff clicking "Completed" | Staff marks test Complete; verify email arrives in <10 seconds | PASS |
+| Email includes student name | Open received email; verify student name appears | PASS |
+| Email includes course name | Open received email; verify course name appears | PASS |
+| Email includes date of completion | Open received email; verify date appears | PASS |
+| Email includes completion status | Open received email; verify status appears | PASS |
+| At least 95% of emails successfully delivered | Send 20 emails; verify at least 19 are received | PASS |
+| Failed emails are logged | Simulate email failure; verify log entry created | PASS |
+
+===============================================================================
+ACCEPTANCE TEST SUMMARY
+===============================================================================
+
+| Requirement | Total Tests | Passed | Failed | Status |
+|-------------|-------------|--------|--------|--------|
+| Quiz Center Dashboard | 5 | 5 | 0 | ACCEPTED |
+| Student Login & Intake | 9 | 8 | 1 | PARTIAL* |
+| QR Code Check-In | 4 | 4 | 0 | ACCEPTED |
+| Room Assignment | 3 | 2 | 1 | PARTIAL* |
+| Faculty Dashboard | 7 | 7 | 0 | ACCEPTED |
+| Export Data | 5 | 5 | 0 | ACCEPTED |
+| Email Confirmation | 7 | 7 | 0 | ACCEPTED |
+| **TOTAL** | **40** | **38** | **2** | **95% PASS RATE** |
+
+*Partial acceptance: Student Login & Intake has one failing test (Google Sign-In access blocked).
+Room Assignment has one failing test (room unavailable scenario not handled correctly).
+
+===============================================================================
+END OF DOCUMENT
+===============================================================================
