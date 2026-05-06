@@ -178,5 +178,20 @@
     "staffName": null,
     "checkInTime": "2026-04-30T10:45:13",
     "checkOutTime": "2026-04-30T10:45:15"
+  },
+  {
+    "id": "QS-88069",
+    "studentName": "John Smith",
+    "login_email": "johnsmith@davidson.edu",
+    "courseCode": "CSC371",
+    "courseName": "Machine Learning",
+    "examName": "",
+    "facultyName": "R.Ramanujan",
+    "notes": "Reduced Distraction",
+    "status": "COMPLETED",
+    "room": "Watson 132",
+    "staffName": null,
+    "checkInTime": "2026-05-06T14:11:01",
+    "checkOutTime": "2026-05-06T14:11:11"
   }
 ]
