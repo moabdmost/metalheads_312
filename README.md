@@ -50,6 +50,10 @@ project/
 │   ├── staff_rooms.html
 │   └── student.html
 │
+|── test/     
+|   ├── AcceptanceTest.txt       # Test files
+|   ├── Input_Output_Test.txt
+|
 ├── .gitignore                   # Git ignore rules
 ├── app.py                       # Flask app init + blueprint registration
 ├── README.md                    # Project Overview
