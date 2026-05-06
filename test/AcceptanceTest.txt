@@ -135,7 +135,7 @@ Acceptance Criteria and Corresponding Tests:
 | Email includes date of completion | Open received email; verify date appears | PASS |
 | Email includes completion status | Open received email; verify status appears | PASS |
 | At least 95% of emails successfully delivered | Send 20 emails; verify at least 19 are received | PASS |
-| Failed emails are logged | Simulate email failure; verify log entry created | PASS |
+| Failed emails are logged | Simulate email failure; verify log entry created | FAIL |
 
 ===============================================================================
 ACCEPTANCE TEST SUMMARY
@@ -149,11 +149,11 @@ ACCEPTANCE TEST SUMMARY
 | Room Assignment | 3 | 2 | 1 | PARTIAL* |
 | Faculty Dashboard | 7 | 7 | 0 | ACCEPTED |
 | Export Data | 5 | 5 | 0 | ACCEPTED |
-| Email Confirmation | 7 | 7 | 0 | ACCEPTED |
+| Email Confirmation | 7 | 7 | 0 | PARTIAL |
 | **TOTAL** | **40** | **38** | **2** | **95% PASS RATE** |
 
 *Partial acceptance: Student Login & Intake has one failing test (Google Sign-In access blocked).
-Room Assignment has one failing test (room unavailable scenario not handled correctly).
+Email Confirmation has one failing test (email delivery failure logging not implemented).
 
 ===============================================================================
 END OF DOCUMENT

@@ -442,7 +442,7 @@ Test Name: Failed Email Logging
 Input: Simulate SMTP server failure
 Expected Output: Failed email logged for inspection
 Actual Output: Error logged to server console
-Result: PASS
+Result: FAIL
 
 ===============================================================================
 TEST SUMMARY
@@ -461,8 +461,8 @@ TEST SUMMARY
 | Staff Room Management | 4 | 3 | 1 | 0 | 75% |
 | Faculty Dashboard | 7 | 7 | 0 | 0 | 100% |
 | Faculty Export | 6 | 6 | 0 | 0 | 100% |
-| Email Confirmation | 7 | 7 | 0 | 0 | 100% |
-| **TOTAL** | **65** | **57** | **5** | **1** | **88%** |
+| Email Confirmation | 7 | 7 | 0 | 0 | 85% |
+| **TOTAL** | **65** | **57** | **5** | **1** | **85%** |
 
 ===============================================================================
 ISSUES IDENTIFIED FOR FUTURE SPRINT
